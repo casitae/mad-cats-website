@@ -56,11 +56,26 @@
     function play() { timer = setInterval(function () { go(i + 1); }, delay); }
     function restart() { if (timer) clearInterval(timer); play(); }
     go(0); play();
-    // tap / click anywhere on the image advances to the next slide (dots excluded)
-    c.addEventListener('click', function (e) {
-      if (e.target.closest('.carousel__dots')) return;
-      go(i + 1); restart();
+
+    // tap = next; horizontal swipe = next (left) / previous (right). dots excluded.
+    var startX = 0, startY = 0, tracking = false;
+    var SWIPE = 40; // px to count as a swipe
+    c.addEventListener('pointerdown', function (e) {
+      if (e.target.closest('.carousel__dots')) { tracking = false; return; }
+      tracking = true; startX = e.clientX; startY = e.clientY;
     });
+    c.addEventListener('pointerup', function (e) {
+      if (!tracking) return;
+      tracking = false;
+      var dx = e.clientX - startX, dy = e.clientY - startY;
+      if (Math.abs(dx) > SWIPE && Math.abs(dx) > Math.abs(dy)) {
+        go(i + (dx < 0 ? 1 : -1)); restart();   // swipe left → next, right → prev
+      } else if (Math.abs(dx) < 12 && Math.abs(dy) < 12) {
+        go(i + 1); restart();                    // tap → next
+      }
+    });
+    c.addEventListener('pointercancel', function () { tracking = false; });
+
     c.addEventListener('mouseenter', function () { if (timer) clearInterval(timer); });
     c.addEventListener('mouseleave', play);
   });
