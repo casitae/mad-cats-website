@@ -1,0 +1,27 @@
+/* Mad Cats — Design Tokens (from design-system.md §4) */
+:root{
+  /* colour */
+  --mc-cream:#f3ecdf;
+  --mc-oxblood:#48201c;
+  --mc-orange:#fa4616;
+  --mc-taupe:#9a9186;
+  --mc-hairline:#d9d1c2;
+  --mc-ink-dark:#141210;
+  --mc-separator:rgba(72,32,28,.12);
+
+  /* type families */
+  --mc-font-display:"Walter Turncoat", cursive;
+  --mc-font-heading:"Cormorant Garamond", Georgia, serif;
+  --mc-font-mono:"IBM Plex Mono", ui-monospace, monospace;
+
+  /* spacing — 4px base */
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px;
+  --sp-6:24px; --sp-8:32px; --sp-12:48px; --sp-16:64px;
+
+  /* layout */
+  --mc-gutter:24px;
+  --mc-content-max:1200px;
+  --mc-radius:4px;
+  --mc-radius-card:8px;
+  --mc-page-w:430px; /* mobile column cap for the phone-style layout */
+}
