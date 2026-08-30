@@ -51,6 +51,19 @@ html,body{overflow-x:clip;}
 /* ---- Modern type scale: labels and values step up for a clearer flow ---- */
 .pe-form .field__label{font-size:12.5px;letter-spacing:.8px;line-height:1.4;}
 .pe-form .field__input,.pe-form .field__textarea{font-size:15px;}
+/* ---- Mobile: never let a tap zoom the page ----
+   (a) iOS Safari zooms whenever a control it focuses is under 16px. The design
+   wants 15px, so hold that on precise pointers and step to 16px on touch.
+   (b) touch-action:manipulation drops the double-tap-to-zoom gesture on the
+   form, the banner and the sheet, which is what fires when someone taps the
+   quantity stepper or a calendar day twice in quick succession.
+   Deliberately NOT fixed with maximum-scale / user-scalable=no: that would
+   take pinch-zoom away from everyone who needs it. Both fixes below leave
+   pinch-zoom completely intact. */
+@media (pointer:coarse){
+  .pe-form .field__input,.pe-form .field__textarea{font-size:16px;}
+}
+.pe-form,.pe-banner,.pe-sheet{touch-action:manipulation;}
 .pe-fields > .reveal{margin-top:0;} /* collapsed reveals must not leave a gap; spacing lives inside the reveal */
 
 /* ---- Visually-hidden native inputs (keyboard + SR accessible) ---- */
@@ -476,6 +489,18 @@ body.pe-done .pe-rail{display:none!important;}
 @keyframes pe-guide-right{0%,100%{transform:none;opacity:1;}50%{transform:translateX(4px);opacity:.6;}}
 .pe-guide.is-on .pe-guide__down{animation:pe-guide-down 1.2s ease-in-out infinite;}
 .pe-guide.is-on .pe-guide__right{animation:pe-guide-right 1.2s ease-in-out infinite;}
+/* Section 01 gate: when someone tries to move on without a guest count the
+   arrow travels to the field and nudges twice, harder and further than its
+   idle pulse, while the field itself throws one soft orange ring. The ring is
+   a box-shadow rather than a border colour because .is-invalid already owns
+   the border (with !important) and the two would fight. */
+@keyframes pe-guide-urge-down{0%,100%{transform:none;}20%,60%{transform:translateY(9px);}40%,80%{transform:none;}}
+@keyframes pe-guide-urge-right{0%,100%{transform:none;}20%,60%{transform:translateX(9px);}40%,80%{transform:none;}}
+.pe-guide.is-urging .pe-guide__down{animation:pe-guide-urge-down .55s ease-in-out 2;}
+.pe-guide.is-urging .pe-guide__right{animation:pe-guide-urge-right .55s ease-in-out 2;}
+@keyframes pe-field-call{0%{box-shadow:0 0 0 0 rgba(250,70,22,.40);}
+  70%{box-shadow:0 0 0 9px rgba(250,70,22,0);}100%{box-shadow:0 0 0 0 rgba(250,70,22,0);}}
+.field.is-urged .field__input{animation:pe-field-call 1.1s ease-out 1;}
 @media (min-width:1025px){
   /* the guide sits in the page's left margin: release .page's clip so the
      arrow is not cut off (html/body keep overflow-x:clip for the viewport) */
@@ -507,6 +532,9 @@ body.pe-done .pe-rail{display:none!important;}
   .field__tick,.pe-sec-tick,.field__check-box::after,.addon-ph,.pe-sheet,.pe-sheet.is-open{transition:none;}
   .field__label-text.is-swapping,.is-reinked{animation:none;}
   .pe-guide{transition:none;} /* static arrow: no pulse, instant relocation */
+  /* the gate still turns people back, it just does it without moving parts */
+  .pe-guide.is-urging .pe-guide__down,.pe-guide.is-urging .pe-guide__right,
+  .field.is-urged .field__input{animation:none;}
   .pe-guide.is-on .pe-guide__down,.pe-guide.is-on .pe-guide__right{animation:none;}
 }
 </style>
@@ -1057,9 +1085,22 @@ body.pe-done .pe-rail{display:none!important;}
   var fSpace  = $("#f-space"),  spaceMsg  = $("#space-msg");
   var guests   = $("#guests"), fGuests = $("#f-guests"), guestsMsg = $("#guests-msg");
 
-  function guestsOk(){
+  /* Guest count is REQUIRED: nothing past section 01 opens without it.
+     `announce` is false while the user is mid-type, so an empty field never
+     shouts before they have had a go; the gate and the submit both pass true. */
+  function guestsMissing(){
     var n = parseInt(guests.value, 10);
-    if(!guests.value || isNaN(n)){ clearMsg(fGuests, guestsMsg); return true; } /* optional field */
+    return !guests.value.trim() || isNaN(n) || n < 1;
+  }
+  function guestsOk(announce){
+    var n = parseInt(guests.value, 10);
+    if(!guests.value.trim() || isNaN(n)){
+      if(announce){
+        showMsg(fGuests, guestsMsg, "We need a guest count before the next question. A rough number is fine.");
+        return false;
+      }
+      clearMsg(fGuests, guestsMsg); return false;
+    }
     if(n < 1){ showMsg(fGuests, guestsMsg, "At least one guest, even if it's just the two of you."); return false; }
     var cap = PRICING.capacities[gv("space")];
     if(cap && n > cap){ showMsg(fGuests, guestsMsg, CAP_MSGS[gv("space")]); return false; }
@@ -1434,7 +1475,7 @@ body.pe-done .pe-rail{display:none!important;}
       showMsg(fSpace, spaceMsg, "Choose a space to get started.");
       invalid.push([fSpace, $('input[name="space"]')]);
     }
-    if(!guestsOk()) invalid.push([fGuests, guests]);
+    if(!guestsOk(true)) invalid.push([fGuests, guests]);
     if(!gv("event-type")){
       showMsg(fEventType, eventTypeMsg, "Tell us what kind of event this is.");
       invalid.push([fEventType, $('input[name="event-type"]')]);
@@ -1598,7 +1639,7 @@ body.pe-done .pe-rail{display:none!important;}
       var el = $('.pe-sec-tick[data-sec="' + name + '"]');
       if(el) el.classList.toggle("is-done", !!done);
     }
-    tick("scope", !!gv("space"));
+    tick("scope", !!gv("space") && !guestsMissing());
     var t = gv("event-type");
     tick("type", t === "celebration" ? !!gv("occasion")
         : t === "corporate" ? (!!gv("industry") && !!gv("planning")) : false);
@@ -2120,6 +2161,7 @@ body.pe-done .pe-rail{display:none!important;}
   function guideTarget(){
     if(document.body.classList.contains("pe-done")) return null; /* enquiry sent */
     if(!gv("space")) return $("#f-space");
+    if(guestsMissing()) return $("#f-guests"); /* required: the gate below enforces it */
     var t = gv("event-type");
     if(!t) return $("#f-event-type");
     if(t === "corporate"){
@@ -2156,6 +2198,39 @@ body.pe-done .pe-rail{display:none!important;}
     guideEl.classList.remove("is-on"); /* fade out here, reappear there */
     guideTimer = setTimeout(function(){ guideTimer = null; placeGuide(guidePending); }, 230);
   }
+
+  /* ---- Section 01 gate: no moving on without a guest count ----
+     A tap anywhere past the first section, while the count is empty, is turned
+     back: the arrow relocates to the field and nudges, the field throws a ring,
+     and focus lands in it. Caught on CLICK in the capture phase, so a <label>
+     never gets to toggle its control. Click and not pointerdown deliberately:
+     preventing a pointerdown default would also kill scrolling, and someone
+     scrolling past section 01 has not skipped anything. */
+  var secScope = $("#sec-scope"), urgeTimer = null;
+  function urgeGuests(){
+    guestsOk(true);
+    if(guideTimer !== null){ clearTimeout(guideTimer); guideTimer = null; }
+    placeGuide($("#f-guests"));   /* straight there, no fade-out delay */
+    guideEl.classList.add("is-urging");
+    fGuests.classList.add("is-urged");
+    if(urgeTimer) clearTimeout(urgeTimer);
+    urgeTimer = setTimeout(function(){
+      guideEl.classList.remove("is-urging");
+      fGuests.classList.remove("is-urged");
+      urgeTimer = null;
+    }, 1150);
+    try{
+      fGuests.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "center" });
+    }catch(err){ fGuests.scrollIntoView(); }
+    guests.focus({ preventScroll: true });
+  }
+  form.addEventListener("click", function(e){
+    if(!guestsMissing()) return;
+    if(secScope && secScope.contains(e.target)) return; /* section 01 stays open, obviously */
+    e.preventDefault();
+    e.stopPropagation();
+    urgeGuests();
+  }, true);
 
   /* one refresh for everything the answers feed */
   /* refreshPricing rather than updateBanner: it is a superset (add-on rows and
