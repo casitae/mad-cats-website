@@ -1524,6 +1524,22 @@ body.pe-done .pe-rail{display:none!important;}
     /* flat venue hire fee, derived from the first-priority date */
     var vf = currentVenueFee();
     if(vf){ payload["venue-fee"] = vf.amount; payload["venue-fee-rate"] = vf.rate; }
+    /* Quantities live in JS state, not in a form field, so FormData never sees
+       them. Without this the events team reads "cake" and sends one. */
+    var qty = {};
+    Object.keys(ADDON_QTY).forEach(function(k){
+      var box = $(ADDON_IDS[k]);
+      if(box && box.checked) qty[k] = qtyOf(k);
+    });
+    if(Object.keys(qty).length) payload["addon-quantities"] = qty;
+    /* Items deliberately left out of the estimate, named so nobody downstream
+       reads the total as the final word: external DJ (quoted on the name) and
+       larger portions (priced against the agreed menu). */
+    var notPriced = selectedAddonKeys().filter(function(k){
+      var m = PRICING.addons[k].model;
+      return m === "tbc" || m === "noted";
+    });
+    if(notPriced.length) payload["addons-not-priced"] = notPriced;
     /* computed estimate for the events team (deposit excluded by design) —
        taken from the summary maths, never from mid-animation banner text */
     var est = summaryTexts();
