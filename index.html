@@ -1224,7 +1224,7 @@ body.tk-clicking .cursor-pixel .px-rays{animation:tk-rays var(--tk-press) infini
     </div>
     <div class="band acc-band acc-band--wide">
       <div class="accordion">
-        <div class="acc">
+        <div class="acc" data-day="2">
           <h2><button class="acc__head" aria-expanded="false"><span class="acc__num">01</span><span class="acc__title">This Tuesday</span><span class="acc__icon" aria-hidden="true">+</span></button></h2>
           <div class="acc__panel"><div class="acc__body acc__body--spread">
             <figure class="acc__media"><img src="assets-opt/this-week/tue.jpg" alt="Tuesday at Mad Cats: Deep Cuts with Marcy Delacroix, 45s soul and Northern soul from 8pm"></figure>
@@ -1233,7 +1233,7 @@ body.tk-clicking .cursor-pixel .px-rays{animation:tk-rays var(--tk-press) infini
             </div>
           </div></div>
         </div>
-        <div class="acc acc--flip">
+        <div class="acc acc--flip" data-day="3">
           <h2><button class="acc__head" aria-expanded="false"><span class="acc__num">02</span><span class="acc__title">This Wednesday</span><span class="acc__icon" aria-hidden="true">+</span></button></h2>
           <div class="acc__panel"><div class="acc__body acc__body--spread">
             <figure class="acc__media"><img src="assets-opt/this-week/wed.jpg" alt="Wednesday at Mad Cats: Wax Wednesday with The Velvet Needle, funk and rare groove from 8pm"></figure>
@@ -1242,7 +1242,7 @@ body.tk-clicking .cursor-pixel .px-rays{animation:tk-rays var(--tk-press) infini
             </div>
           </div></div>
         </div>
-        <div class="acc">
+        <div class="acc" data-day="4">
           <h2><button class="acc__head" aria-expanded="false"><span class="acc__num">03</span><span class="acc__title">This Thursday</span><span class="acc__icon" aria-hidden="true">+</span></button></h2>
           <div class="acc__panel"><div class="acc__body acc__body--spread">
             <figure class="acc__media"><img src="assets-opt/this-week/thu.jpg" alt="Thursday at Mad Cats: Boogie Hour with Dee Solstice, boogie and early disco from 8pm till 1.30am"></figure>
@@ -1251,7 +1251,7 @@ body.tk-clicking .cursor-pixel .px-rays{animation:tk-rays var(--tk-press) infini
             </div>
           </div></div>
         </div>
-        <div class="acc acc--flip">
+        <div class="acc acc--flip" data-day="5">
           <h2><button class="acc__head" aria-expanded="false"><span class="acc__num">04</span><span class="acc__title">This Friday</span><span class="acc__icon" aria-hidden="true">+</span></button></h2>
           <div class="acc__panel"><div class="acc__body acc__body--spread">
             <figure class="acc__media"><img src="assets-opt/this-week/fri.jpg" alt="Friday at Mad Cats: Mirrorball with Otis Marlow b2b Juniper Vale, disco and house edits from 8pm till 2.30am"></figure>
@@ -1260,7 +1260,7 @@ body.tk-clicking .cursor-pixel .px-rays{animation:tk-rays var(--tk-press) infini
             </div>
           </div></div>
         </div>
-        <div class="acc">
+        <div class="acc" data-day="6">
           <h2><button class="acc__head" aria-expanded="false"><span class="acc__num">05</span><span class="acc__title">This Saturday</span><span class="acc__icon" aria-hidden="true">+</span></button></h2>
           <div class="acc__panel"><div class="acc__body acc__body--spread">
             <figure class="acc__media"><img src="assets-opt/this-week/sat.jpg" alt="Saturday at Mad Cats: Soul Clap with Leon Baptiste, funk, soul and disco from 8pm till 2.30am"></figure>
@@ -1269,7 +1269,7 @@ body.tk-clicking .cursor-pixel .px-rays{animation:tk-rays var(--tk-press) infini
             </div>
           </div></div>
         </div>
-        <div class="acc acc--flip">
+        <div class="acc acc--flip" data-day="7">
           <h2><button class="acc__head" aria-expanded="false"><span class="acc__num">06</span><span class="acc__title">This Sunday</span><span class="acc__icon" aria-hidden="true">+</span></button></h2>
           <div class="acc__panel"><div class="acc__body acc__body--spread">
             <figure class="acc__media"><img src="assets-opt/this-week/sun.jpg" alt="Sunday at Mad Cats: Live Jazz Sundays 4pm to 6pm, then Comedown with Nina Kessler until 8pm"></figure>
@@ -2410,6 +2410,31 @@ body.tk-clicking .cursor-pixel .px-rays{animation:tk-rays var(--tk-press) infini
     });
     a.addEventListener('animationend', function(e){ if (e.animationName === 'tk-text') a.classList.remove('is-press'); });
   });
+
+  /* ============ This Week: open today and the nights still to come ============ */
+  /* Accordions carry data-day (Mon=1 .. Sun=7). Today and every later day of the
+     week open by default; earlier days stay closed. The day is the venue's
+     (Europe/London), and a night runs until 5am: at 1am on Saturday the
+     Friday card is still "tonight". Monday (closed) opens the whole week. */
+  (function(){
+    var accs = d.querySelectorAll('.route[data-route="/this-week"] .acc[data-day]');
+    if (!accs.length) return;
+    var now = new Date(), day, hour;
+    try {
+      var parts = new Intl.DateTimeFormat('en-GB', {timeZone:'Europe/London', weekday:'short', hour:'numeric', hourCycle:'h23'}).formatToParts(now);
+      var wd = {}; parts.forEach(function(p){ wd[p.type] = p.value; });
+      day = {Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6,Sun:7}[wd.weekday]; hour = parseInt(wd.hour, 10);
+    } catch (e) {}
+    if (!day) { day = now.getDay() || 7; hour = now.getHours(); }
+    if (hour < 5) day = day === 1 ? 7 : day - 1;   /* small hours belong to the night before */
+    [].forEach.call(accs, function(acc){
+      var open = parseInt(acc.getAttribute('data-day'), 10) >= day;
+      acc.classList.toggle('is-open', open);
+      var head = acc.querySelector('.acc__head');
+      if (head) head.setAttribute('aria-expanded', open ? 'true' : 'false');
+      acc.classList.toggle('is-today', parseInt(acc.getAttribute('data-day'), 10) === day);
+    });
+  })();
 
   /* ============ Boot ============ */
   var first = parseHash();
