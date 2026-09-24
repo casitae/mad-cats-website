@@ -479,6 +479,10 @@ main{min-height:calc(100vh - var(--console-h));min-height:calc(100dvh - var(--co
 /* clip only sideways so the pointer can hang below the band; no scroll box, no height change */
 a.ticker-link{position:relative;overflow:hidden;overflow-x:clip;overflow-y:visible}
 .ticker-link:focus-visible{outline:2px solid var(--orange);outline-offset:4px}
+/* always-on LED breath: a soft orange glow that swells and settles (inherited by the Doto spans) */
+.ticker-link{animation:tk-glow 2.8s ease-in-out infinite}
+.ticker-link .tk-label{text-shadow:none}
+@keyframes tk-glow{0%,100%{text-shadow:0 0 0 rgba(250,70,22,0)}50%{text-shadow:0 0 7px rgba(250,70,22,.6),0 0 1px rgba(250,70,22,.35)}}
 .tk-ptr{position:absolute;left:58%;top:50%;width:0;height:0;z-index:3;pointer-events:none;opacity:0}
 .tk-ptr svg,.cursor-pixel svg{
   position:absolute;display:block;shape-rendering:crispEdges;
@@ -908,6 +912,7 @@ body.tk-clicking .cursor-pixel .px-rays{animation:tk-rays var(--tk-press) infini
   body.has-cursor,body.has-cursor a,body.has-cursor button{cursor:auto}
   /* Ticker: click affordance, reduced motion: no pointer, static cue label */
   .tk-ptr,.cursor-pixel{display:none}
+  .ticker-link{animation:none;text-shadow:none}
   .ticker-link .tk-label,.ticker-link::after{opacity:1;animation:none}
   .ticker-link::after{width:336px}   /* longer static label needs a wider edge fade */
   @media (max-width:899px){
@@ -1220,7 +1225,7 @@ body.tk-clicking .cursor-pixel .px-rays{animation:tk-rays var(--tk-press) infini
     <div class="band acc-band acc-band--wide">
       <div class="accordion">
         <div class="acc">
-          <h2><button class="acc__head" aria-expanded="false"><span class="acc__num">01</span><span class="acc__title">Tuesday</span><span class="acc__icon" aria-hidden="true">+</span></button></h2>
+          <h2><button class="acc__head" aria-expanded="false"><span class="acc__num">01</span><span class="acc__title">This Tuesday</span><span class="acc__icon" aria-hidden="true">+</span></button></h2>
           <div class="acc__panel"><div class="acc__body acc__body--spread">
             <figure class="acc__media"><img src="assets-opt/this-week/tue.jpg" alt="Tuesday at Mad Cats: Deep Cuts with Marcy Delacroix, 45s soul and Northern soul from 8pm"></figure>
             <div class="acc__copy">
@@ -1229,7 +1234,7 @@ body.tk-clicking .cursor-pixel .px-rays{animation:tk-rays var(--tk-press) infini
           </div></div>
         </div>
         <div class="acc acc--flip">
-          <h2><button class="acc__head" aria-expanded="false"><span class="acc__num">02</span><span class="acc__title">Wednesday</span><span class="acc__icon" aria-hidden="true">+</span></button></h2>
+          <h2><button class="acc__head" aria-expanded="false"><span class="acc__num">02</span><span class="acc__title">This Wednesday</span><span class="acc__icon" aria-hidden="true">+</span></button></h2>
           <div class="acc__panel"><div class="acc__body acc__body--spread">
             <figure class="acc__media"><img src="assets-opt/this-week/wed.jpg" alt="Wednesday at Mad Cats: Wax Wednesday with The Velvet Needle, funk and rare groove from 8pm"></figure>
             <div class="acc__copy">
@@ -1238,7 +1243,7 @@ body.tk-clicking .cursor-pixel .px-rays{animation:tk-rays var(--tk-press) infini
           </div></div>
         </div>
         <div class="acc">
-          <h2><button class="acc__head" aria-expanded="false"><span class="acc__num">03</span><span class="acc__title">Thursday</span><span class="acc__icon" aria-hidden="true">+</span></button></h2>
+          <h2><button class="acc__head" aria-expanded="false"><span class="acc__num">03</span><span class="acc__title">This Thursday</span><span class="acc__icon" aria-hidden="true">+</span></button></h2>
           <div class="acc__panel"><div class="acc__body acc__body--spread">
             <figure class="acc__media"><img src="assets-opt/this-week/thu.jpg" alt="Thursday at Mad Cats: Boogie Hour with Dee Solstice, boogie and early disco from 8pm till 1.30am"></figure>
             <div class="acc__copy">
@@ -1247,7 +1252,7 @@ body.tk-clicking .cursor-pixel .px-rays{animation:tk-rays var(--tk-press) infini
           </div></div>
         </div>
         <div class="acc acc--flip">
-          <h2><button class="acc__head" aria-expanded="false"><span class="acc__num">04</span><span class="acc__title">Friday</span><span class="acc__icon" aria-hidden="true">+</span></button></h2>
+          <h2><button class="acc__head" aria-expanded="false"><span class="acc__num">04</span><span class="acc__title">This Friday</span><span class="acc__icon" aria-hidden="true">+</span></button></h2>
           <div class="acc__panel"><div class="acc__body acc__body--spread">
             <figure class="acc__media"><img src="assets-opt/this-week/fri.jpg" alt="Friday at Mad Cats: Mirrorball with Otis Marlow b2b Juniper Vale, disco and house edits from 8pm till 2.30am"></figure>
             <div class="acc__copy">
@@ -1256,7 +1261,7 @@ body.tk-clicking .cursor-pixel .px-rays{animation:tk-rays var(--tk-press) infini
           </div></div>
         </div>
         <div class="acc">
-          <h2><button class="acc__head" aria-expanded="false"><span class="acc__num">05</span><span class="acc__title">Saturday</span><span class="acc__icon" aria-hidden="true">+</span></button></h2>
+          <h2><button class="acc__head" aria-expanded="false"><span class="acc__num">05</span><span class="acc__title">This Saturday</span><span class="acc__icon" aria-hidden="true">+</span></button></h2>
           <div class="acc__panel"><div class="acc__body acc__body--spread">
             <figure class="acc__media"><img src="assets-opt/this-week/sat.jpg" alt="Saturday at Mad Cats: Soul Clap with Leon Baptiste, funk, soul and disco from 8pm till 2.30am"></figure>
             <div class="acc__copy">
@@ -1265,7 +1270,7 @@ body.tk-clicking .cursor-pixel .px-rays{animation:tk-rays var(--tk-press) infini
           </div></div>
         </div>
         <div class="acc acc--flip">
-          <h2><button class="acc__head" aria-expanded="false"><span class="acc__num">06</span><span class="acc__title">Sunday</span><span class="acc__icon" aria-hidden="true">+</span></button></h2>
+          <h2><button class="acc__head" aria-expanded="false"><span class="acc__num">06</span><span class="acc__title">This Sunday</span><span class="acc__icon" aria-hidden="true">+</span></button></h2>
           <div class="acc__panel"><div class="acc__body acc__body--spread">
             <figure class="acc__media"><img src="assets-opt/this-week/sun.jpg" alt="Sunday at Mad Cats: Live Jazz Sundays 4pm to 6pm, then Comedown with Nina Kessler until 8pm"></figure>
             <div class="acc__copy">
@@ -2312,8 +2317,8 @@ body.tk-clicking .cursor-pixel .px-rays{animation:tk-rays var(--tk-press) infini
   /* ============ Ticker: click affordance ============ */
   /* Idle cue (all devices): a 1-bit pixel pointer glides onto the ticker and
      clicks it, then [ CLICK ] / [ TAP ] shows at the trailing edge. Loops every
-     7.5s until the first hover / touch / focus / click on any ticker, then stays
-     off for the session (sessionStorage). Desktop hover: .cursor-pixel replaces
+     7.5s for as long as the page is open (it pauses only while the ticker is
+     hovered, and restarts after). Desktop hover: .cursor-pixel replaces
      the orange dot + ring and clicks in lockstep with the text: one class toggle
      (link.is-clicking + body.tk-clicking) starts both animations in one frame.
      Reduced motion: no pointer, a static [ SEE WHAT IS ON ] label (CSS). */
@@ -2332,23 +2337,16 @@ body.tk-clicking .cursor-pixel .px-rays{animation:tk-rays var(--tk-press) infini
   }
   var tkLinks = [].slice.call(d.querySelectorAll('.ticker-link'));
   var tkWord = reduceMotion ? 'SEE WHAT IS ON' : (window.matchMedia('(pointer: coarse)').matches ? 'TAP' : 'CLICK');
-  var tkSeen = false, tkTimer = 0, tkOff = 0, tkHoverOn = null, tkPix = null;
-  try { tkSeen = sessionStorage.getItem('mc-ticker-seen') === '1'; } catch (e) {}
+  var tkTimer = 0, tkOff = 0, tkHoverOn = null, tkPix = null;
 
   function tkRestart(el, cls){ el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); }
   function tkStopCue(){
     clearTimeout(tkTimer); clearTimeout(tkOff);
     tkLinks.forEach(function(a){ a.classList.remove('is-cue'); });
   }
-  function tkMarkSeen(){
-    if (tkSeen) return;
-    tkSeen = true;
-    try { sessionStorage.setItem('mc-ticker-seen', '1'); } catch (e) {}
-    tkStopCue();
-  }
   function tkCue(){
     var a = d.querySelector('.route.is-current .ticker-link');
-    if (tkSeen || !a) return;
+    if (!a) return;
     var r = a.getBoundingClientRect();
     if (a.offsetParent !== null && r.bottom > 0 && r.top < innerHeight){   /* only when on screen */
       tkRestart(a, 'is-cue');
@@ -2362,6 +2360,7 @@ body.tk-clicking .cursor-pixel .px-rays{animation:tk-rays var(--tk-press) infini
     d.body.classList.remove('tk-hover', 'tk-clicking');
     dot.classList.remove('is-hidden'); ring.classList.remove('is-hidden');
     tkHoverOn = null;
+    tkStopCue(); tkTimer = setTimeout(tkCue, 2400);   /* the idle cue resumes after a hover */
   }
   function tkClickCycle(a){   /* restart pointer + text press together, same frame */
     a.classList.remove('is-clicking'); d.body.classList.remove('tk-clicking');
@@ -2370,7 +2369,7 @@ body.tk-clicking .cursor-pixel .px-rays{animation:tk-rays var(--tk-press) infini
   }
   function tickerRoute(){   /* called from showRoute: restart the idle cue per page */
     tkHoverEnd(); tkStopCue();
-    if (!tkSeen && !reduceMotion) tkTimer = setTimeout(tkCue, 2400);
+    if (!reduceMotion) tkTimer = setTimeout(tkCue, 2400);
   }
 
   if (finePointer && !reduceMotion){
@@ -2392,7 +2391,6 @@ body.tk-clicking .cursor-pixel .px-rays{animation:tk-rays var(--tk-press) infini
     a.appendChild(l);
 
     a.addEventListener('mouseenter', function(){
-      tkMarkSeen();
       if (!tkPix || !mqDesktop.matches) return;
       tkStopCue();
       tkHoverOn = a;
@@ -2403,16 +2401,13 @@ body.tk-clicking .cursor-pixel .px-rays{animation:tk-rays var(--tk-press) infini
     a.addEventListener('mouseleave', tkHoverEnd);
     a.addEventListener('mousedown', function(){ if (tkHoverOn === a) tkClickCycle(a); });  /* press lands with the real click; no navigation delay */
     a.addEventListener('pointerdown', function(e){
-      tkMarkSeen();
       if (e.pointerType === 'touch' && !reduceMotion) tkRestart(a, 'is-press');
     });
     a.addEventListener('focus', function(){
-      tkMarkSeen();
       var kb = false;
       try { kb = a.matches(':focus-visible'); } catch (e) {}
       if (kb && !reduceMotion && tkHoverOn !== a) tkRestart(a, 'is-press');
     });
-    a.addEventListener('click', tkMarkSeen);
     a.addEventListener('animationend', function(e){ if (e.animationName === 'tk-text') a.classList.remove('is-press'); });
   });
 
