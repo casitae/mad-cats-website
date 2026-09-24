@@ -34,6 +34,17 @@ html,body{overflow-x:clip;}
 .pe-title{font-family:var(--mc-font-heading);font-weight:500;font-style:italic;
   color:var(--mc-orange);font-size:34px;line-height:1.15;}
 
+.pe-terms{font-family:var(--mc-font-mono);font-size:11.5px;line-height:1.65;color:var(--mc-taupe);
+  margin:var(--sp-4) 0 0;padding-left:var(--sp-4);border-left:1px solid var(--mc-separator);}
+.pe-terms strong{color:var(--mc-oxblood);font-weight:600;}
+
+/* The estimate notice. A rule and taupe ink, not a tinted warning box:
+   nothing here is an error, it is a framing device. */
+.pe-notice{font-family:var(--mc-font-mono);font-size:11.5px;line-height:1.65;color:var(--mc-taupe);
+  margin:var(--sp-4) 0 0;padding-left:var(--sp-4);border-left:2px solid var(--mc-orange);
+  text-align:left;} /* the intro centres its copy; a ruled aside must not inherit that */
+.pe-notice strong{color:var(--mc-oxblood);font-weight:600;}
+
 /* ---- Form scaffolding: numbered sections separated by in-list rules ---- */
 .pe-form{max-width:none;display:block;margin-bottom:var(--sp-8);}
 .pe-form fieldset{border:0;margin:0;min-width:0;}
@@ -220,6 +231,32 @@ html,body{overflow-x:clip;}
 .cal__day[data-rank="3"] .cal__rank{background:var(--mc-taupe);color:var(--mc-ink-dark);}
 .cal__day:disabled{cursor:default;}
 .cal__day:disabled:hover{border-color:transparent;}
+/* ---- Minimum spend: progress, never a deficit. No red, no error state. ----
+   A total under the minimum is a perfectly normal enquiry and still submits. */
+.minspend{margin-top:var(--sp-6);padding-top:var(--sp-6);border-top:1px solid var(--mc-separator);}
+.minspend[hidden]{display:none;}
+.minspend__row{display:flex;align-items:baseline;justify-content:space-between;gap:var(--sp-3);}
+.minspend__label{font-family:var(--mc-font-mono);font-size:11px;font-weight:600;letter-spacing:1px;
+  text-transform:uppercase;color:var(--mc-taupe);}
+.minspend__figure{font-family:var(--mc-font-mono);font-size:15px;font-weight:500;
+  color:var(--mc-oxblood);font-variant-numeric:tabular-nums;}
+/* the track is a hairline, the fill is the only ink that moves */
+.minspend__track{position:relative;height:3px;margin-top:var(--sp-3);
+  background:transparent;border-bottom:1px solid var(--mc-separator);}
+.minspend__fill{position:absolute;left:0;top:0;height:3px;width:0;
+  border-bottom:3px solid var(--mc-orange);transition:width .35s ease;}
+.minspend__note{font-family:var(--mc-font-mono);font-size:11px;line-height:1.5;
+  color:var(--mc-taupe);margin:var(--sp-3) 0 0;}
+.minspend__ways{list-style:none;margin:var(--sp-3) 0 0;padding:0;}
+.minspend__ways[hidden]{display:none;}
+.minspend__ways li{font-family:var(--mc-font-mono);font-size:11px;line-height:1.6;
+  color:var(--mc-oxblood);padding-left:14px;position:relative;}
+.minspend__ways li::before{content:"+";position:absolute;left:0;color:var(--mc-orange);}
+.minspend__terms{font-family:var(--mc-font-mono);font-size:10.5px;line-height:1.5;
+  color:var(--mc-taupe);margin:var(--sp-3) 0 0;}
+.pkg-card__vat{display:block;font-family:var(--mc-font-mono);font-size:10px;line-height:1.4;
+  color:var(--mc-taupe);margin-top:var(--sp-2);}
+
 /* ---- Quantity stepper: revealed only once its add-on is ticked ----
    48px controls (above the 44px minimum), transparent like every other
    control here, hairline border, orange on hover/focus. The numeral is the
@@ -239,10 +276,6 @@ html,body{overflow-x:clip;}
   font-weight:500;color:var(--mc-orange);font-variant-numeric:tabular-nums;}
 .qty__note{font-family:var(--mc-font-mono);font-size:11px;line-height:1.4;color:var(--mc-taupe);}
 .cal__day:disabled .cal__num{color:var(--mc-taupe);opacity:.45;}
-/* Sun/Mon on a semi-private brief. Dimmed like a past date, but outlined so it
-   reads as "not for this space" rather than "gone" — switching to Full Venue
-   brings it back. */
-.cal__day.is-off{border-color:var(--mc-separator);border-style:dashed;}
 .cal__pad{min-height:48px;} /* empty leading cells keep the grid honest */
 .cal__note{margin:0;}
 @media (min-width:1025px){ .cal{max-width:520px;} }
@@ -558,10 +591,11 @@ body.pe-done .pe-rail{display:none!important;}
     <section class="pe-intro section-intro" aria-labelledby="pe-heading">
       <p class="t-overline">PRIVATE EVENTS</p>
       <h1 class="t-script pe-title" id="pe-heading">Host Your Event</h1>
-      <p class="section-intro__body t-caption">The whole house, the front room, or the bar. Tell us the shape of the evening and our events team takes it from there. At the end, give us up to three dates, best first.</p>
+      <p class="section-intro__body t-caption">The whole house, the front room, or the bar. Tell us the shape of the evening and our events team takes it from there. You will pick up to three dates, best first, early on so we can show you the minimum spend for those nights.</p>
+      <p class="pe-notice" id="pe-notice">Every figure on this page is an <strong>estimate</strong>. It is built from the options you pick and is there to give you a feel for the shape of the evening. It is not a quote, and nothing is confirmed until our events team comes back to you. Prices are inclusive of VAT and exclusive of 12.5% service charge.</p>
     </section>
 
-    <!-- ===== Inquiry form (Phase 1 — no date step; scheduling follows post-enquiry) ===== -->
+    <!-- ===== Inquiry form. Step order per CFO spec v1.1: space, event, dates, food & drink, add-ons, details ===== -->
     <form class="form pe-form" id="pe-form" novalidate>
 
       <!-- ——— 01 · The space ——— -->
@@ -572,9 +606,9 @@ body.pe-done .pe-rail{display:none!important;}
             <span class="field__label" id="space-label" data-group="space">WHAT SPACE ARE YOU LOOKING TO BOOK?</span>
             <div class="opt-list" role="radiogroup" aria-labelledby="space-label">
               <label class="opt"><input class="sr-input" type="radio" name="space" value="full"><span class="opt__name">Full Venue</span><span class="opt__meta">up to 75 guests</span></label>
-              <label class="opt"><input class="sr-input" type="radio" name="space" value="seated"><span class="opt__name">Semi-Private: Seated</span><span class="opt__meta">front room, up to 30</span></label>
+              <label class="opt"><input class="sr-input" type="radio" name="space" value="seated"><span class="opt__name">Semi-Private: Seated</span><span class="opt__meta">front room, up to 30 guests</span></label>
               <!-- Bar Area cap of 40 below is a PLACEHOLDER, TBC with venue -->
-              <label class="opt"><input class="sr-input" type="radio" name="space" value="bar"><span class="opt__name">Semi-Private: Bar Area</span><span class="opt__meta">standing / seated</span></label>
+              <label class="opt"><input class="sr-input" type="radio" name="space" value="bar"><span class="opt__name">Semi-Private: Bar Area</span><span class="opt__meta">up to 40 guests</span></label>
             </div>
             <p class="field__msg" id="space-msg" hidden></p>
           </div>
@@ -652,10 +686,49 @@ body.pe-done .pe-rail{display:none!important;}
           </div>
         </div>
       </fieldset>
+      <!-- ——— 06 · The dates (final step; ranked picks, availability chance from live bookings) ——— -->
+      <fieldset class="pe-section" id="sec-date">
+        <legend class="pe-section__label"><span class="pe-section__num">03<span class="pe-sec-tick" data-sec="date" aria-hidden="true"> ✓</span></span><span class="pe-section__title">The dates</span></legend>
+        <p class="pe-section__lead">Give us up to three dates, best first. More options means faster confirmation. Each date carries an early read on how likely the room is to be free for private hire, based on live bookings and the brief above.</p>
+        <!-- minimum-spend explainer injected from JS (single source of truth) -->
+        <p class="pe-section__lead" id="date-fee-lead"></p>
+        <div class="pe-fields">
+          <div class="field" id="f-date">
+            <span class="field__label" id="date-label" data-group="cal-date">PICK UP TO THREE DATES</span>
+            <div class="cal" role="group" aria-labelledby="date-label">
+              <div class="cal__bar">
+                <button class="cal__nav" id="cal-prev" type="button" aria-label="Previous month">&larr;</button>
+                <span class="cal__month" id="cal-month" aria-live="polite"></span>
+                <button class="cal__nav" id="cal-next" type="button" aria-label="Next month">&rarr;</button>
+              </div>
+              <div class="cal__week" aria-hidden="true"><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span><span>Su</span></div>
+              <div class="cal__grid" id="cal-grid"></div>
+              <p class="cal__note t-micro">An indication based on how this space usually books at this time of year. Every date is confirmed by our events team.</p>
+            </div>
+            <!-- minimum spend for the chosen space + first-choice date -->
+            <div class="minspend" id="minspend" hidden>
+              <div class="minspend__row">
+                <span class="minspend__label" id="minspend-label"></span>
+                <span class="minspend__figure" id="minspend-figure"></span>
+              </div>
+              <div class="minspend__track" id="minspend-track" role="img" aria-labelledby="minspend-label">
+                <span class="minspend__fill" id="minspend-fill"></span>
+              </div>
+              <p class="minspend__note" id="minspend-note"></p>
+              <ul class="minspend__ways" id="minspend-ways" hidden></ul>
+              <p class="minspend__terms">Anything spent on the night counts toward the minimum, including the bar. If it is not reached, the difference is charged as venue hire.</p>
+            </div>
+            <!-- ranked picks: selection order = priority, rendered by JS -->
+            <ol class="cal-picks" id="cal-picks" hidden aria-label="Your dates, best first"></ol>
+            <p class="field__msg" id="date-limit" hidden aria-live="polite"></p>
+            <p class="field__msg" id="date-msg" hidden></p>
+          </div>
+        </div>
+      </fieldset>
 
       <!-- ——— 03 · Food & drink ——— -->
       <fieldset class="pe-section" id="sec-package">
-        <legend class="pe-section__label"><span class="pe-section__num">03<span class="pe-sec-tick" data-sec="package" aria-hidden="true"> ✓</span></span><span class="pe-section__title">Food &amp; drink</span></legend>
+        <legend class="pe-section__label"><span class="pe-section__num">04<span class="pe-sec-tick" data-sec="package" aria-hidden="true"> ✓</span></span><span class="pe-section__title">Food &amp; drink</span></legend>
         <div class="pe-fields">
           <div class="field" id="f-consumption" data-radio-group="consumption">
             <span class="field__label" id="consumption-label">FOOD AND DRINKS, OR JUST DRINKS?</span>
@@ -672,11 +745,13 @@ body.pe-done .pe-rail{display:none!important;}
                 <input class="sr-input" type="radio" name="package" value="standard">
                 <span class="pkg-card__head"><span class="pkg-card__name">Standard</span><span class="pkg-card__price"><span class="pkg-card__amount" data-pkg="standard"></span><span class="pkg-card__per"> / head</span></span></span>
                 <span class="pkg-card__desc" data-food="Curated Classics menu + canapés." data-drinks="Curated classics, drinks-only.">Curated Classics menu + canapés.</span>
+                <span class="pkg-card__vat">Inclusive of VAT, exclusive of 12.5% service charge.</span>
               </label>
               <label class="pkg-card">
                 <input class="sr-input" type="radio" name="package" value="signature">
                 <span class="pkg-card__head"><span class="pkg-card__name">Signature</span><span class="pkg-card__price"><span class="pkg-card__amount" data-pkg="signature"></span><span class="pkg-card__per"> / head</span></span></span>
                 <span class="pkg-card__desc" data-food="Signature cocktails + expanded canapés." data-drinks="Signature cocktails, drinks-only.">Signature cocktails + expanded canapés.</span>
+                <span class="pkg-card__vat">Inclusive of VAT, exclusive of 12.5% service charge.</span>
               </label>
               <label class="pkg-card">
                 <input class="sr-input" type="radio" name="package" value="bespoke">
@@ -705,7 +780,7 @@ body.pe-done .pe-rail{display:none!important;}
 
       <!-- ——— 04 · Add-ons (full-service upsell) ——— -->
       <fieldset class="pe-section" id="sec-addons">
-        <legend class="pe-section__label"><span class="pe-section__num">04</span><span class="pe-section__title">Add-ons</span></legend>
+        <legend class="pe-section__label"><span class="pe-section__num">05</span><span class="pe-section__title">Add-ons</span></legend>
         <p class="pe-section__lead">We plan the whole evening, not just the room. Tick anything worth talking about.</p>
         <div class="pe-fields">
           <div>
@@ -851,7 +926,7 @@ body.pe-done .pe-rail{display:none!important;}
 
       <!-- ——— 05 · Your details ——— -->
       <fieldset class="pe-section" id="sec-details">
-        <legend class="pe-section__label"><span class="pe-section__num">05<span class="pe-sec-tick" data-sec="details" aria-hidden="true"> ✓</span></span><span class="pe-section__title">Your details</span></legend>
+        <legend class="pe-section__label"><span class="pe-section__num">06<span class="pe-sec-tick" data-sec="details" aria-hidden="true"> ✓</span></span><span class="pe-section__title">Your details</span></legend>
         <div class="pe-fields">
           <div class="form__row">
             <div class="field" id="f-name">
@@ -879,39 +954,14 @@ body.pe-done .pe-rail{display:none!important;}
             </div>
           </div>
         </div>
-      </fieldset>
-
-      <!-- ——— 06 · The dates (final step; ranked picks, availability chance from live bookings) ——— -->
-      <fieldset class="pe-section" id="sec-date">
-        <legend class="pe-section__label"><span class="pe-section__num">06<span class="pe-sec-tick" data-sec="date" aria-hidden="true"> ✓</span></span><span class="pe-section__title">The dates</span></legend>
-        <p class="pe-section__lead">Give us up to three dates, best first. More options means faster confirmation. Each date carries an early read on how likely the room is to be free for private hire, based on live bookings and the brief above.</p>
-        <!-- venue-fee rates injected from PRICING (single source of truth) -->
-        <p class="pe-section__lead" id="date-fee-lead"></p>
-        <div class="pe-fields">
-          <div class="field" id="f-date">
-            <span class="field__label" id="date-label" data-group="cal-date">PICK UP TO THREE DATES</span>
-            <div class="cal" role="group" aria-labelledby="date-label">
-              <div class="cal__bar">
-                <button class="cal__nav" id="cal-prev" type="button" aria-label="Previous month">&larr;</button>
-                <span class="cal__month" id="cal-month" aria-live="polite"></span>
-                <button class="cal__nav" id="cal-next" type="button" aria-label="Next month">&rarr;</button>
-              </div>
-              <div class="cal__week" aria-hidden="true"><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span><span>Su</span></div>
-              <div class="cal__grid" id="cal-grid"></div>
-              <p class="cal__note t-micro">The percentages are an early estimate from our booking history, tuned to the space you picked and the time of year. Dimmed days are not available for that space. Every date is confirmed by the events team.</p>
-            </div>
-            <!-- ranked picks: selection order = priority, rendered by JS -->
-            <ol class="cal-picks" id="cal-picks" hidden aria-label="Your dates, best first"></ol>
-            <p class="field__msg" id="date-limit" hidden aria-live="polite"></p>
-            <p class="field__msg" id="date-msg" hidden></p>
-          </div>
           <div class="pe-submit">
             <button class="btn btn--primary" type="submit">SEND ENQUIRY</button>
             <p class="field__msg pe-submit__miss" id="submit-miss" hidden></p>
             <p class="t-micro">Our events team checks your dates, best first, and comes back to confirm the details of your evening.</p>
           </div>
-        </div>
+
       </fieldset>
+
 
     </form>
 
@@ -934,6 +984,7 @@ body.pe-done .pe-rail{display:none!important;}
       <h2 class="t-script pe-title" id="pe-confirm-heading" tabindex="-1">Thank you</h2>
       <p class="t-body">Your event brief is with our events team.</p>
       <p class="pe-confirm__next"><span class="arrow">→</span> Next up: we check your dates against the diary, best first, and come back to confirm the details of your evening.</p>
+      <p class="pe-terms" id="pe-terms"><span id="pe-terms-lead">Confirming a booking takes a <strong>booking deposit of 25% of the minimum spend</strong> for your date, deductible from your final bill.</span> This is separate from any equipment deposit, such as the refundable sound deposit for an external DJ. Full terms are set out in our <a class="link" href="/events-terms" id="pe-terms-link">events terms</a>.</p>
       <div class="pe-receipt" id="pe-receipt" hidden>
         <p class="t-overline">WHAT WE SENT THE EVENTS TEAM</p>
         <div class="pe-brief pe-brief--cream" id="receipt-brief"></div>
@@ -1015,17 +1066,38 @@ body.pe-done .pe-rail{display:none!important;}
       "champagne":      { model: "perHead", value: 15 },
       "sparkling":      { model: "perHead", value: 9 },
       "dj-resident":    { model: "flat",    value: 350 },
-      "dj-external":    { model: "tbc",     value: null, deposit: 1000 },
-      "live":           { model: "flat",    value: 400, from: true },
+      /* client decision 24 Sep: external DJ and live entertainment are the two
+         items that do NOT count toward the minimum spend. External DJ carries no
+         price anyway; live entertainment does, so it raises the running total
+         without moving the minimum. Both are labelled in the UI. */
+      "dj-external":    { model: "tbc",     value: null, deposit: 1000, offMinimum: true },
+      "live":           { model: "flat",    value: 400, from: true, offMinimum: true },
       /* charged per cake, so it carries a quantity stepper */
       "cake":           { model: "flat",    value: 45, qty: { min: 1, max: 6, unit: "cake", units: "cakes" } },
       "print":          { model: "perHead", value: 1.50 }
     },
-    /* flat venue hire fee, keyed to the FIRST-priority date. "Weekend" =
-       Friday and Saturday nights (PLACEHOLDER assumption — TBC with venue).
-       Weekdays carry NO hire fee. Semi-private spaces (Seated + Bar Area)
-       pay the factored rate. */
-    venueFee: { weekend: 1000, weekday: 0, semiPrivateFactor: 0.6 },
+    /* MINIMUM SPEND, per CFO spec v1.1 (23 Sep 2026). This replaces the old
+       flat venue hire fee and the semi-private factor, both now deleted.
+       Venue hire is expressed solely as a minimum spend, keyed to the SPACE
+       and the DATE. Seated and Bar share one table.
+         season band  = month of the event date
+         day group    = tue/wed · thu · fri/sat · sun · mon
+       All figures £ inclusive of VAT, exclusive of 12.5% service. */
+    minSpend: {
+      bands: { quiet: [0,6,7], peak: [9,10], december: [11] }, /* else standard */
+      full: {
+        quiet:     { tuewed: 3000, thu: 3750, frisat: 6750, sun: 3000, mon: 2500 },
+        standard:  { tuewed: 3600, thu: 4500, frisat: 7500, sun: 3000, mon: 2500 },
+        peak:      { tuewed: 4600, thu: 5750, frisat: 7900, sun: 3000, mon: 2500 },
+        december:  { tuewed: 5400, thu: 6750, frisat: 8250, sun: 4050, mon: 3375 }
+      },
+      semi: {
+        quiet:     { tuewed: 1500, thu: 1875, frisat: 4750, sun: 1800, mon: 1500 },
+        standard:  { tuewed: 1800, thu: 2250, frisat: 5250, sun: 1800, mon: 1500 },
+        peak:      { tuewed: 2300, thu: 2875, frisat: 5500, sun: 1800, mon: 1500 },
+        december:  { tuewed: 2700, thu: 3375, frisat: 5800, sun: 2400, mon: 2040 }
+      }
+    },
     capacities: { full: 75, seated: 30, bar: 40 } /* bar cap PLACEHOLDER — TBC with venue */
   };
 
@@ -1392,23 +1464,35 @@ body.pe-done .pe-rail{display:none!important;}
   }
   function summaryTexts(){
     var s = computeSummary();
-    if(!s) return null;
-    /* the venue hire fee NEVER folds into the per-head figure — it rides
-       along as its own clearly labelled flat line */
-    var fee = currentVenueFee();
-    /* a £0 weekday fee is not a line item — say nothing rather than "+ £0" */
-    var feeTxt = (fee && fee.amount) ? " + " + money(fee.amount) + " venue hire" : "";
+    var minimum0 = currentMinimum();
+    /* Dates now come BEFORE food and drink, so there is a stretch of the form
+       where a minimum exists but no package does. The brief must still be
+       there: it used to appear at step 03 and would otherwise vanish until
+       step 04. Show the minimum on its own until a package arrives. */
+    if(!s){
+      if(minimum0 === null) return null;
+      return { minimumOnly: true, bespoke: false,
+               amount: money(minimum0),
+               meta: "minimum spend · " + calLongDate(calPicks[0]) +
+                     (minimumsDiffer() ? " · your other dates differ" : "") };
+    }
+    /* The minimum NEVER folds into the per-head figure. It rides as its own
+       labelled line, exactly as the old venue hire fee did. */
+    var minimum = currentMinimum();
     if(s.bespoke){
       var bits = [];
-      if(s.addons > 0) bits.push("+ " + money(s.addons) + " add-ons");
-      if(fee && fee.amount) bits.push("+ " + money(fee.amount) + " venue hire");
+      if(s.addons > 0) bits.push("+ " + money(s.addons) + " add-ons, ESTIMATE");
+      if(minimum) bits.push("min. spend " + money(minimum));
       if(s.g) bits.push(s.g.n + " guests");
       return { bespoke: true, amount: "priced after a conversation", meta: bits.join(" · ") };
     }
     return { bespoke: false, amount: money(s.perHead),
              meta: s.total !== null
-               ? money(s.total) + " total" + feeTxt + " · " + s.g.n + " guests"
-               : "add a guest count for the full total" + feeTxt };
+               /* ESTIMATE rides with every total, per client instruction, so a
+                  figure lifted out of context still carries its caveat */
+               ? money(s.total) + " total · ESTIMATE · " + s.g.n + " guests" +
+                 (minimum ? " · min. " + money(minimum) : "")
+               : "add a guest count for the full total" };
   }
   function updateBanner(){
     if(document.body.classList.contains("pe-done")) return; /* the enquiry is in */
@@ -1422,8 +1506,9 @@ body.pe-done .pe-rail{display:none!important;}
       });
     }
     banner.classList.toggle("pe-banner--bespoke", t.bespoke);
-    bannerLabel.textContent = t.bespoke ? "Bespoke" : "Per head";
+    bannerLabel.textContent = t.minimumOnly ? "Minimum spend" : t.bespoke ? "Bespoke" : "Per head";
     bannerMeta.textContent = t.meta;
+    if(t.minimumOnly){ bannerAmount.textContent = t.amount; lastPerHead = null; return; }
     if(t.bespoke){
       bannerAmount.textContent = t.amount;
       lastPerHead = null;
@@ -1450,12 +1535,14 @@ body.pe-done .pe-rail{display:none!important;}
     el.textContent = def.model === "tbc" ? "TBC" : money(def.value);
   });
   $("#dj-deposit").textContent = money(PRICING.addons["dj-external"].deposit);
-  /* venue-fee explainer in the dates lead — numbers from PRICING, never hardcoded copy.
-     Weekdays are free, so the sentence names the charge and then the exemption. */
-  $("#date-fee-lead").textContent = "Venue hire carries a flat " +
-    money(PRICING.venueFee.weekend) + " fee on weekend nights (Friday and Saturday). " +
-    "Weekdays carry no hire fee. Semi-private bookings pay " +
-    Math.round(PRICING.venueFee.semiPrivateFactor * 100) + "% of that.";
+  /* minimum-spend explainer in the dates lead. No figure is hardcoded here:
+     the number itself appears against the chosen date, because it depends on
+     both the space and the night. */
+  $("#date-fee-lead").textContent =
+    "Every space and date carries a minimum spend. Anything spent on the night counts " +
+    "toward it, including the bar. If it is not reached, the difference is charged as venue hire. " +
+    "Hire includes the room from 6pm to close: midnight Tuesday and Wednesday, 1.30am Thursday, " +
+    "2.30am Friday and Saturday. Sunday events run 3pm to 7pm.";
 
   /* ---- Submit: validate required (space · type · package · name · email), scroll to first miss ---- */
   var form = $("#pe-form");
@@ -1480,6 +1567,10 @@ body.pe-done .pe-rail{display:none!important;}
       showMsg(fEventType, eventTypeMsg, "Tell us what kind of event this is.");
       invalid.push([fEventType, $('input[name="event-type"]')]);
     }
+    if(calPicks.length === 0){
+      showMsg(fDate, dateMsg, "Pick at least one date. Up to three, best first, means faster confirmation.");
+      invalid.push([fDate, calGrid.querySelector(".cal__day:not(:disabled)")]);
+    }
     if(!selectedPackage()){
       showMsg(fPackage, packageMsg, "Pick a package: Standard, Signature or Bespoke.");
       invalid.push([fPackage, $('input[name="package"]')]);
@@ -1491,10 +1582,6 @@ body.pe-done .pe-rail{display:none!important;}
     if(!EMAIL_RE.test(emailIn.value.trim())){
       showMsg(fEmail, emailMsg, emailIn.value.trim() ? "That email doesn't look right. Check it once more." : "We need an email to reply to.");
       invalid.push([fEmail, emailIn]);
-    }
-    if(calPicks.length === 0){
-      showMsg(fDate, dateMsg, "Pick at least one date. Up to three, best first, means faster confirmation.");
-      invalid.push([fDate, calGrid.querySelector(".cal__day:not(:disabled)")]);
     }
 
     var missEl = $("#submit-miss");
@@ -1521,9 +1608,18 @@ body.pe-done .pe-rail{display:none!important;}
     payload.dates = calPicks.map(function(d, i){
       return { iso: calKey(d), confidence: Math.round(chanceFor(d) * 100), rank: i + 1 };
     });
-    /* flat venue hire fee, derived from the first-priority date */
-    var vf = currentVenueFee();
-    if(vf){ payload["venue-fee"] = vf.amount; payload["venue-fee-rate"] = vf.rate; }
+    /* minimum spend, derived from the space and the first-priority date.
+       Every ranked date's minimum goes too, because they can differ by band. */
+    var cm = currentMinimum();
+    if(cm !== null){
+      payload["minimum-spend"] = cm;
+      payload["minimum-spend-basis"] = minBand(calPicks[0]) + " / " + minDayGroup(calPicks[0]);
+      payload.dates.forEach(function(row, i){ row.minimum = minimumFor(calPicks[i]); });
+      var g0 = effGuests(), sum0 = computeSummary();
+      if(sum0 && !sum0.bespoke && sum0.total !== null){
+        payload["qualifying-total"] = sum0.total - offMinimumTotal(g0);
+      }
+    }
     /* Quantities live in JS state, not in a form field, so FormData never sees
        them. Without this the events team reads "cake" and sends one. */
     var qty = {};
@@ -1558,6 +1654,20 @@ body.pe-done .pe-rail{display:none!important;}
     /* the enquiry is in — retire the running total with the form */
     banner.classList.remove("is-shown");
     document.body.classList.remove("has-banner");
+    /* Name the real deposit figure once the minimum is known, rather than
+       leaving the guest to do the arithmetic. The whole sentence is rewritten
+       rather than patched, so no clause is left dangling. */
+    var cmDep = currentMinimum(), depLead = $("#pe-terms-lead");
+    if(cmDep !== null && depLead){
+      depLead.textContent = "";
+      depLead.appendChild(document.createTextNode("Confirming a booking takes a "));
+      var strongEl = document.createElement("strong");
+      strongEl.textContent = "booking deposit of " + money(Math.round(cmDep * 0.25));
+      depLead.appendChild(strongEl);
+      depLead.appendChild(document.createTextNode(
+        ", 25% of the " + money(cmDep) + " minimum spend for " + calLongDate(calPicks[0]) +
+        ", deductible from your final bill."));
+    }
     var confirmEl = $("#pe-confirm");
     confirmEl.hidden = false;
     confirmEl.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
@@ -1747,9 +1857,10 @@ body.pe-done .pe-rail{display:none!important;}
     sessionDrift: .015
   };
   function tierOf(){ var sv = gv("space"); return AVAIL.tier[sv] ? sv : "full"; }
-  function semiPrivate(){ var sv = gv("space"); return sv === "seated" || sv === "bar"; }
-  /* Sunday and Monday are full-venue nights. Semi-private cannot book them. */
-  function offNight(d){ var w = d.getDay(); return semiPrivate() && (w === 0 || w === 1); }
+  /* CFO spec v1.1: Sunday and Monday are bookable for ALL three spaces. The
+     old semi-private Tue-to-Sat restriction is deleted. Kept as a stub so the
+     calendar's disabled-day branch stays intact for past dates. */
+  function offNight(){ return false; }
 
   /* One salt per page load, so far-out numbers sit a point either side of
      where they sat last visit. Near-term and ramp numbers never drift: those
@@ -1785,40 +1896,57 @@ body.pe-done .pe-rail{display:none!important;}
     }
     return Math.max(AVAIL.minCap, Math.min(AVAIL.maxCap, pct));
   }
-  /* switching to a semi-private space retires any Sun/Mon picks: they are
-     full-venue nights, and leaving them ranked would send a brief the venue
-     could only decline */
-  function dropOffNightPicks(){
-    var before = calPicks.length;
-    calPicks = calPicks.filter(function(d){ return !offNight(d); });
-    if(calPicks.length !== before){
-      dateLimit.textContent = "Semi-private hire runs Tuesday to Saturday, so we have dropped your Sunday and Monday picks.";
-      dateLimit.hidden = false;
-    }
-  }
+  /* every space can now book every night, so nothing is ever retired on a
+     space change. Kept as a no-op so the space handler reads unchanged. */
+  function dropOffNightPicks(){}
   function pad2(n){ return (n < 10 ? "0" : "") + n; }
   function calKey(d){ return d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate()); }
   function calLongDate(d){ return CAL_DAYS[d.getDay()] + " " + d.getDate() + " " + CAL_MONTHS[d.getMonth()]; }
 
-  /* ---- flat venue hire fee, keyed to the FIRST-priority date ----
-     weekend = Fri/Sat (PLACEHOLDER — TBC with venue); semi-private spaces
-     (Seated + Bar Area) pay the factored rate. Re-derives whenever the
-     space changes or the ranking shifts. */
-  function feeRates(){
-    var f = PRICING.venueFee;
-    var semi = !!gv("space") && gv("space") !== "full";
-    return { weekend: semi ? f.weekend * f.semiPrivateFactor : f.weekend,
-             weekday: semi ? f.weekday * f.semiPrivateFactor : f.weekday };
+  /* ---- MINIMUM SPEND, keyed to the SPACE and the FIRST-priority date ----
+     Replaces the deleted flat venue hire fee. Re-derives whenever the space
+     changes or the date ranking shifts. Returns null until both are known. */
+  function minBand(d){
+    var m = d.getMonth(), b = PRICING.minSpend.bands;
+    if(b.quiet.indexOf(m) >= 0)    return "quiet";
+    if(b.peak.indexOf(m) >= 0)     return "peak";
+    if(b.december.indexOf(m) >= 0) return "december";
+    return "standard";
   }
-  function isWeekendRate(d){ var dow = d.getDay(); return dow === 5 || dow === 6; }
-  function venueFeeFor(d){
-    var rates = feeRates();
-    var rate = isWeekendRate(d) ? "weekend" : "weekday";
-    return { rate: rate, amount: rates[rate],
-             other: rate === "weekend" ? rates.weekday : rates.weekend };
+  function minDayGroup(d){
+    var w = d.getDay();
+    return w === 0 ? "sun" : w === 1 ? "mon" : w === 4 ? "thu"
+         : (w === 5 || w === 6) ? "frisat" : "tuewed";
   }
-  function currentVenueFee(){ return calPicks.length ? venueFeeFor(calPicks[0]) : null; }
-  function feeRateName(rate){ return rate === "weekend" ? "Weekend rate" : "Weekday rate"; }
+  function minimumFor(d){
+    var sv = gv("space");
+    if(!sv || !d) return null;
+    return PRICING.minSpend[sv === "full" ? "full" : "semi"][minBand(d)][minDayGroup(d)];
+  }
+  function currentMinimum(){ return calPicks.length ? minimumFor(calPicks[0]) : null; }
+  /* Do the chosen dates straddle two different minimums? Then no single figure
+     is honest and each date is listed separately. */
+  function minimumsDiffer(){
+    if(calPicks.length < 2) return false;
+    var first = minimumFor(calPicks[0]);
+    for(var i = 1; i < calPicks.length; i++) if(minimumFor(calPicks[i]) !== first) return true;
+    return false;
+  }
+  /* The running total counts every priced item. The QUALIFYING total is what
+     counts toward the minimum, which by client decision excludes external DJ
+     and live entertainment. External DJ carries no price anyway, so in practice
+     live entertainment is the only item that lifts the total without moving
+     the bar. That is deliberate and the UI says so. */
+  function offMinimumTotal(g){
+    var off = 0;
+    selectedAddonKeys().forEach(function(k){
+      if(PRICING.addons[k] && PRICING.addons[k].offMinimum){
+        var a = addonAmount(k, g);
+        if(a !== null) off += a;
+      }
+    });
+    return off;
+  }
   function pickIndex(d){
     for(var i = 0; i < calPicks.length; i++){ if(calKey(calPicks[i]) === calKey(d)) return i; }
     return -1;
@@ -1840,9 +1968,10 @@ body.pe-done .pe-rail{display:none!important;}
       rk.textContent = i + 1; rk.setAttribute("aria-hidden", "true");
       var main = document.createElement("span"); main.className = "cal-picks__main";
       var dt = document.createElement("span"); dt.className = "cal-picks__date"; dt.textContent = calLongDate(d);
-      var fee = venueFeeFor(d);
+      var dMin = minimumFor(d);
       var feeEl = document.createElement("span"); feeEl.className = "cal-picks__fee";
-      feeEl.textContent = feeRateName(fee.rate) + " · " + money(fee.amount) + " venue hire";
+      feeEl.textContent = dMin === null ? "pick a space to see the minimum"
+        : money(dMin) + " minimum spend";
       main.appendChild(dt); main.appendChild(feeEl);
       var pct = document.createElement("span"); pct.className = "cal-picks__pct";
       pct.textContent = Math.round(chanceFor(d) * 100) + "% chance";
@@ -1880,15 +2009,11 @@ body.pe-done .pe-rail{display:none!important;}
         btn.type = "button";
         btn.className = "cal__day";
         var past = d.getTime() <= calToday.getTime(); /* same-day hires go through the team */
-        var off = !past && offNight(d);               /* Sun/Mon on a semi-private brief */
-        btn.disabled = past || off;
+        btn.disabled = past;                          /* every space books every night now */
         var num = document.createElement("span"); num.className = "cal__num"; num.textContent = d.getDate();
         btn.appendChild(num);
         if(past){
           btn.setAttribute("aria-label", calLongDate(d) + ", unavailable");
-        } else if(off){
-          btn.classList.add("is-off");
-          btn.setAttribute("aria-label", calLongDate(d) + ", full venue only, semi-private hire runs Tuesday to Saturday");
         } else {
           var pc = Math.round(chanceFor(d) * 100);
           var pct = document.createElement("span"); pct.className = "cal__pct"; pct.textContent = pc + "%";
@@ -2032,14 +2157,15 @@ body.pe-done .pe-rail{display:none!important;}
                 CAL_MONTHS[d.getMonth()].slice(0, 3) + " " + d.getFullYear(),
           price: Math.round(chanceFor(d) * 100) + "% est." };
       });
-      /* the first-priority date sets the venue hire fee; the subline explains the road not taken */
-      var fee = currentVenueFee();
-      di.push({ text: feeRateName(fee.rate) + " · venue hire",
-        price: fee.amount ? money(fee.amount) : "no fee",
-        sub: fee.rate === "weekend"
-          ? (fee.other ? "Move your first pick to a weekday and the flat fee drops to " + money(fee.other) + "."
-                       : "Move your first pick to a weekday and the hire fee falls away entirely.")
-          : "Weekend dates (Friday and Saturday) carry " + money(fee.other) + "." });
+      /* the first-priority date sets the minimum; if the picks straddle bands,
+         each date carries its own figure above and this line says so */
+      var cmin = currentMinimum();
+      if(cmin !== null){
+        di.push({ text: "Minimum spend · first choice", price: money(cmin),
+          sub: minimumsDiffer()
+            ? "Your dates fall in different bands, so each carries its own minimum above."
+            : "Anything spent on the night counts toward this, including the bar." });
+      }
       groups.push({ icon: "dates", label: "Dates · best first", target: "#sec-date", items: di });
     }
     return groups;
@@ -2098,7 +2224,7 @@ body.pe-done .pe-rail{display:none!important;}
     var t = summaryTexts();
     railFoot.hidden = !t;
     if(t){
-      $("#rail-amount").textContent = t.bespoke ? t.amount : t.amount + " / head";
+      $("#rail-amount").textContent = (t.bespoke || t.minimumOnly) ? t.amount : t.amount + " / head";
       $("#rail-meta").textContent = t.meta;
     }
   }
@@ -2108,7 +2234,7 @@ body.pe-done .pe-rail{display:none!important;}
   function openSheet(){
     renderBrief($("#sheet-brief"), true, true);
     var t = summaryTexts();
-    $("#sheet-amount").textContent = t ? (t.bespoke ? t.amount : t.amount + " / head") : "";
+    $("#sheet-amount").textContent = t ? ((t.bespoke || t.minimumOnly) ? t.amount : t.amount + " / head") : "";
     $("#sheet-meta").textContent = t ? t.meta : "";
     var dj = $('input[name="dj-type"]:checked');
     var ext = djCheck.checked && dj && dj.value === "external";
@@ -2137,7 +2263,9 @@ body.pe-done .pe-rail{display:none!important;}
     $("#pe-receipt").hidden = false;
     renderBrief($("#receipt-brief"), false, false); /* receipt has its own "Sent by" line */
     var t = summaryTexts();
-    $("#receipt-foot").textContent = !t ? "" : t.bespoke
+    $("#receipt-foot").textContent = !t ? "" : t.minimumOnly
+      ? "Minimum spend " + t.amount + " · " + t.meta
+      : t.bespoke
       ? "Bespoke · priced after a conversation" + (t.meta ? " · " + t.meta : "")
       : "Estimated " + t.amount + " per head · " + t.meta;
     var by = [nameIn.value.trim(), emailIn.value.trim()];
@@ -2184,10 +2312,10 @@ body.pe-done .pe-rail{display:none!important;}
       if(!gv("industry")) return $("#reveal-industry .field");
       if(!gv("planning")) return $("#reveal-planning .field");
     } else if(!gv("occasion")){ return $("#reveal-occasion .field"); }
+    if(calPicks.length === 0) return $("#f-date"); /* dates now precede the package */
     if(!selectedPackage()) return consumptionTouched ? $("#f-package") : $("#f-consumption");
     if(!nameIn.value.trim()) return $("#f-name");
     if(!EMAIL_RE.test(emailIn.value.trim())) return $("#f-email");
-    if(calPicks.length === 0) return $("#f-date");
     return $(".pe-submit");
   }
   var guideHost = null, guidePending = null, guideTimer = null;
@@ -2252,7 +2380,97 @@ body.pe-done .pe-rail{display:none!important;}
   /* refreshPricing rather than updateBanner: it is a superset (add-on rows and
      the larger-portions visibility ride along), and the space change that
      re-renders the calendar also re-rates the add-ons */
-  function refreshUX(){ updateSectionTicks(); updateAck(); renderCal(); renderPicks(); renderRail(); refreshPricing(); updateGuide(); }
+  /* ---- Minimum spend panel ----
+     Framed as progress toward a number, never as a shortfall. No red, no error
+     state: a total under the minimum is an ordinary enquiry and still submits.
+     Bespoke carries no computable total, so it shows the minimum as a
+     "starting from" figure with no bar. */
+  var WAYS = [
+    { key: "upgrade",        label: "Upgrade to Signature" },
+    { key: "champagne",      label: "Champagne on arrival" },
+    { key: "welcome-drinks", label: "Welcome mini-drinks" },
+    { key: "dj-resident",    label: "Resident DJ" }
+  ];
+  function waysToClose(gap, g){
+    /* Live entertainment is deliberately absent: by client decision it does not
+       count toward the minimum, so offering it as a way to close the gap would
+       be wrong however tempting the spec's original list was. */
+    var out = [], pkg = selectedPackage(), mode = currentConsumption() === "drinks" ? "drinks" : "food";
+    WAYS.forEach(function(w){
+      if(out.length >= 3) return;
+      if(w.key === "upgrade"){
+        if(pkg !== "standard" || !g) return;
+        var lift = (PRICING.packages.signature[mode] - PRICING.packages.standard[mode]) * g.n;
+        if(lift > 0) out.push(w.label + ", " + money(lift));
+        return;
+      }
+      var box = $(ADDON_IDS[w.key] || "#addon-dj");
+      if(w.key === "dj-resident"){
+        if(djCheck.checked) return;
+        out.push(w.label + ", " + money(PRICING.addons["dj-resident"].value));
+        return;
+      }
+      if(box && box.checked) return;
+      var amt = addonAmount(w.key, g);
+      if(amt !== null && amt > 0) out.push(w.label + ", " + money(amt));
+    });
+    return out;
+  }
+  function renderMinSpend(){
+    var box = $("#minspend");
+    if(!box) return;
+    var minimum = currentMinimum();
+    if(minimum === null){ box.hidden = true; return; }
+    box.hidden = false;
+    var first = calPicks[0], pkg = selectedPackage(), g = effGuests();
+    var label = $("#minspend-label"), fig = $("#minspend-figure"),
+        track = $("#minspend-track"), fill = $("#minspend-fill"),
+        note = $("#minspend-note"), ways = $("#minspend-ways");
+
+    label.textContent = "Minimum spend · " + calLongDate(first);
+
+    /* Bespoke: a starting figure, no progress, because there is no total yet */
+    if(pkg === "bespoke"){
+      fig.textContent = "Starting from " + money(minimum);
+      track.hidden = true; fill.style.width = "0%";
+      note.textContent = "Bespoke events are priced with the events team. This is the minimum for your space and date.";
+      ways.hidden = true;
+      return;
+    }
+    track.hidden = false;
+
+    var sum = computeSummary();
+    var qualifying = (sum && sum.total !== null && g) ? sum.total - offMinimumTotal(g) : null;
+    if(qualifying === null){
+      fig.textContent = money(minimum);
+      fill.style.width = "0%";
+      note.textContent = "Pick a package to see how your total tracks against this.";
+      ways.hidden = true;
+      return;
+    }
+    var pct = Math.max(0, Math.min(100, (qualifying / minimum) * 100));
+    fill.style.width = pct.toFixed(1) + "%";
+    fig.textContent = money(qualifying) + " ESTIMATE of " + money(minimum);
+    track.setAttribute("aria-label", money(qualifying) + " of a " + money(minimum) +
+      " minimum for " + calLongDate(first));
+
+    var offAmt = offMinimumTotal(g);
+    var offNote = offAmt > 0 ? " External DJ and live entertainment are not counted toward it." : "";
+    if(qualifying >= minimum){
+      note.textContent = "You are at the minimum for this date." + offNote;
+      ways.hidden = true;
+    } else {
+      var gap = minimum - qualifying;
+      note.textContent = money(gap) + " to go." +
+        (minimumsDiffer() ? " Your other dates carry different minimums, listed above." : "") + offNote;
+      var list = waysToClose(gap, g);
+      ways.innerHTML = "";
+      list.forEach(function(t){ var li = document.createElement("li"); li.textContent = t; ways.appendChild(li); });
+      ways.hidden = list.length === 0;
+    }
+  }
+
+  function refreshUX(){ updateSectionTicks(); updateAck(); renderCal(); renderPicks(); renderRail(); refreshPricing(); renderMinSpend(); updateGuide(); }
   form.addEventListener("input", refreshUX);
   form.addEventListener("change", refreshUX);
   refreshUX();
