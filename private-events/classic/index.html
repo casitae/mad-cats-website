@@ -345,6 +345,34 @@ html,body{overflow-x:clip;}
   opacity:.85;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;max-width:none;}
 .pe-banner--bespoke .pe-banner__amount{font-size:14px;line-height:1.35;}
 body.has-banner{padding-bottom:calc(72px + env(safe-area-inset-bottom));}
+/* The minimum-spend progress rides at the TOP EDGE of the orange banner, so it
+   sits directly on top of the brief button on mobile. It reuses the banner's
+   own accent surface rather than introducing a second fill: cream on orange,
+   with a hairline track in the same idiom as the in-page minimum panel. */
+.pe-progress{max-width:calc(var(--mc-page-w) - 2 * var(--mc-gutter));margin-inline:auto;
+  display:grid;gap:6px;padding-bottom:9px;margin-bottom:9px;
+  border-bottom:1px solid rgba(243,236,223,.26);}
+.pe-progress[hidden]{display:none;}
+.pe-progress__msg{font-family:var(--mc-font-mono);font-size:10.5px;line-height:1.4;
+  color:var(--mc-cream);opacity:.9;font-variant-numeric:tabular-nums;}
+.pe-progress__msg.is-met{opacity:1;font-weight:600;}
+.pe-progress__track{position:relative;display:block;height:3px;
+  border-bottom:1px solid rgba(243,236,223,.35);}
+.pe-progress__fill{position:absolute;left:0;top:0;height:3px;width:0;
+  border-bottom:3px solid var(--mc-cream);transition:width .4s ease;}
+body.has-progress.has-banner{padding-bottom:calc(104px + env(safe-area-inset-bottom));}
+
+/* Desktop: the same reading, orange on cream, inside the sticky rail. */
+.rail-progress{display:grid;gap:6px;margin-top:var(--sp-4);padding-top:var(--sp-3);
+  border-top:1px solid var(--mc-separator);}
+.rail-progress[hidden]{display:none;}
+.rail-progress__msg{font-family:var(--mc-font-mono);font-size:11px;line-height:1.45;
+  color:var(--mc-oxblood);font-variant-numeric:tabular-nums;}
+.rail-progress__msg.is-met{color:var(--mc-orange);font-weight:600;}
+.rail-progress__track{position:relative;display:block;height:3px;
+  border-bottom:1px solid var(--mc-separator);}
+.rail-progress__fill{position:absolute;left:0;top:0;height:3px;width:0;
+  border-bottom:3px solid var(--mc-orange);transition:width .4s ease;}
 
 /* ---- Desktop ≥1025: 680px editorial column, 3-across packages, stepped-up rhythm ----
    (kept last so it wins the cascade over the mobile-baseline rules above) */
@@ -565,6 +593,7 @@ body.pe-done .pe-rail{display:none!important;}
   .field__tick,.pe-sec-tick,.field__check-box::after,.addon-ph,.pe-sheet,.pe-sheet.is-open{transition:none;}
   .field__label-text.is-swapping,.is-reinked{animation:none;}
   .pe-guide{transition:none;} /* static arrow: no pulse, instant relocation */
+  .pe-progress__fill,.rail-progress__fill{transition:none;}
   /* the gate still turns people back, it just does it without moving parts */
   .pe-guide.is-urging .pe-guide__down,.pe-guide.is-urging .pe-guide__right,
   .field.is-urged .field__input{animation:none;}
@@ -971,6 +1000,12 @@ body.pe-done .pe-rail{display:none!important;}
         <span class="t-overline">YOUR BRIEF</span>
         <p class="pe-rail__empty" id="rail-empty">It fills in as you answer.</p>
         <div class="pe-brief pe-brief--cream" id="rail-brief"></div>
+        <div class="rail-progress" id="rail-progress" hidden>
+          <span class="rail-progress__msg" id="rail-progress-msg"></span>
+          <span class="rail-progress__track" role="img">
+            <span class="rail-progress__fill" id="rail-progress-fill"></span>
+          </span>
+        </div>
         <div class="pe-rail__foot" id="rail-foot" hidden>
           <span class="pe-rail__foot-amount" id="rail-amount"></span>
           <span class="pe-rail__foot-meta" id="rail-meta"></span>
@@ -999,6 +1034,12 @@ body.pe-done .pe-rail{display:none!important;}
 
 <!-- ===== Sticky per-head total (accent surface) — outside .page so overflow:clip can't touch it ===== -->
 <aside class="pe-banner" id="pe-banner" aria-live="polite" aria-label="Estimated cost">
+  <div class="pe-progress" id="pe-progress" hidden>
+    <span class="pe-progress__msg" id="pe-progress-msg"></span>
+    <span class="pe-progress__track" id="pe-progress-track" role="img">
+      <span class="pe-progress__fill" id="pe-progress-fill"></span>
+    </span>
+  </div>
   <button class="pe-banner__hit" id="pe-banner-hit" type="button" aria-expanded="false" aria-controls="pe-sheet">
     <span class="pe-banner__inner">
       <span>
@@ -1937,6 +1978,22 @@ body.pe-done .pe-rail{display:none!important;}
      and live entertainment. External DJ carries no price anyway, so in practice
      live entertainment is the only item that lifts the total without moving
      the bar. That is deliberate and the UI says so. */
+  /* The single place progress toward the minimum is worked out, shared by the
+     in-page panel, the mobile banner bar, the desktop rail bar and the brief.
+     Returns null when there is nothing meaningful to show yet. */
+  function minProgress(){
+    var minimum = currentMinimum();
+    if(minimum === null) return null;
+    var pkg = selectedPackage();
+    if(pkg === "bespoke") return { minimum: minimum, bespoke: true };
+    var sum = computeSummary(), g = effGuests();
+    if(!sum || sum.total === null || !g) return { minimum: minimum, qualifying: null };
+    var qualifying = sum.total - offMinimumTotal(g);
+    return { minimum: minimum, qualifying: qualifying,
+             gap: Math.max(0, minimum - qualifying),
+             met: qualifying >= minimum,
+             pct: Math.max(0, Math.min(100, (qualifying / minimum) * 100)) };
+  }
   function offMinimumTotal(g){
     var off = 0;
     selectedAddonKeys().forEach(function(k){
@@ -2168,6 +2225,13 @@ body.pe-done .pe-rail{display:none!important;}
         }
         return row;
       });
+      /* If the options do not reach the minimum, the brief states the surcharge
+         plainly rather than leaving the guest to subtract. */
+      var pr = minProgress();
+      if(pr && !pr.bespoke && pr.qualifying !== null && !pr.met){
+        di.push({ text: "Surcharge to reach minimum spend", price: money(pr.gap),
+          sub: "Charged as venue hire only if the minimum is not reached on the night." });
+      }
 
       groups.push({ icon: "dates", label: "Dates · best first · minimum spend", target: "#sec-date", items: di });
     }
@@ -2473,7 +2537,34 @@ body.pe-done .pe-rail{display:none!important;}
     }
   }
 
-  function refreshUX(){ updateSectionTicks(); updateAck(); renderCal(); renderPicks(); renderRail(); refreshPricing(); renderMinSpend(); updateGuide(); }
+  var MIN_MET_MSG = "Great. You've reached the minimum spend for your first date choice!";
+  /* Paints the mobile banner bar and the desktop rail bar from one reading, so
+     they can never disagree. Both hide until there is a real number to show. */
+  function renderProgressBars(){
+    var p = minProgress();
+    var wrapB = $("#pe-progress"), wrapR = $("#rail-progress");
+    var show = !!(p && !p.bespoke && p.qualifying !== null);
+    document.body.classList.toggle("has-progress", show);
+    if(wrapB) wrapB.hidden = !show;
+    if(wrapR) wrapR.hidden = !show;
+    if(!show) return;
+    var msg = p.met ? MIN_MET_MSG
+      : money(p.qualifying) + " of " + money(p.minimum) + " minimum · " +
+        money(p.gap) + " to go";
+    var aria = p.met ? MIN_MET_MSG
+      : money(p.qualifying) + " of a " + money(p.minimum) + " minimum for " + calLongDate(calPicks[0]);
+    [["#pe-progress-msg","#pe-progress-fill","#pe-progress-track"],
+     ["#rail-progress-msg","#rail-progress-fill",null]].forEach(function(ids){
+      var m = $(ids[0]), f = $(ids[1]);
+      if(m){ m.textContent = msg; m.classList.toggle("is-met", !!p.met); }
+      if(f) f.style.width = p.pct.toFixed(1) + "%";
+      var tr = ids[2] && $(ids[2]);
+      if(tr) tr.setAttribute("aria-label", aria);
+    });
+    if(wrapR) wrapR.querySelector(".rail-progress__track").setAttribute("aria-label", aria);
+  }
+
+  function refreshUX(){ updateSectionTicks(); updateAck(); renderCal(); renderPicks(); renderRail(); refreshPricing(); renderMinSpend(); renderProgressBars(); updateGuide(); }
   form.addEventListener("input", refreshUX);
   form.addEventListener("change", refreshUX);
   refreshUX();
