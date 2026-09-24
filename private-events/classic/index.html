@@ -2151,22 +2151,25 @@ body.pe-done .pe-rail{display:none!important;}
       if(ci.length) groups.push({ icon: "contact", label: "Contact", target: "#sec-details", items: ci });
     }
     if(calPicks.length){
+      /* The money column carries the minimum for each date, because that is the
+         figure that changes the decision. Availability rides in brackets after
+         the date itself: useful context, but not a number to rank on. */
       var di = calPicks.map(function(d, i){
-        return { rank: i + 1,
+        var dMin = minimumFor(d);
+        var row = { rank: i + 1,
           text: CAL_DAYS[d.getDay()].slice(0, 3) + " " + d.getDate() + " " +
-                CAL_MONTHS[d.getMonth()].slice(0, 3) + " " + d.getFullYear(),
-          price: Math.round(chanceFor(d) * 100) + "% est." };
+                CAL_MONTHS[d.getMonth()].slice(0, 3) + " " + d.getFullYear() +
+                " (" + Math.round(chanceFor(d) * 100) + "% est. availability)",
+          price: dMin === null ? "pick a space" : money(dMin) };
+        if(i === 0){
+          row.sub = (calPicks.length > 1
+            ? "Your first choice sets the minimum. "
+            : "") + "Anything spent on the night counts toward it, including the bar.";
+        }
+        return row;
       });
-      /* the first-priority date sets the minimum; if the picks straddle bands,
-         each date carries its own figure above and this line says so */
-      var cmin = currentMinimum();
-      if(cmin !== null){
-        di.push({ text: "Minimum spend · first choice", price: money(cmin),
-          sub: minimumsDiffer()
-            ? "Your dates fall in different bands, so each carries its own minimum above."
-            : "Anything spent on the night counts toward this, including the bar." });
-      }
-      groups.push({ icon: "dates", label: "Dates · best first", target: "#sec-date", items: di });
+
+      groups.push({ icon: "dates", label: "Dates · best first · minimum spend", target: "#sec-date", items: di });
     }
     return groups;
   }
