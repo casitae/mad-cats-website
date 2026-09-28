@@ -341,10 +341,26 @@ html,body{overflow-x:clip;}
   letter-spacing:1px;color:var(--mc-cream);opacity:.75;text-transform:uppercase;}
 .pe-banner__amount{display:block;font-family:var(--mc-font-mono);font-weight:500;font-size:20px;line-height:1.2;
   color:var(--mc-cream);font-variant-numeric:tabular-nums;}
-.pe-banner__meta{font-family:var(--mc-font-mono);font-size:10px;line-height:1.45;color:var(--mc-cream);
-  opacity:.85;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;max-width:none;}
+/* Was 10px and nowrap, which forced the eye to squint at the one number that
+   matters. Larger, and allowed to wrap onto a second line rather than shrink. */
+.pe-banner__meta{font-family:var(--mc-font-mono);font-size:12px;line-height:1.4;color:var(--mc-cream);
+  opacity:.9;text-align:right;font-variant-numeric:tabular-nums;white-space:normal;max-width:62vw;}
 .pe-banner--bespoke .pe-banner__amount{font-size:14px;line-height:1.35;}
 body.has-banner{padding-bottom:calc(72px + env(safe-area-inset-bottom));}
+/* ---- "click here" cue ----
+   Reviewers were missing that the orange strip opens the full brief. A tap
+   ripple at the right edge plus a gently pulsing label, and the wording gains
+   a verb. It runs until the sheet is opened once, then never returns: a cue
+   that keeps firing after you have understood it is just noise. */
+.pe-banner__open{position:relative;}
+.pe-banner__ring{display:none;}
+.pe-banner.is-cueing .pe-banner__ring{display:block;position:absolute;right:-9px;top:50%;
+  width:9px;height:9px;margin-top:-4.5px;border:1.5px solid var(--mc-cream);border-radius:50%;
+  opacity:0;animation:pe-cue-ring 1.9s ease-out infinite;}
+.pe-banner.is-cueing #banner-open-text{animation:pe-cue-pulse 1.9s ease-in-out infinite;}
+@keyframes pe-cue-ring{0%{transform:scale(.5);opacity:.95;}
+  65%{transform:scale(2.9);opacity:0;}100%{transform:scale(2.9);opacity:0;}}
+@keyframes pe-cue-pulse{0%,100%{opacity:.7;}50%{opacity:1;}}
 /* The minimum-spend progress rides at the TOP EDGE of the orange banner, so it
    sits directly on top of the brief button on mobile. It reuses the banner's
    own accent surface rather than introducing a second fill: cream on orange,
@@ -473,7 +489,7 @@ body.has-progress.has-banner{padding-bottom:calc(104px + env(safe-area-inset-bot
 .pe-sheet__foot{border-top:1px solid rgba(243,236,223,.55);padding-top:var(--sp-3);
   display:flex;align-items:baseline;justify-content:space-between;gap:var(--sp-4);}
 .pe-sheet__foot-amount{font-family:var(--mc-font-mono);font-weight:500;font-size:20px;color:var(--mc-cream);font-variant-numeric:tabular-nums;white-space:nowrap;}
-.pe-sheet__foot-meta{font-family:var(--mc-font-mono);font-size:11px;color:var(--mc-cream);opacity:.85;
+.pe-sheet__foot-meta{font-family:var(--mc-font-mono);font-size:12.5px;line-height:1.5;color:var(--mc-cream);opacity:.85;
   font-variant-numeric:tabular-nums;text-align:right;}
 .pe-sheet__deposit{font-family:var(--mc-font-mono);font-size:10px;line-height:1.4;color:var(--mc-ink-dark);margin:0;}
 
@@ -488,7 +504,7 @@ button.pe-brief__group:focus-visible{outline:1.5px solid currentColor;outline-of
 .pe-brief__head{display:flex;align-items:center;gap:var(--sp-2);padding-block:2px;}
 .pe-brief__icon{display:inline-flex;flex:0 0 auto;color:var(--mc-orange);}
 .pe-brief__icon svg{display:block;width:16px;height:16px;}
-.pe-brief__label{display:block;font-family:var(--mc-font-mono);font-weight:600;font-size:10.5px;letter-spacing:1px;text-transform:uppercase;}
+.pe-brief__label{display:block;font-family:var(--mc-font-mono);font-weight:600;font-size:11.5px;letter-spacing:1px;text-transform:uppercase;}
 /* the answers, one level down: compact bullets, orange diamond markers */
 .pe-brief__item{display:block;position:relative;padding:3px 0 3px 24px;}
 .pe-brief__item::before{content:"";position:absolute;left:9px;top:10.5px;
@@ -496,9 +512,13 @@ button.pe-brief__group:focus-visible{outline:1.5px solid currentColor;outline-of
 .pe-brief__item[data-rank]::before{content:none;} /* ranked dates: the numeral IS the marker */
 .pe-brief__rank{position:absolute;left:6px;top:3px;font-weight:600;font-size:12.5px;line-height:1.5;}
 .pe-brief__line{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px var(--sp-2);}
-.pe-brief__val{font-family:var(--mc-font-mono);font-size:12.5px;font-weight:500;line-height:1.5;min-width:0;}
-.pe-brief__price{font-family:var(--mc-font-mono);font-size:12px;white-space:nowrap;font-variant-numeric:tabular-nums;margin-left:auto;}
-.pe-brief__subnote{display:block;font-family:var(--mc-font-mono);font-size:11px;line-height:1.45;color:var(--mc-taupe);margin-top:1px;}
+.pe-brief__val{font-family:var(--mc-font-mono);font-size:13.5px;font-weight:500;line-height:1.5;min-width:0;}
+/* The money column was 12px and reviewers could not read it. It is the figure
+   people are actually scanning for, so it now outweighs the label beside it. */
+.pe-brief__price{font-family:var(--mc-font-mono);font-size:15px;font-weight:600;line-height:1.4;
+  white-space:nowrap;font-variant-numeric:tabular-nums;margin-left:auto;color:var(--mc-oxblood);}
+.pe-brief--cream .pe-brief__price{color:var(--mc-oxblood);}
+.pe-brief__subnote{display:block;font-family:var(--mc-font-mono);font-size:12px;line-height:1.5;color:var(--mc-taupe);margin-top:2px;}
 /* accent-surface flavour: dense info = dark ink per DS rule; icons + markers turn cream */
 .pe-brief--sheet .pe-brief__icon{color:var(--mc-cream);}
 .pe-brief--sheet .pe-brief__group + .pe-brief__group{border-top-color:rgba(243,236,223,.35);}
@@ -515,8 +535,8 @@ button.pe-brief__group:focus-visible{outline:1.5px solid currentColor;outline-of
 .pe-rail__card{border:1px solid var(--mc-hairline);border-radius:var(--mc-radius-card);padding:var(--sp-4);display:grid;gap:var(--sp-3);}
 .pe-rail__empty{font-family:var(--mc-font-mono);font-size:12px;line-height:1.5;color:var(--mc-taupe);margin:0;}
 .pe-rail__foot{border-top:1px solid var(--mc-separator);padding-top:var(--sp-3);display:grid;gap:2px;}
-.pe-rail__foot-amount{font-family:var(--mc-font-mono);font-weight:500;font-size:16px;color:var(--mc-oxblood);font-variant-numeric:tabular-nums;}
-.pe-rail__foot-meta{font-family:var(--mc-font-mono);font-size:11px;color:var(--mc-taupe);font-variant-numeric:tabular-nums;}
+.pe-rail__foot-amount{font-family:var(--mc-font-mono);font-weight:600;font-size:20px;color:var(--mc-oxblood);font-variant-numeric:tabular-nums;line-height:1.25;}
+.pe-rail__foot-meta{font-family:var(--mc-font-mono);font-size:12.5px;line-height:1.5;color:var(--mc-oxblood);opacity:.72;font-variant-numeric:tabular-nums;}
 .pe-rail__foot[hidden]{display:none;}
 .pe-receipt[hidden]{display:none;}
 body.pe-done .pe-rail{display:none!important;}
@@ -594,6 +614,10 @@ body.pe-done .pe-rail{display:none!important;}
   .field__label-text.is-swapping,.is-reinked{animation:none;}
   .pe-guide{transition:none;} /* static arrow: no pulse, instant relocation */
   .pe-progress__fill,.rail-progress__fill{transition:none;}
+  /* the cue still reads as a cue, it just stops moving */
+  .pe-banner.is-cueing .pe-banner__ring,
+  .pe-banner.is-cueing #banner-open-text{animation:none;}
+  .pe-banner.is-cueing .pe-banner__ring{opacity:.9;}
   /* the gate still turns people back, it just does it without moving parts */
   .pe-guide.is-urging .pe-guide__down,.pe-guide.is-urging .pe-guide__right,
   .field.is-urged .field__input{animation:none;}
@@ -1048,7 +1072,7 @@ body.pe-done .pe-rail{display:none!important;}
       </span>
       <span class="pe-banner__meta-wrap">
         <span class="pe-banner__meta" id="banner-meta"></span>
-        <span class="pe-banner__open">THE FULL BRIEF +</span>
+        <span class="pe-banner__open" id="banner-open"><span class="pe-banner__ring" aria-hidden="true"></span><span id="banner-open-text">THE FULL BRIEF +</span></span>
       </span>
     </span>
   </button>
@@ -1543,7 +1567,10 @@ body.pe-done .pe-rail{display:none!important;}
       bannerShown = true;
       document.body.classList.add("has-banner");
       requestAnimationFrame(function(){ /* never re-show over the confirmation */
-        if(!document.body.classList.contains("pe-done")) banner.classList.add("is-shown");
+        if(!document.body.classList.contains("pe-done")){
+          banner.classList.add("is-shown");
+          startCue();
+        }
       });
     }
     banner.classList.toggle("pe-banner--bespoke", t.bespoke);
@@ -2298,7 +2325,26 @@ body.pe-done .pe-rail{display:none!important;}
 
   /* A4 — the order sheet */
   var sheet = $("#pe-sheet"), bannerHit = $("#pe-banner-hit");
+  /* "TAP" on touch, "CLICK" on a mouse: the cue should say what the person
+     in front of it actually does. */
+  var CUE_VERB = (window.matchMedia && window.matchMedia("(pointer: coarse)").matches) ? "TAP" : "CLICK";
+  var cueRetired = false;
+  function startCue(){
+    if(cueRetired) return;
+    banner.classList.add("is-cueing");
+    var txt = $("#banner-open-text");
+    if(txt) txt.textContent = CUE_VERB + " FOR THE FULL BRIEF +";
+    bannerHit.setAttribute("aria-label", CUE_VERB.toLowerCase() + " to open the full brief");
+  }
+  function retireCue(){
+    cueRetired = true;
+    banner.classList.remove("is-cueing");
+    var txt = $("#banner-open-text");
+    if(txt) txt.textContent = "THE FULL BRIEF +";
+    bannerHit.removeAttribute("aria-label");
+  }
   function openSheet(){
+    retireCue(); /* they found it; stop pointing at it */
     renderBrief($("#sheet-brief"), true, true);
     var t = summaryTexts();
     $("#sheet-amount").textContent = t ? ((t.bespoke || t.minimumOnly) ? t.amount : t.amount + " / head") : "";
