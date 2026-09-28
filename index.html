@@ -2369,7 +2369,8 @@ body.tk-clicking .cursor-pixel .px-rays{animation:tk-rays var(--tk-press) infini
   }
   function tickerRoute(){   /* called from showRoute: restart the idle cue per page */
     tkHoverEnd(); tkStopCue();
-    if (!reduceMotion) tkTimer = setTimeout(tkCue, 2400);
+    /* first cue fires almost at once (600ms), before the visitor's first scroll takes the band off screen */
+    if (!reduceMotion) tkTimer = setTimeout(tkCue, 600);
   }
 
   if (finePointer && !reduceMotion){
