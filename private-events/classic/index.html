@@ -325,66 +325,127 @@ html,body{overflow-x:clip;}
 .pe-confirm__next{font-family:var(--mc-font-mono);font-size:12px;line-height:1.6;color:var(--mc-oxblood);}
 .pe-confirm__next .arrow{color:var(--mc-orange);}
 
-/* ---- Sticky per-head total banner: ACCENT SURFACE (orange bg / cream fg) ----
+/* ---- Sticky cost banner: ACCENT SURFACE (orange bg / cream fg) ----
    Slides up on first package selection, stays fixed, updates live.
-   Safe-area aware; body.has-banner pads the page so nothing hides beneath it. */
+   Safe-area aware; body.has-banner pads the page so nothing hides beneath it,
+   and the pad is re-measured from the live height (the reached-minimum message
+   is long enough to wrap, so a hardcoded pad would leave a gap or an overlap). */
 .pe-banner{position:fixed;left:0;right:0;bottom:0;z-index:40;
   background:var(--mc-orange);color:var(--mc-cream);
-  padding:10px var(--mc-gutter) calc(10px + env(safe-area-inset-bottom));
-  transform:translateY(110%);visibility:hidden;
+  padding:var(--sp-2) var(--mc-gutter) calc(var(--sp-3) + env(safe-area-inset-bottom));
+  transform:translateY(110%);visibility:hidden;--pe-lift:12px;
   transition:transform .45s cubic-bezier(.32,.72,.28,1),visibility 0s linear .45s;}
 .pe-banner.is-shown{transform:none;visibility:visible;
   transition:transform .45s cubic-bezier(.32,.72,.28,1),visibility 0s;}
-.pe-banner__inner{max-width:calc(var(--mc-page-w) - 2 * var(--mc-gutter));margin-inline:auto;
+.pe-banner__body{display:grid;}
+/* Sheet grabber. The single biggest reason the strip read as a passive status
+   bar was that it had no handle: every bottom sheet a person has ever used has
+   one, so its absence types the strip as chrome. Structural, always present,
+   and it survives the cue being retired. */
+.pe-banner__grab{justify-self:center;width:40px;height:4px;border-radius:4px;
+  background:var(--mc-cream);opacity:.66;margin-bottom:var(--sp-2);}
+.pe-banner__inner{max-width:calc(var(--mc-page-w) - 2 * var(--mc-gutter));margin-inline:auto;width:100%;
   display:flex;align-items:center;justify-content:space-between;gap:var(--sp-4);min-height:44px;}
-.pe-banner__label{display:block;font-family:var(--mc-font-mono);font-weight:600;font-size:10px;
-  letter-spacing:1px;color:var(--mc-cream);opacity:.75;text-transform:uppercase;}
-.pe-banner__amount{display:block;font-family:var(--mc-font-mono);font-weight:500;font-size:20px;line-height:1.2;
-  color:var(--mc-cream);font-variant-numeric:tabular-nums;}
-/* Was 10px and nowrap, which forced the eye to squint at the one number that
-   matters. Larger, and allowed to wrap onto a second line rather than shrink. */
-.pe-banner__meta{font-family:var(--mc-font-mono);font-size:12px;line-height:1.4;color:var(--mc-cream);
-  opacity:.9;text-align:right;font-variant-numeric:tabular-nums;white-space:normal;max-width:62vw;}
-.pe-banner--bespoke .pe-banner__amount{font-size:14px;line-height:1.35;}
-body.has-banner{padding-bottom:calc(72px + env(safe-area-inset-bottom));}
-/* ---- "click here" cue ----
-   Reviewers were missing that the orange strip opens the full brief. A tap
-   ripple at the right edge plus a gently pulsing label, and the wording gains
-   a verb. It runs until the sheet is opened once, then never returns: a cue
-   that keeps firing after you have understood it is just noise. */
-.pe-banner__open{position:relative;}
-.pe-banner__ring{display:none;}
-.pe-banner.is-cueing .pe-banner__ring{display:block;position:absolute;right:-9px;top:50%;
-  width:9px;height:9px;margin-top:-4.5px;border:1.5px solid var(--mc-cream);border-radius:50%;
-  opacity:0;animation:pe-cue-ring 1.9s ease-out infinite;}
-.pe-banner.is-cueing #banner-open-text{animation:pe-cue-pulse 1.9s ease-in-out infinite;}
-@keyframes pe-cue-ring{0%{transform:scale(.5);opacity:.95;}
-  65%{transform:scale(2.9);opacity:0;}100%{transform:scale(2.9);opacity:0;}}
-@keyframes pe-cue-pulse{0%,100%{opacity:.7;}50%{opacity:1;}}
+/* The figure block is a ledger, read top to bottom: what it is, the number,
+   then the arithmetic behind it. The TOTAL is the hero now, not the per-head
+   rate: the total is the figure a booker budgets against, and it was the one
+   the client could not read. */
+.pe-banner__fig{display:grid;gap:2px;min-width:0;}
+.pe-banner__label{display:block;font-family:var(--mc-font-mono);font-weight:600;font-size:11px;
+  letter-spacing:1px;color:var(--mc-cream);opacity:.8;text-transform:uppercase;line-height:1.3;}
+.pe-banner__amount{display:block;font-family:var(--mc-font-mono);font-weight:500;font-size:26px;line-height:1.15;
+  color:var(--mc-cream);font-variant-numeric:tabular-nums;letter-spacing:-.4px;}
+/* The qualifiers that used to be crammed into the same 12px run-on string:
+   now demoted to their own line, where they can be read rather than decoded. */
+.pe-banner__meta{display:block;font-family:var(--mc-font-mono);font-size:12.5px;line-height:1.45;color:var(--mc-cream);
+  opacity:.82;font-variant-numeric:tabular-nums;}
+.pe-banner__meta:empty{display:none;}
+.pe-banner--bespoke .pe-banner__amount{font-size:15px;line-height:1.3;letter-spacing:0;}
+body.has-banner{padding-bottom:calc(var(--pe-banner-h, 120px) + var(--sp-4));}
+
+/* ---- The "this opens" cue ----
+   Round one was a 9px ring and an opacity pulse: peripheral, small, and it
+   changed nothing about the SHAPE of the thing, so it read as decoration.
+   Round two works on three levels at once.
+   1. STRUCTURE (permanent): a grabber on the top edge and a real outlined
+      button chip with an up chevron. Affordance should be legible with the
+      motion switched off; motion only draws the eye to it.
+   2. MOTION (retires): the whole strip swells upward and settles twice while
+      its top edge lights up. A 12px move on a 145px object is an order of
+      magnitude more visible than a 9px ring, and it previews the gesture.
+   3. RHYTHM (retires): short bursts, not a loop. A loop habituates in seconds
+      and starts reading as an advert. Bursts fire on a long interval and are
+      re-armed whenever the guest changes a choice, because a fresh number is
+      exactly the moment the brief is worth opening. Capped, then escalated
+      once, then silent. Opening the sheet retires all of it for good. */
+.pe-banner__cta{display:inline-flex;align-items:center;justify-content:center;gap:var(--sp-2);
+  flex:0 0 auto;min-height:44px;padding:0 var(--sp-3);border:1.5px solid var(--mc-cream);
+  border-radius:var(--mc-radius);font-family:var(--mc-font-mono);font-weight:600;font-size:12.5px;
+  letter-spacing:1px;text-transform:uppercase;color:var(--mc-cream);
+  transition:background-color .2s ease,color .2s ease;}
+.pe-banner__cta svg{flex:0 0 auto;}
+.pe-banner__hit:hover .pe-banner__cta,
+.pe-banner__hit:focus-visible .pe-banner__cta{background:var(--mc-cream);color:var(--mc-orange);}
+/* the lip: the orange grows ABOVE its resting top edge, so the strip appears to
+   swell rather than lift off the bottom and expose a gap behind it. It overlaps
+   the strip by 4px and always runs 2px taller than the lift, so no sub-pixel
+   sliver of page can ever flash through between the two. */
+.pe-banner__lip{position:absolute;left:0;right:0;bottom:calc(100% - 4px);height:6px;
+  background:var(--mc-orange);border-top:3px solid transparent;pointer-events:none;}
+.pe-banner.is-burst .pe-banner__lip{animation:pe-cue-lip 1.5s cubic-bezier(.33,.9,.33,1) 1;}
+.pe-banner.is-burst .pe-banner__body{animation:pe-cue-lift 1.5s cubic-bezier(.33,.9,.33,1) 1;}
+.pe-banner.is-cue-loud{--pe-lift:18px;}
+.pe-banner.is-cue-loud .pe-banner__cta{background:var(--mc-cream);color:var(--mc-orange);}
+@keyframes pe-cue-lift{
+  0%{transform:translateY(0);}
+  14%{transform:translateY(calc(-1 * var(--pe-lift)));}
+  34%{transform:translateY(0);}
+  48%{transform:translateY(calc(-.5 * var(--pe-lift)));}
+  64%,100%{transform:translateY(0);}}
+@keyframes pe-cue-lip{
+  0%{height:6px;border-top-color:rgba(243,236,223,0);box-shadow:0 0 0 0 rgba(250,70,22,0);}
+  8%{border-top-color:rgba(243,236,223,1);box-shadow:0 -7px 18px 0 rgba(250,70,22,.7);}
+  14%{height:calc(var(--pe-lift) + 6px);border-top-color:rgba(243,236,223,1);box-shadow:0 -12px 28px 0 rgba(250,70,22,1);}
+  34%{height:6px;}
+  48%{height:calc(var(--pe-lift) * .5 + 6px);box-shadow:0 -9px 22px 0 rgba(250,70,22,.8);}
+  64%{height:6px;}
+  86%{border-top-color:rgba(243,236,223,1);box-shadow:0 -5px 14px 0 rgba(250,70,22,.4);}
+  100%{height:6px;border-top-color:rgba(243,236,223,0);box-shadow:0 0 0 0 rgba(250,70,22,0);}}
+
 /* The minimum-spend progress rides at the TOP EDGE of the orange banner, so it
    sits directly on top of the brief button on mobile. It reuses the banner's
    own accent surface rather than introducing a second fill: cream on orange,
-   with a hairline track in the same idiom as the in-page minimum panel. */
-.pe-progress{max-width:calc(var(--mc-page-w) - 2 * var(--mc-gutter));margin-inline:auto;
-  display:grid;gap:6px;padding-bottom:9px;margin-bottom:9px;
+   with a hairline track in the same idiom as the in-page minimum panel.
+   Split in two: the GAP leads, because it is the only number the bar itself
+   cannot show, and the ratio trails as context the bar already draws. */
+.pe-progress{max-width:calc(var(--mc-page-w) - 2 * var(--mc-gutter));margin-inline:auto;width:100%;
+  display:grid;gap:6px;padding-bottom:var(--sp-2);margin-bottom:var(--sp-2);
   border-bottom:1px solid rgba(243,236,223,.26);}
 .pe-progress[hidden]{display:none;}
-.pe-progress__msg{font-family:var(--mc-font-mono);font-size:10.5px;line-height:1.4;
-  color:var(--mc-cream);opacity:.9;font-variant-numeric:tabular-nums;}
-.pe-progress__msg.is-met{opacity:1;font-weight:600;}
+.pe-progress__msg{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;
+  gap:2px var(--sp-3);margin:0;font-family:var(--mc-font-mono);
+  color:var(--mc-cream);font-variant-numeric:tabular-nums;}
+.pe-progress__lead{font-size:15px;line-height:1.3;font-weight:600;letter-spacing:-.2px;}
+.pe-progress__of{font-size:12.5px;line-height:1.4;opacity:.8;}
+.pe-progress__of:empty{display:none;}
+/* reached: one long sentence, allowed to run the full width and wrap cleanly */
+.pe-progress__msg.is-met{display:block;}
+.pe-progress__msg.is-met .pe-progress__lead{font-size:13.5px;line-height:1.4;display:block;}
 .pe-progress__track{position:relative;display:block;height:3px;
   border-bottom:1px solid rgba(243,236,223,.35);}
 .pe-progress__fill{position:absolute;left:0;top:0;height:3px;width:0;
   border-bottom:3px solid var(--mc-cream);transition:width .4s ease;}
-body.has-progress.has-banner{padding-bottom:calc(104px + env(safe-area-inset-bottom));}
 
 /* Desktop: the same reading, orange on cream, inside the sticky rail. */
 .rail-progress{display:grid;gap:6px;margin-top:var(--sp-4);padding-top:var(--sp-3);
   border-top:1px solid var(--mc-separator);}
 .rail-progress[hidden]{display:none;}
-.rail-progress__msg{font-family:var(--mc-font-mono);font-size:11px;line-height:1.45;
+.rail-progress__msg{display:grid;gap:1px;margin:0;font-family:var(--mc-font-mono);
   color:var(--mc-oxblood);font-variant-numeric:tabular-nums;}
-.rail-progress__msg.is-met{color:var(--mc-orange);font-weight:600;}
+.rail-progress__lead{font-size:14px;line-height:1.3;font-weight:600;}
+.rail-progress__of{font-size:12px;line-height:1.45;color:var(--mc-taupe);}
+.rail-progress__of:empty{display:none;}
+.rail-progress__msg.is-met .rail-progress__lead{color:var(--mc-orange);font-size:13px;line-height:1.45;}
 .rail-progress__track{position:relative;display:block;height:3px;
   border-bottom:1px solid var(--mc-separator);}
 .rail-progress__fill{position:absolute;left:0;top:0;height:3px;width:0;
@@ -404,7 +465,17 @@ body.has-progress.has-banner{padding-bottom:calc(104px + env(safe-area-inset-bot
   .pkg-card:has(.sr-input:checked),.pkg-card:has(.sr-input:focus-visible){padding:calc(var(--sp-4) - .5px);}
   .pkg-card__name{font-size:20px;}
   .pkg-card__head{flex-direction:column;align-items:flex-start;gap:var(--sp-1);} /* 3-up cards: price stacks under the name */
-  .pe-banner__meta{max-width:none;}
+  /* desktop: the strip has room, so the figures step up and the button chip
+     takes the verb it cannot fit on a phone */
+  .pe-banner{padding-bottom:var(--sp-3);}
+  .pe-banner__amount{font-size:28px;}
+  .pe-banner__meta{font-size:13.5px;}
+  .pe-banner__label{font-size:11.5px;}
+  .pe-banner__cta{font-size:13px;padding:0 var(--sp-4);min-height:48px;}
+  .pe-banner .pe-banner__cta-verb{display:inline;}
+  .pe-progress__lead{font-size:16px;}
+  .pe-progress__of{font-size:13.5px;}
+  .pe-progress__msg.is-met .pe-progress__lead{font-size:15px;}
   /* desktop anchor: diamond on the note's top rule, centred under the selected card
      (marker sits on the hairline, same family as the checked-box fill) */
   #reveal-sell .note::after{content:"";position:absolute;top:-4.5px;left:var(--sell-x,50%);
@@ -414,7 +485,11 @@ body.has-progress.has-banner{padding-bottom:calc(104px + env(safe-area-inset-bot
   .pe-intro{grid-column:1;grid-row:1;}
   .pe-form{grid-column:1;grid-row:2;}
   .pe-confirm{grid-column:1;grid-row:2;}
-  .pe-rail{display:block;grid-column:2;grid-row:2;align-self:start;position:sticky;top:var(--sp-6);margin-top:var(--sp-12);}
+  /* the standing order sheet is sticky, so it cannot be pushed clear of the
+     bottom strip: cap it against the live strip height instead, or its own
+     total ends up hidden behind the strip that repeats it */
+  .pe-rail{display:block;grid-column:2;grid-row:2;align-self:start;position:sticky;top:var(--sp-6);margin-top:var(--sp-12);
+    max-height:calc(100vh - var(--sp-6) - var(--sp-4) - var(--pe-banner-h, 120px));overflow:auto;overscroll-behavior:contain;}
 }
 
 
@@ -465,12 +540,14 @@ body.has-progress.has-banner{padding-bottom:calc(104px + env(safe-area-inset-bot
 /* E3 — the submit explains itself */
 .pe-submit__miss{font-family:var(--mc-font-mono);font-size:12px;line-height:1.5;color:var(--mc-orange);margin:0;}
 
-/* E1/A4 — banner: non-wrapping meta, tappable, opens the order sheet */
+/* E1/A4 — banner: tappable, opens the order sheet */
 .pe-banner__hit{display:block;width:100%;background:transparent;border:0;padding:0;margin:0;
   color:inherit;font:inherit;text-align:inherit;cursor:pointer;}
-.pe-banner__meta-wrap{display:grid;justify-items:end;gap:2px;text-align:right;}
-.pe-banner__open{display:block;font-family:var(--mc-font-mono);font-size:10px;letter-spacing:1px;
-  color:var(--mc-cream);opacity:.85;text-decoration:underline;text-underline-offset:2px;}
+.pe-banner__hit:focus-visible{outline:1.5px solid var(--mc-cream);outline-offset:3px;border-radius:var(--mc-radius);}
+/* the verb only fits where there is room for it; on a phone the chip shape and
+   the chevron carry the meaning, and the accessible name carries the verb. */
+.pe-banner__cta-verb{display:none;}
+.pe-banner__cta-verb:empty{display:none!important;}
 
 /* A4 — the order sheet (accent surface; menu-overlay precedent) */
 .pe-sheet{position:fixed;left:0;right:0;bottom:0;z-index:46;background:var(--mc-orange);
@@ -486,11 +563,16 @@ body.has-progress.has-banner{padding-bottom:calc(104px + env(safe-area-inset-bot
 .pe-sheet__close{background:transparent;border:0;padding:var(--sp-2);margin-right:calc(-1 * var(--sp-2));
   font-family:var(--mc-font-mono);font-size:24px;line-height:1;color:var(--mc-cream);cursor:pointer;outline:none;}
 .pe-sheet__close:focus-visible{outline:1.5px solid var(--mc-cream);outline-offset:2px;border-radius:var(--mc-radius);}
+/* the sheet foot carries the same ledger as the strip that opened it: what the
+   figure is, the figure, then the arithmetic. Two different shapes for the same
+   four numbers was half the reason they were hard to read. */
 .pe-sheet__foot{border-top:1px solid rgba(243,236,223,.55);padding-top:var(--sp-3);
-  display:flex;align-items:baseline;justify-content:space-between;gap:var(--sp-4);}
-.pe-sheet__foot-amount{font-family:var(--mc-font-mono);font-weight:500;font-size:20px;color:var(--mc-cream);font-variant-numeric:tabular-nums;white-space:nowrap;}
-.pe-sheet__foot-meta{font-family:var(--mc-font-mono);font-size:12.5px;line-height:1.5;color:var(--mc-cream);opacity:.85;
-  font-variant-numeric:tabular-nums;text-align:right;}
+  display:grid;gap:2px;}
+.pe-sheet__foot-label{font-family:var(--mc-font-mono);font-weight:600;font-size:11px;letter-spacing:1px;
+  text-transform:uppercase;color:var(--mc-cream);opacity:.8;line-height:1.3;}
+.pe-sheet__foot-amount{font-family:var(--mc-font-mono);font-weight:500;font-size:26px;line-height:1.15;color:var(--mc-cream);font-variant-numeric:tabular-nums;letter-spacing:-.4px;}
+.pe-sheet__foot-meta{font-family:var(--mc-font-mono);font-size:12.5px;line-height:1.45;color:var(--mc-cream);opacity:.82;
+  font-variant-numeric:tabular-nums;}
 .pe-sheet__deposit{font-family:var(--mc-font-mono);font-size:10px;line-height:1.4;color:var(--mc-ink-dark);margin:0;}
 
 /* shared brief ledger (sheet · rail · receipt) — TWO LEVELS: an icon + small-caps
@@ -535,7 +617,10 @@ button.pe-brief__group:focus-visible{outline:1.5px solid currentColor;outline-of
 .pe-rail__card{border:1px solid var(--mc-hairline);border-radius:var(--mc-radius-card);padding:var(--sp-4);display:grid;gap:var(--sp-3);}
 .pe-rail__empty{font-family:var(--mc-font-mono);font-size:12px;line-height:1.5;color:var(--mc-taupe);margin:0;}
 .pe-rail__foot{border-top:1px solid var(--mc-separator);padding-top:var(--sp-3);display:grid;gap:2px;}
-.pe-rail__foot-amount{font-family:var(--mc-font-mono);font-weight:600;font-size:20px;color:var(--mc-oxblood);font-variant-numeric:tabular-nums;line-height:1.25;}
+/* same ledger as the sticky strip: what it is, the figure, the arithmetic */
+.pe-rail__foot-label{font-family:var(--mc-font-mono);font-weight:600;font-size:11px;letter-spacing:1px;
+  text-transform:uppercase;color:var(--mc-taupe);line-height:1.3;}
+.pe-rail__foot-amount{font-family:var(--mc-font-mono);font-weight:600;font-size:24px;color:var(--mc-oxblood);font-variant-numeric:tabular-nums;line-height:1.2;}
 .pe-rail__foot-meta{font-family:var(--mc-font-mono);font-size:12.5px;line-height:1.5;color:var(--mc-oxblood);opacity:.72;font-variant-numeric:tabular-nums;}
 .pe-rail__foot[hidden]{display:none;}
 .pe-receipt[hidden]{display:none;}
@@ -614,10 +699,15 @@ body.pe-done .pe-rail{display:none!important;}
   .field__label-text.is-swapping,.is-reinked{animation:none;}
   .pe-guide{transition:none;} /* static arrow: no pulse, instant relocation */
   .pe-progress__fill,.rail-progress__fill{transition:none;}
-  /* the cue still reads as a cue, it just stops moving */
-  .pe-banner.is-cueing .pe-banner__ring,
-  .pe-banner.is-cueing #banner-open-text{animation:none;}
-  .pe-banner.is-cueing .pe-banner__ring{opacity:.9;}
+  /* the cue still reads as a cue, it just stops moving. With the swell and the
+     glow switched off, the chip carries it on its own: it goes solid cream on
+     orange the moment the cue starts, which is the loudest STATIC state the
+     accent surface allows, and it clears again the moment the sheet opens. */
+  .pe-banner.is-burst .pe-banner__lip,
+  .pe-banner.is-burst .pe-banner__body{animation:none;}
+  .pe-banner__cta{transition:none;}
+  .pe-banner.is-cueing .pe-banner__cta{background:var(--mc-cream);color:var(--mc-orange);}
+  .pe-banner.is-cueing .pe-banner__grab{opacity:1;}
   /* the gate still turns people back, it just does it without moving parts */
   .pe-guide.is-urging .pe-guide__down,.pe-guide.is-urging .pe-guide__right,
   .field.is-urged .field__input{animation:none;}
@@ -1025,12 +1115,16 @@ body.pe-done .pe-rail{display:none!important;}
         <p class="pe-rail__empty" id="rail-empty">It fills in as you answer.</p>
         <div class="pe-brief pe-brief--cream" id="rail-brief"></div>
         <div class="rail-progress" id="rail-progress" hidden>
-          <span class="rail-progress__msg" id="rail-progress-msg"></span>
+          <p class="rail-progress__msg" id="rail-progress-msg">
+            <span class="rail-progress__lead" id="rail-progress-lead"></span>
+            <span class="rail-progress__of" id="rail-progress-of"></span>
+          </p>
           <span class="rail-progress__track" role="img">
             <span class="rail-progress__fill" id="rail-progress-fill"></span>
           </span>
         </div>
         <div class="pe-rail__foot" id="rail-foot" hidden>
+          <span class="pe-rail__foot-label" id="rail-label"></span>
           <span class="pe-rail__foot-amount" id="rail-amount"></span>
           <span class="pe-rail__foot-meta" id="rail-meta"></span>
         </div>
@@ -1058,24 +1152,32 @@ body.pe-done .pe-rail{display:none!important;}
 
 <!-- ===== Sticky per-head total (accent surface) — outside .page so overflow:clip can't touch it ===== -->
 <aside class="pe-banner" id="pe-banner" aria-live="polite" aria-label="Estimated cost">
-  <div class="pe-progress" id="pe-progress" hidden>
-    <span class="pe-progress__msg" id="pe-progress-msg"></span>
-    <span class="pe-progress__track" id="pe-progress-track" role="img">
-      <span class="pe-progress__fill" id="pe-progress-fill"></span>
-    </span>
+  <span class="pe-banner__lip" aria-hidden="true"></span>
+  <div class="pe-banner__body">
+    <span class="pe-banner__grab" aria-hidden="true"></span>
+    <div class="pe-progress" id="pe-progress" hidden>
+      <p class="pe-progress__msg" id="pe-progress-msg">
+        <span class="pe-progress__lead" id="pe-progress-lead"></span>
+        <span class="pe-progress__of" id="pe-progress-of"></span>
+      </p>
+      <span class="pe-progress__track" id="pe-progress-track" role="img">
+        <span class="pe-progress__fill" id="pe-progress-fill"></span>
+      </span>
+    </div>
+    <button class="pe-banner__hit" id="pe-banner-hit" type="button" aria-expanded="false" aria-controls="pe-sheet">
+      <span class="pe-banner__inner">
+        <span class="pe-banner__fig">
+          <span class="pe-banner__label" id="banner-label">Total &middot; estimate</span>
+          <span class="pe-banner__amount" id="banner-amount"></span>
+          <span class="pe-banner__meta" id="banner-meta"></span>
+        </span>
+        <span class="pe-banner__cta" id="banner-open">
+          <span class="pe-banner__cta-verb" id="banner-open-verb"></span><span id="banner-open-text">FULL BRIEF</span>
+          <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 10 8 5.5 12.5 10"/></svg>
+        </span>
+      </span>
+    </button>
   </div>
-  <button class="pe-banner__hit" id="pe-banner-hit" type="button" aria-expanded="false" aria-controls="pe-sheet">
-    <span class="pe-banner__inner">
-      <span>
-        <span class="pe-banner__label" id="banner-label">Per head</span>
-        <span class="pe-banner__amount" id="banner-amount"></span>
-      </span>
-      <span class="pe-banner__meta-wrap">
-        <span class="pe-banner__meta" id="banner-meta"></span>
-        <span class="pe-banner__open" id="banner-open"><span class="pe-banner__ring" aria-hidden="true"></span><span id="banner-open-text">THE FULL BRIEF +</span></span>
-      </span>
-    </span>
-  </button>
 </aside>
 
 <!-- ===== A4: the order sheet — the brief in your pocket ===== -->
@@ -1087,6 +1189,7 @@ body.pe-done .pe-rail{display:none!important;}
     </div>
     <div class="pe-brief pe-brief--sheet" id="sheet-brief"></div>
     <div class="pe-sheet__foot" id="sheet-foot">
+      <span class="pe-sheet__foot-label" id="sheet-label"></span>
       <span class="pe-sheet__foot-amount" id="sheet-amount"></span>
       <span class="pe-sheet__foot-meta" id="sheet-meta"></span>
     </div>
@@ -1512,7 +1615,16 @@ body.pe-done .pe-rail{display:none!important;}
   var banner = $("#pe-banner"), bannerLabel = $("#banner-label"),
       bannerAmount = $("#banner-amount"), bannerMeta = $("#banner-meta");
   var bannerShown = false;
-  var lastPerHead = null;
+  var lastAmount = null, lastHero = "";
+  /* The strip is not a fixed height: the reached-minimum sentence wraps, the
+     bespoke figure runs to two lines and the progress bar comes and goes. The
+     page pad is measured from the live height rather than hardcoded, so the
+     last field is never left sitting underneath it. */
+  function syncBannerHeight(){
+    document.documentElement.style.setProperty("--pe-banner-h", banner.offsetHeight + "px");
+  }
+  if(window.ResizeObserver){ new ResizeObserver(syncBannerHeight).observe(banner); }
+  else { window.addEventListener("resize", syncBannerHeight); }
 
   /* one summary for banner, sheet, rail and receipt */
   function computeSummary(){
@@ -1574,22 +1686,44 @@ body.pe-done .pe-rail{display:none!important;}
       });
     }
     banner.classList.toggle("pe-banner--bespoke", t.bespoke);
-    bannerLabel.textContent = t.minimumOnly ? "Minimum spend" : t.bespoke ? "Bespoke" : "Per head";
-    bannerMeta.textContent = t.meta;
-    if(t.minimumOnly){ bannerAmount.textContent = t.amount; lastPerHead = null; return; }
-    if(t.bespoke){
-      bannerAmount.textContent = t.amount;
-      lastPerHead = null;
-      return;
-    }
-    var s = computeSummary();
-    /* B2: the amount rolls like a till */
-    if(lastPerHead !== null && !reducedMotion && Math.abs(s.perHead - lastPerHead) > 0.005){
-      tweenMoney(bannerAmount, lastPerHead, s.perHead);
+    var L = ledgerTexts();
+    bannerLabel.textContent = L.label;
+    bannerMeta.textContent = L.meta;
+    /* B2: the amount rolls like a till, but only while it is still the same
+       figure. Flipping between per-head and total is a change of subject, not
+       a change of value, so it cuts rather than counts. */
+    if(L.value !== null && lastAmount !== null && L.kind === lastHero &&
+       !reducedMotion && Math.abs(L.value - lastAmount) > 0.005){
+      tweenMoney(bannerAmount, lastAmount, L.value);
     } else {
-      bannerAmount.textContent = money(s.perHead);
+      bannerAmount.textContent = L.amount;
     }
-    lastPerHead = s.perHead;
+    lastAmount = L.value; lastHero = L.kind;
+    nudgeCue();
+  }
+
+  /* ONE reading of the money, shared by the sticky strip and the desktop rail
+     so the two can never disagree: what the figure is, the figure, then the
+     arithmetic behind it. The TOTAL leads, because it is what a booker budgets
+     against and it was the number the client could not read. The minimum is
+     deliberately NOT repeated here: the progress line carries it, and printing
+     it twice is what made the old single line unreadable. */
+  function ledgerTexts(){
+    var t = summaryTexts();
+    if(!t) return null;
+    if(t.minimumOnly) return { label: "Minimum spend", amount: t.amount, kind: "min", value: null,
+      /* the label already says "minimum spend"; the line beneath only has to
+         say which night it belongs to */
+      meta: t.meta.replace(/^minimum spend · /, "for ") };
+    if(t.bespoke) return { label: "Bespoke", amount: t.amount, kind: "bespoke", value: null, meta: t.meta };
+    var s = computeSummary();
+    var hasTotal = s.total !== null;
+    return { label: hasTotal ? "Total · estimate" : "Per head",
+             amount: money(hasTotal ? s.total : s.perHead),
+             value: hasTotal ? s.total : s.perHead,
+             kind: hasTotal ? "total" : "perhead",
+             meta: hasTotal ? money(s.perHead) + " per head · " + s.g.n + " guests"
+                            : "add a guest count for the full total" };
   }
 
   function refreshPricing(){ syncPortions(); renderQty(); renderAddonPrices(); updateBanner(); }
@@ -2315,11 +2449,12 @@ body.pe-done .pe-rail{display:none!important;}
   function renderRail(){
     var n = renderBrief(railBrief, true, true);
     railEmpty.hidden = n > 0;
-    var t = summaryTexts();
-    railFoot.hidden = !t;
-    if(t){
-      $("#rail-amount").textContent = (t.bespoke || t.minimumOnly) ? t.amount : t.amount + " / head";
-      $("#rail-meta").textContent = t.meta;
+    var L = ledgerTexts();
+    railFoot.hidden = !L;
+    if(L){
+      $("#rail-label").textContent = L.label;
+      $("#rail-amount").textContent = L.amount;
+      $("#rail-meta").textContent = L.meta;
     }
   }
 
@@ -2328,27 +2463,58 @@ body.pe-done .pe-rail{display:none!important;}
   /* "TAP" on touch, "CLICK" on a mouse: the cue should say what the person
      in front of it actually does. */
   var CUE_VERB = (window.matchMedia && window.matchMedia("(pointer: coarse)").matches) ? "TAP" : "CLICK";
-  var cueRetired = false;
+  var cueRetired = false, cueTimer = null, cueBursts = 0;
+  var CUE_MAX_BURSTS = 5;   /* then it stops asking. A cue that never stops is noise. */
+  var CUE_LOUD_AFTER = 2;   /* ignored twice: escalate ONCE, and only once */
+  var cueVerb = $("#banner-open-verb");
+  function cueBurst(){
+    if(cueRetired || reducedMotion) return;
+    cueBursts++;
+    if(cueBursts > CUE_LOUD_AFTER) banner.classList.add("is-cue-loud");
+    banner.classList.remove("is-burst");
+    void banner.offsetWidth;              /* forces the animation to restart */
+    banner.classList.add("is-burst");
+  }
+  function scheduleCue(delay){
+    if(cueRetired || reducedMotion || cueBursts >= CUE_MAX_BURSTS) return;
+    clearTimeout(cueTimer);
+    cueTimer = setTimeout(function(){
+      cueBurst();
+      scheduleCue(7000 + cueBursts * 2000); /* the gaps stretch as it goes on */
+    }, delay);
+  }
+  /* A fresh number is the best possible moment to point at the brief, so every
+     change to the strip re-arms the next burst. Still capped, so it can never
+     turn into the permanent loop that made the last cue invisible. */
+  function nudgeCue(){
+    if(cueRetired || !banner.classList.contains("is-cueing")) return;
+    scheduleCue(1200);
+  }
+  banner.addEventListener("animationend", function(e){
+    if(e.animationName === "pe-cue-lift") banner.classList.remove("is-burst");
+  });
   function startCue(){
     if(cueRetired) return;
     banner.classList.add("is-cueing");
-    var txt = $("#banner-open-text");
-    if(txt) txt.textContent = CUE_VERB + " FOR THE FULL BRIEF +";
+    if(cueVerb) cueVerb.textContent = CUE_VERB + " FOR THE";
     bannerHit.setAttribute("aria-label", CUE_VERB.toLowerCase() + " to open the full brief");
+    scheduleCue(1100);
   }
   function retireCue(){
     cueRetired = true;
-    banner.classList.remove("is-cueing");
-    var txt = $("#banner-open-text");
-    if(txt) txt.textContent = "THE FULL BRIEF +";
+    clearTimeout(cueTimer);
+    banner.classList.remove("is-cueing", "is-burst", "is-cue-loud");
+    if(cueVerb) cueVerb.textContent = "";
     bannerHit.removeAttribute("aria-label");
   }
   function openSheet(){
     retireCue(); /* they found it; stop pointing at it */
     renderBrief($("#sheet-brief"), true, true);
     var t = summaryTexts();
-    $("#sheet-amount").textContent = t ? ((t.bespoke || t.minimumOnly) ? t.amount : t.amount + " / head") : "";
-    $("#sheet-meta").textContent = t ? t.meta : "";
+    var L = ledgerTexts();  /* the sheet closes on the same reading the strip opened with */
+    $("#sheet-label").textContent = L ? L.label : "";
+    $("#sheet-amount").textContent = L ? L.amount : "";
+    $("#sheet-meta").textContent = L ? L.meta : "";
     var dj = $('input[name="dj-type"]:checked');
     var ext = djCheck.checked && dj && dj.value === "external";
     var dep = $("#sheet-deposit");
@@ -2594,19 +2760,25 @@ body.pe-done .pe-rail{display:none!important;}
     if(wrapB) wrapB.hidden = !show;
     if(wrapR) wrapR.hidden = !show;
     if(!show) return;
-    var msg = p.met ? MIN_MET_MSG
-      : money(p.qualifying) + " of " + money(p.minimum) + " minimum · " +
-        money(p.gap) + " to go";
+    /* One string of four figures was unreadable at any size that fits here, so
+       it is split by importance. The GAP leads, because it is the one number
+       the bar cannot draw and the only one that tells you what to do next. The
+       ratio trails as context, smaller, because the bar is already showing it. */
+    var lead = p.met ? MIN_MET_MSG : money(p.gap) + " to go";
+    var tail = p.met ? "" : money(p.qualifying) + " of " + money(p.minimum) + " minimum";
     var aria = p.met ? MIN_MET_MSG
       : money(p.qualifying) + " of a " + money(p.minimum) + " minimum for " + calLongDate(calPicks[0]);
-    [["#pe-progress-msg","#pe-progress-fill","#pe-progress-track"],
-     ["#rail-progress-msg","#rail-progress-fill",null]].forEach(function(ids){
-      var m = $(ids[0]), f = $(ids[1]);
-      if(m){ m.textContent = msg; m.classList.toggle("is-met", !!p.met); }
-      if(f) f.style.width = p.pct.toFixed(1) + "%";
-      var tr = ids[2] && $(ids[2]);
-      if(tr) tr.setAttribute("aria-label", aria);
-    });
+    [["#pe-progress-msg","#pe-progress-lead","#pe-progress-of","#pe-progress-fill","#pe-progress-track"],
+     ["#rail-progress-msg","#rail-progress-lead","#rail-progress-of","#rail-progress-fill",null]]
+      .forEach(function(ids){
+        var m = $(ids[0]), ld = $(ids[1]), of = $(ids[2]), f = $(ids[3]);
+        if(m) m.classList.toggle("is-met", !!p.met);
+        if(ld) ld.textContent = lead;
+        if(of) of.textContent = tail;
+        if(f) f.style.width = p.pct.toFixed(1) + "%";
+        var tr = ids[4] && $(ids[4]);
+        if(tr) tr.setAttribute("aria-label", aria);
+      });
     if(wrapR) wrapR.querySelector(".rail-progress__track").setAttribute("aria-label", aria);
   }
 
