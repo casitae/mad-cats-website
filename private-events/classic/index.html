@@ -552,8 +552,8 @@ body.has-banner{padding-bottom:calc(var(--pe-banner-h, 120px) + var(--sp-4));}
 /* The minimum-spend progress follows the guest into the expanded brief. It was
    disappearing on open, which is exactly when someone is deciding what else to
    add, so it sits above the summary rather than below it. */
-.sheet-progress{display:grid;gap:var(--sp-2);padding:0 0 var(--sp-4);
-  border-bottom:1px solid rgba(243,236,223,.35);margin-bottom:var(--sp-4);}
+.sheet-progress{display:grid;gap:var(--sp-2);padding:var(--sp-4) 0 0;
+  border-top:1px solid rgba(243,236,223,.35);margin-top:var(--sp-4);}
 .sheet-progress[hidden]{display:none;}
 .sheet-progress__msg{margin:0;display:flex;flex-wrap:wrap;align-items:baseline;gap:2px var(--sp-3);}
 .sheet-progress__lead{font-family:var(--mc-font-mono);font-size:17px;font-weight:600;line-height:1.3;
@@ -616,6 +616,9 @@ button.pe-brief__group:focus-visible{outline:1.5px solid currentColor;outline-of
 .pe-brief__price{font-family:var(--mc-font-mono);font-size:15px;font-weight:600;line-height:1.4;
   white-space:nowrap;font-variant-numeric:tabular-nums;margin-left:auto;color:var(--mc-oxblood);}
 .pe-brief--cream .pe-brief__price{color:var(--mc-oxblood);}
+/* the raised plus: smaller, lifted, and hard against the last character */
+.pe-brief__plus{font-size:.6em;line-height:1;vertical-align:super;margin-left:.5px;
+  font-weight:600;opacity:.8;}
 .pe-brief__subnote{display:block;font-family:var(--mc-font-mono);font-size:12px;line-height:1.5;color:var(--mc-taupe);margin-top:2px;}
 /* accent-surface flavour: dense info = dark ink per DS rule; icons + markers turn cream */
 .pe-brief--sheet .pe-brief__icon{color:var(--mc-cream);}
@@ -1204,6 +1207,7 @@ body.pe-done .pe-rail{display:none!important;}
       <span class="t-overline pe-sheet__title">YOUR BRIEF · SO FAR</span>
       <button class="pe-sheet__close" id="pe-sheet-close" type="button" aria-label="Close">×</button>
     </div>
+    <div class="pe-brief pe-brief--sheet" id="sheet-brief"></div>
     <div class="sheet-progress" id="sheet-progress" hidden>
       <p class="sheet-progress__msg">
         <span class="sheet-progress__lead" id="sheet-progress-lead"></span>
@@ -1213,7 +1217,6 @@ body.pe-done .pe-rail{display:none!important;}
         <span class="sheet-progress__fill" id="sheet-progress-fill"></span>
       </span>
     </div>
-    <div class="pe-brief pe-brief--sheet" id="sheet-brief"></div>
     <div class="pe-sheet__foot" id="sheet-foot">
       <span class="pe-sheet__foot-label" id="sheet-label"></span>
       <span class="pe-sheet__foot-amount" id="sheet-amount"></span>
@@ -2348,7 +2351,9 @@ body.pe-done .pe-rail{display:none!important;}
     food:    '<svg ' + ICON_ATTRS + '><path d="M3.25 2.75h9.5c-.35 2.85-2.3 4.45-4.75 4.45S3.6 5.6 3.25 2.75Z"/><path d="M8 7.25v5"/><path d="M5.5 13.25h5"/></svg>',
     addons:  '<svg ' + ICON_ATTRS + '><circle cx="8" cy="8" r="5.75"/><path d="M8 5.75v4.5M5.75 8h4.5"/></svg>',
     dates:   '<svg ' + ICON_ATTRS + '><rect x="2.25" y="3.25" width="11.5" height="10.5" rx="1.5"/><path d="M2.5 6.75h11M5.5 1.75v3M10.5 1.75v3"/></svg>',
-    contact: '<svg ' + ICON_ATTRS + '><rect x="2.25" y="3.75" width="11.5" height="8.5" rx="1.5"/><path d="M2.75 4.75 8 8.9l5.25-4.15"/></svg>'
+    contact: '<svg ' + ICON_ATTRS + '><rect x="2.25" y="3.75" width="11.5" height="8.5" rx="1.5"/><path d="M2.75 4.75 8 8.9l5.25-4.15"/></svg>',
+    /* a coin with the level being raised: a floor, topped up to meet it */
+    money:   '<svg ' + ICON_ATTRS + '><circle cx="8" cy="9.25" r="4.5"/><path d="M8 11.5V7"/><path d="M6.25 8.75 8 7l1.75 1.75"/><path d="M3.5 3.25h9"/></svg>'
   };
 
   function briefGroups(includeContact){
@@ -2429,7 +2434,7 @@ body.pe-done .pe-rail{display:none!important;}
           text: CAL_DAYS[d.getDay()].slice(0, 3) + " " + d.getDate() + " " +
                 CAL_MONTHS[d.getMonth()].slice(0, 3) + " " + d.getFullYear() +
                 " (" + Math.round(chanceFor(d) * 100) + "% est. availability)",
-          price: dMin === null ? "pick a space" : money(dMin) };
+          price: dMin === null ? "pick a space" : money(dMin), plus: dMin !== null };
         if(i === 0){
           row.sub = (calPicks.length > 1
             ? "Your first choice sets the minimum. "
@@ -2437,15 +2442,27 @@ body.pe-done .pe-rail{display:none!important;}
         }
         return row;
       });
-      /* If the options do not reach the minimum, the brief states the surcharge
-         plainly rather than leaving the guest to subtract. */
+      groups.push({ icon: "dates", label: "Dates · best first · minimum spend", target: "#sec-date", items: di });
+
+      /* The surcharge gets its own section rather than hiding among the dates.
+         It is a single derived figure with a rule behind it, and the rule is
+         the part people query: it comes from the FIRST-choice date, because
+         that is the night being held. */
       var pr = minProgress();
       if(pr && !pr.bespoke && pr.qualifying !== null && !pr.met){
-        di.push({ text: "Surcharge to reach minimum spend", price: money(pr.gap),
-          sub: "Charged as venue hire only if the minimum is not reached on the night." });
+        var sd = calPicks[0], sMin = minimumFor(sd);
+        var items = [{ text: "To reach the minimum", price: money(pr.gap),
+          sub: "Your first choice, " + calLongDate(sd) + ", carries a " +
+               money(sMin) + " minimum. Your options come to " + money(pr.qualifying) +
+               " of it, so the difference is charged as venue hire if the minimum is " +
+               "not reached on the night." }];
+        if(minimumsDiffer()){
+          items.push({ text: "If another date is confirmed",
+            sub: "Your other dates carry different minimums, listed above. Whichever " +
+                 "night is confirmed sets the figure, and we recalculate it with you." });
+        }
+        groups.push({ icon: "money", label: "Minimum spend top-up", target: "#sec-date", items: items });
       }
-
-      groups.push({ icon: "dates", label: "Dates · best first · minimum spend", target: "#sec-date", items: di });
     }
     return groups;
   }
@@ -2481,6 +2498,15 @@ body.pe-done .pe-rail{display:none!important;}
         line.appendChild(val);
         if(it.price){
           var pr = document.createElement("span"); pr.className = "pe-brief__price"; pr.textContent = it.price;
+          /* A small raised plus, tight against the last digit, says "at least
+             this" without spending a word on it. Used only where the figure is
+             a floor, never where it is an exact charge. */
+          if(it.plus){
+            var pl = document.createElement("span"); pl.className = "pe-brief__plus";
+            pl.textContent = "+"; pl.setAttribute("aria-hidden", "true");
+            pr.appendChild(pl);
+            pr.setAttribute("aria-label", it.price + " minimum");
+          }
           line.appendChild(pr);
         }
         item.appendChild(line);
