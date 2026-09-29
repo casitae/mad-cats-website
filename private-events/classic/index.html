@@ -617,8 +617,9 @@ button.pe-brief__group:focus-visible{outline:1.5px solid currentColor;outline-of
   white-space:nowrap;font-variant-numeric:tabular-nums;margin-left:auto;color:var(--mc-oxblood);}
 .pe-brief--cream .pe-brief__price{color:var(--mc-oxblood);}
 /* the raised plus: smaller, lifted, and hard against the last character */
-.pe-brief__plus{font-size:.6em;line-height:1;vertical-align:super;margin-left:.5px;
-  font-weight:600;opacity:.8;}
+/* raised, but not so small it reads as a typo: at .6em it was being missed */
+.pe-brief__plus{font-size:.8em;line-height:1;vertical-align:super;margin-left:1px;
+  font-weight:600;opacity:1;}
 .pe-brief__subnote{display:block;font-family:var(--mc-font-mono);font-size:12px;line-height:1.5;color:var(--mc-taupe);margin-top:2px;}
 /* accent-surface flavour: dense info = dark ink per DS rule; icons + markers turn cream */
 .pe-brief--sheet .pe-brief__icon{color:var(--mc-cream);}
