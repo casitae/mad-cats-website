@@ -549,6 +549,22 @@ body.has-banner{padding-bottom:calc(var(--pe-banner-h, 120px) + var(--sp-4));}
 .pe-banner__cta-verb{display:none;}
 .pe-banner__cta-verb:empty{display:none!important;}
 
+/* The minimum-spend progress follows the guest into the expanded brief. It was
+   disappearing on open, which is exactly when someone is deciding what else to
+   add, so it sits above the summary rather than below it. */
+.sheet-progress{display:grid;gap:var(--sp-2);padding:0 0 var(--sp-4);
+  border-bottom:1px solid rgba(243,236,223,.35);margin-bottom:var(--sp-4);}
+.sheet-progress[hidden]{display:none;}
+.sheet-progress__msg{margin:0;display:flex;flex-wrap:wrap;align-items:baseline;gap:2px var(--sp-3);}
+.sheet-progress__lead{font-family:var(--mc-font-mono);font-size:17px;font-weight:600;line-height:1.3;
+  color:var(--mc-cream);font-variant-numeric:tabular-nums;}
+.sheet-progress__of{font-family:var(--mc-font-mono);font-size:13px;line-height:1.5;
+  color:var(--mc-cream);opacity:.8;font-variant-numeric:tabular-nums;}
+.sheet-progress__track{position:relative;display:block;height:4px;
+  border-bottom:1px solid rgba(243,236,223,.35);}
+.sheet-progress__fill{position:absolute;left:0;top:0;height:4px;width:0;
+  border-bottom:4px solid var(--mc-cream);transition:width .4s ease;}
+
 /* A4 — the order sheet (accent surface; menu-overlay precedent) */
 .pe-sheet{position:fixed;left:0;right:0;bottom:0;z-index:46;background:var(--mc-orange);
   max-height:82vh;overflow:auto;overscroll-behavior:contain;
@@ -698,7 +714,7 @@ body.pe-done .pe-rail{display:none!important;}
   .field__tick,.pe-sec-tick,.field__check-box::after,.addon-ph,.pe-sheet,.pe-sheet.is-open{transition:none;}
   .field__label-text.is-swapping,.is-reinked{animation:none;}
   .pe-guide{transition:none;} /* static arrow: no pulse, instant relocation */
-  .pe-progress__fill,.rail-progress__fill{transition:none;}
+  .pe-progress__fill,.rail-progress__fill,.sheet-progress__fill{transition:none;}
   /* the cue still reads as a cue, it just stops moving. With the swell and the
      glow switched off, the chip carries it on its own: it goes solid cream on
      orange the moment the cue starts, which is the loudest STATIC state the
@@ -1187,6 +1203,15 @@ body.pe-done .pe-rail{display:none!important;}
       <span class="t-overline pe-sheet__title">YOUR BRIEF · SO FAR</span>
       <button class="pe-sheet__close" id="pe-sheet-close" type="button" aria-label="Close">×</button>
     </div>
+    <div class="sheet-progress" id="sheet-progress" hidden>
+      <p class="sheet-progress__msg">
+        <span class="sheet-progress__lead" id="sheet-progress-lead"></span>
+        <span class="sheet-progress__of" id="sheet-progress-of"></span>
+      </p>
+      <span class="sheet-progress__track" role="img" id="sheet-progress-track">
+        <span class="sheet-progress__fill" id="sheet-progress-fill"></span>
+      </span>
+    </div>
     <div class="pe-brief pe-brief--sheet" id="sheet-brief"></div>
     <div class="pe-sheet__foot" id="sheet-foot">
       <span class="pe-sheet__foot-label" id="sheet-label"></span>
@@ -1633,11 +1658,23 @@ body.pe-done .pe-rail{display:none!important;}
     var g = effGuests();
     var addons = selectedAddonTotals(g);
     var mode = currentConsumption() === "drinks" ? "drinks" : "food";
-    if(pkg === "bespoke") return { bespoke: true, g: g, addons: addons, mode: mode };
+    var minimum = currentMinimum();
+    if(pkg === "bespoke") return { bespoke: true, g: g, addons: addons, mode: mode, minimum: minimum };
     var rate = PRICING.packages[pkg][mode];
+    /* `base` is what the chosen options come to. `qualifying` is the part of
+       that which counts toward the minimum, so it excludes external DJ and
+       live entertainment. If qualifying falls short, the venue charges the
+       difference as venue hire, so it is a real cost and it BELONGS IN THE
+       TOTAL. Leaving it out was showing guests an estimate below a minimum
+       they were always going to pay. */
+    var base = g ? rate * g.n + addons : null;
+    var qualifying = (base === null) ? null : base - offMinimumTotal(g);
+    var surcharge = (qualifying !== null && minimum !== null)
+      ? Math.max(0, minimum - qualifying) : 0;
     return { bespoke: false, g: g, addons: addons, mode: mode, rate: rate,
+             minimum: minimum, base: base, qualifying: qualifying, surcharge: surcharge,
              perHead: rate + (g ? addons / g.n : 0),
-             total: g ? rate * g.n + addons : null };
+             total: base === null ? null : base + surcharge };
   }
   function summaryTexts(){
     var s = computeSummary();
@@ -1718,12 +1755,23 @@ body.pe-done .pe-rail{display:none!important;}
     if(t.bespoke) return { label: "Bespoke", amount: t.amount, kind: "bespoke", value: null, meta: t.meta };
     var s = computeSummary();
     var hasTotal = s.total !== null;
-    return { label: hasTotal ? "Total · estimate" : "Per head",
-             amount: money(hasTotal ? s.total : s.perHead),
-             value: hasTotal ? s.total : s.perHead,
-             kind: hasTotal ? "total" : "perhead",
-             meta: hasTotal ? money(s.perHead) + " per head · " + s.g.n + " guests"
-                            : "add a guest count for the full total" };
+    if(!hasTotal) return { label: "Per head", amount: money(s.perHead), value: s.perHead,
+                           kind: "perhead", meta: "add a guest count for the full total" };
+    /* The minimum is stated beside the total in every state, never implied.
+       When the options fall short, the total already contains the top-up and
+       the line says so, so the figure and its explanation cannot drift apart. */
+    var meta;
+    if(s.surcharge > 0){
+      meta = "includes " + money(s.surcharge) + " to reach the " + money(s.minimum) +
+             " minimum · " + s.g.n + " guests";
+    } else if(s.minimum !== null){
+      meta = money(s.perHead) + " per head · " + s.g.n + " guests · " +
+             money(s.minimum) + " minimum met";
+    } else {
+      meta = money(s.perHead) + " per head · " + s.g.n + " guests";
+    }
+    return { label: "Total · estimate", amount: money(s.total), value: s.total,
+             kind: "total", meta: meta };
   }
 
   function refreshPricing(){ syncPortions(); renderQty(); renderAddonPrices(); updateBanner(); }
@@ -1817,9 +1865,12 @@ body.pe-done .pe-rail{display:none!important;}
       payload["minimum-spend"] = cm;
       payload["minimum-spend-basis"] = minBand(calPicks[0]) + " / " + minDayGroup(calPicks[0]);
       payload.dates.forEach(function(row, i){ row.minimum = minimumFor(calPicks[i]); });
-      var g0 = effGuests(), sum0 = computeSummary();
+      var sum0 = computeSummary();
       if(sum0 && !sum0.bespoke && sum0.total !== null){
-        payload["qualifying-total"] = sum0.total - offMinimumTotal(g0);
+        payload["options-total"] = sum0.base;        /* what they chose */
+        payload["qualifying-total"] = sum0.qualifying; /* what counts toward the minimum */
+        payload["minimum-surcharge"] = sum0.surcharge; /* charged as venue hire if unmet */
+        payload["estimated-total"] = sum0.total;     /* options + surcharge */
       }
     }
     /* Quantities live in JS state, not in a form field, so FormData never sees
@@ -2147,13 +2198,12 @@ body.pe-done .pe-rail{display:none!important;}
     if(minimum === null) return null;
     var pkg = selectedPackage();
     if(pkg === "bespoke") return { minimum: minimum, bespoke: true };
-    var sum = computeSummary(), g = effGuests();
-    if(!sum || sum.total === null || !g) return { minimum: minimum, qualifying: null };
-    var qualifying = sum.total - offMinimumTotal(g);
-    return { minimum: minimum, qualifying: qualifying,
-             gap: Math.max(0, minimum - qualifying),
-             met: qualifying >= minimum,
-             pct: Math.max(0, Math.min(100, (qualifying / minimum) * 100)) };
+    var sum = computeSummary();
+    if(!sum || sum.qualifying === null) return { minimum: minimum, qualifying: null };
+    return { minimum: minimum, qualifying: sum.qualifying,
+             gap: sum.surcharge,
+             met: sum.qualifying >= minimum,
+             pct: Math.max(0, Math.min(100, (sum.qualifying / minimum) * 100)) };
   }
   function offMinimumTotal(g){
     var off = 0;
@@ -2534,6 +2584,20 @@ body.pe-done .pe-rail{display:none!important;}
   bannerHit.addEventListener("click", function(){
     sheet.classList.contains("is-open") ? closeSheet() : openSheet();
   });
+  /* The progress bar and the grabber sit outside the button, so a tap on them
+     was doing nothing at all. Any tap on the orange band now behaves like the
+     button it visually belongs to. */
+  banner.addEventListener("click", function(e){
+    if(bannerHit.contains(e.target)) return; /* the button handles its own */
+    sheet.classList.contains("is-open") ? closeSheet() : openSheet();
+  });
+  /* Tapping the page behind dismisses the sheet, the way a bottom sheet is
+     expected to behave. The banner is excluded because it is the control. */
+  document.addEventListener("click", function(e){
+    if(!sheet.classList.contains("is-open")) return;
+    if(sheet.contains(e.target) || banner.contains(e.target)) return;
+    closeSheet();
+  });
   $("#pe-sheet-close").addEventListener("click", closeSheet);
   document.addEventListener("keydown", function(e){ if(e.key === "Escape") closeSheet(); });
 
@@ -2718,8 +2782,11 @@ body.pe-done .pe-rail{display:none!important;}
     }
     track.hidden = false;
 
-    var sum = computeSummary();
-    var qualifying = (sum && sum.total !== null && g) ? sum.total - offMinimumTotal(g) : null;
+    /* Read the shared calculation rather than deriving it again. The total now
+       contains the surcharge, so recomputing qualifying from it double-counted
+       and reported every booking as already at the minimum. */
+    var prog = minProgress();
+    var qualifying = (prog && !prog.bespoke) ? prog.qualifying : null;
     if(qualifying === null){
       fig.textContent = money(minimum);
       fill.style.width = "0%";
@@ -2727,7 +2794,7 @@ body.pe-done .pe-rail{display:none!important;}
       ways.hidden = true;
       return;
     }
-    var pct = Math.max(0, Math.min(100, (qualifying / minimum) * 100));
+    var pct = prog.pct;
     fill.style.width = pct.toFixed(1) + "%";
     fig.textContent = money(qualifying) + " ESTIMATE of " + money(minimum);
     track.setAttribute("aria-label", money(qualifying) + " of a " + money(minimum) +
@@ -2735,11 +2802,11 @@ body.pe-done .pe-rail{display:none!important;}
 
     var offAmt = offMinimumTotal(g);
     var offNote = offAmt > 0 ? " External DJ and live entertainment are not counted toward it." : "";
-    if(qualifying >= minimum){
+    if(prog.met){
       note.textContent = "You are at the minimum for this date." + offNote;
       ways.hidden = true;
     } else {
-      var gap = minimum - qualifying;
+      var gap = prog.gap;
       note.textContent = money(gap) + " to go." +
         (minimumsDiffer() ? " Your other dates carry different minimums, listed above." : "") + offNote;
       var list = waysToClose(gap, g);
@@ -2754,11 +2821,14 @@ body.pe-done .pe-rail{display:none!important;}
      they can never disagree. Both hide until there is a real number to show. */
   function renderProgressBars(){
     var p = minProgress();
-    var wrapB = $("#pe-progress"), wrapR = $("#rail-progress");
+    var wrapB = $("#pe-progress"), wrapR = $("#rail-progress"), wrapS = $("#sheet-progress");
     var show = !!(p && !p.bespoke && p.qualifying !== null);
     document.body.classList.toggle("has-progress", show);
     if(wrapB) wrapB.hidden = !show;
     if(wrapR) wrapR.hidden = !show;
+    /* the expanded brief keeps it too: that is the moment someone is deciding
+       what else to add, so hiding it there was hiding it when it mattered most */
+    if(wrapS) wrapS.hidden = !show;
     if(!show) return;
     /* One string of four figures was unreadable at any size that fits here, so
        it is split by importance. The GAP leads, because it is the one number
@@ -2769,9 +2839,10 @@ body.pe-done .pe-rail{display:none!important;}
     var aria = p.met ? MIN_MET_MSG
       : money(p.qualifying) + " of a " + money(p.minimum) + " minimum for " + calLongDate(calPicks[0]);
     [["#pe-progress-msg","#pe-progress-lead","#pe-progress-of","#pe-progress-fill","#pe-progress-track"],
-     ["#rail-progress-msg","#rail-progress-lead","#rail-progress-of","#rail-progress-fill",null]]
+     ["#rail-progress-msg","#rail-progress-lead","#rail-progress-of","#rail-progress-fill",null],
+     [null,"#sheet-progress-lead","#sheet-progress-of","#sheet-progress-fill","#sheet-progress-track"]]
       .forEach(function(ids){
-        var m = $(ids[0]), ld = $(ids[1]), of = $(ids[2]), f = $(ids[3]);
+        var m = ids[0] && $(ids[0]), ld = $(ids[1]), of = $(ids[2]), f = $(ids[3]);
         if(m) m.classList.toggle("is-met", !!p.met);
         if(ld) ld.textContent = lead;
         if(of) of.textContent = tail;
