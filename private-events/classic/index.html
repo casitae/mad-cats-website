@@ -888,6 +888,7 @@ body.pe-done .pe-rail{display:none!important;}
       <!-- ——— 03 · Food & drink ——— -->
       <fieldset class="pe-section" id="sec-package">
         <legend class="pe-section__label"><span class="pe-section__num">04<span class="pe-sec-tick" data-sec="package" aria-hidden="true"> ✓</span></span><span class="pe-section__title">Food &amp; drink</span></legend>
+        <p class="pe-section__lead">Packages are a starting point, not a fixed menu. We send the full detail by email as soon as you send this through, and your events specialist can adjust any of it with you.</p>
         <div class="pe-fields">
           <div class="field" id="f-consumption" data-radio-group="consumption">
             <span class="field__label" id="consumption-label">FOOD AND DRINKS, OR JUST DRINKS?</span>
@@ -903,13 +904,13 @@ body.pe-done .pe-rail{display:none!important;}
               <label class="pkg-card">
                 <input class="sr-input" type="radio" name="package" value="standard">
                 <span class="pkg-card__head"><span class="pkg-card__name">Standard</span><span class="pkg-card__price"><span class="pkg-card__amount" data-pkg="standard"></span><span class="pkg-card__per"> / head</span></span></span>
-                <span class="pkg-card__desc" data-food="Curated Classics menu + canapés." data-drinks="Curated classics, drinks-only.">Curated Classics menu + canapés.</span>
+                <span class="pkg-card__desc" data-food="Typically six food items and two cocktails." data-drinks="Two cocktails, drinks only.">Typically six food items and two cocktails.</span>
                 <span class="pkg-card__vat">Inclusive of VAT, exclusive of 12.5% service charge.</span>
               </label>
               <label class="pkg-card">
                 <input class="sr-input" type="radio" name="package" value="signature">
                 <span class="pkg-card__head"><span class="pkg-card__name">Signature</span><span class="pkg-card__price"><span class="pkg-card__amount" data-pkg="signature"></span><span class="pkg-card__per"> / head</span></span></span>
-                <span class="pkg-card__desc" data-food="Signature cocktails + expanded canapés." data-drinks="Signature cocktails, drinks-only.">Signature cocktails + expanded canapés.</span>
+                <span class="pkg-card__desc" data-food="Typically six food items and two cocktails, with premium plates." data-drinks="Two cocktails from the premium list, drinks only.">Typically six food items and two cocktails, with premium plates.</span>
                 <span class="pkg-card__vat">Inclusive of VAT, exclusive of 12.5% service charge.</span>
               </label>
               <label class="pkg-card">
@@ -1297,14 +1298,14 @@ body.pe-done .pe-rail{display:none!important;}
   /* ---- Package sell copy (Mad Cats voice — understated, specific) ---- */
   var SELL = {
     standard: {
-      food:   { label: "Standard · Food & Drinks", body: "The classics, because they work. A tight run of the dishes we're known for and the pours that never leave the list, served while the records turn. Nothing to decide on the night. It runs itself." },
-      drinks: { label: "Standard · Just Drinks",   body: "The pours that never leave the list, made properly and kept coming. Nothing to decide on the night." }
+      food:   { label: "Standard · Food & Drinks", body: "The classics, because they work. Typically six food items and two cocktails, served while the records turn. We send the full menu by email the moment this reaches us, and anything on it can be swapped with your events specialist." },
+      drinks: { label: "Standard · Just Drinks",   body: "Two cocktails, made properly and kept coming. We send the full list by email the moment this reaches us, and it can be adjusted with your events specialist." }
     },
     signature: {
-      food:   { label: "Signature · Food & Drinks", body: "The kitchen and the bar showing off, politely. Signature cocktails built for the room, canapés that keep arriving. A menu that reads like our record shelf: considered, a little unexpected." },
-      drinks: { label: "Signature · Just Drinks",   body: "Signature cocktails built for the room. The ones people ask about, made without fuss, kept coming." }
+      food:   { label: "Signature · Food & Drinks", body: "The kitchen showing off, politely. The same shape as Standard, typically six food items and two cocktails, with premium plates on the list: wagyu and crab among them. We send the full menu by email the moment this reaches us, and anything on it can be swapped with your events specialist." },
+      drinks: { label: "Signature · Just Drinks",   body: "Two cocktails from the premium list, made without fuss and kept coming. We send the full list by email the moment this reaches us, and it can be adjusted with your events specialist." }
     },
-    bespoke: { label: "Bespoke · by consultation", body: "We've put logos on drinks for brand launches and rebuilt the room for a single night. Bespoke events are shaped in a follow-up with our events team. No set menu, priced after a conversation." }
+    bespoke: { label: "Bespoke · by consultation", body: "We've put logos on drinks for brand launches and rebuilt the room for a single night. No set menu and no set shape. Bespoke events are built with our events team in a follow-up, and priced after a conversation." }
   };
 
   var $  = function(s,c){ return (c||document).querySelector(s); };
