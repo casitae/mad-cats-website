@@ -1596,8 +1596,16 @@ body.pe-done .pe-rail{display:none!important;}
       if(def.model === "noted"){ setReink(el, money(def.value) + " / head / dish"); return; }
       var total = addonAmount(key, g);
       if(total === null){ setReink(el, ""); return; }
-      setReink(el, (def.from ? "from " : "") +
-        (g ? money(total / g.n) + " / head" : money(total) + " flat"));
+      /* Lead with how the item is ACTUALLY priced. Normalising everything to a
+         per-head figure made a £45 cake read "£1.13 / head", which is both
+         unreconcilable with the £45 on the row beneath it and easily mistaken
+         for the pricing model being wrong. Per-head items say per head; flat
+         items say flat; per-unit items name the unit. */
+      var basis;
+      if(def.model === "perHead") basis = money(def.value) + " / head";
+      else if(def.qty)            basis = money(def.value) + " per " + def.qty.unit;
+      else                        basis = money(def.value) + (def.from ? "" : " flat");
+      setReink(el, (def.from ? "from " : "") + basis);
     });
     $$("[data-addon-sub]").forEach(function(el){
       var key = el.getAttribute("data-addon-sub");
@@ -1607,13 +1615,14 @@ body.pe-done .pe-rail{display:none!important;}
       if(def.model === "noted"){ setReink(el, "not included in your total"); return; }
       var total = addonAmount(key, g);
       if(total === null){ setReink(el, "select your space first"); return; }
-      var txt = (def.from ? "from " : "") + money(total) + " total" +
-        (def.model === "flat" ? " · flat" : "");
+      var txt = (def.from ? "from " : "") + money(total) + " total";
       if(def.qty){
         var n = qtyOf(key);
         txt += " · " + n + " " + (n === 1 ? def.qty.unit : def.qty.units) + " at " + money(def.value);
       }
       if(!g){ setReink(el, txt); return; }
+      /* the per-head equivalent is context, not the price, so it trails */
+      if(def.model !== "perHead") txt += " · " + money(total / g.n) + " per head";
       if(g.src === "space"){ txt += " · based on " + g.n + " guests, update your guest count above"; }
       else{ txt += " · at " + g.n + " guests"; }
       setReink(el, txt);
