@@ -1567,7 +1567,12 @@ body.pe-done .pe-rail{display:none!important;}
       var key = b.getAttribute("data-qty"), q = PRICING.addons[key].qty;
       var next = qtyOf(key) + parseInt(b.getAttribute("data-step"), 10);
       ADDON_QTY[key] = Math.max(q.min, Math.min(q.max, next));
-      refreshPricing();
+      /* refreshUX, not refreshPricing. These are <button>s, so they never fire
+         the form's change event that drives the full refresh. refreshPricing
+         alone left the minimum-spend progress and the in-page panel stale, so a
+         second cake updated its own row and the total but never counted toward
+         the minimum. */
+      refreshUX();
       if(!b.disabled) b.focus({ preventScroll: true }); /* the rebuild must not drop focus */
     });
   });
@@ -1720,10 +1725,7 @@ body.pe-done .pe-rail{display:none!important;}
       bannerShown = true;
       document.body.classList.add("has-banner");
       requestAnimationFrame(function(){ /* never re-show over the confirmation */
-        if(!document.body.classList.contains("pe-done")){
-          banner.classList.add("is-shown");
-          startCue();
-        }
+        if(!document.body.classList.contains("pe-done")) banner.classList.add("is-shown");
       });
     }
     banner.classList.toggle("pe-banner--bespoke", t.bespoke);
@@ -2455,7 +2457,11 @@ body.pe-done .pe-rail{display:none!important;}
           sub: "Your first choice, " + calLongDate(sd) + ", carries a " +
                money(sMin) + " minimum. Your options come to " + money(pr.qualifying) +
                " of it, so the difference is charged as venue hire if the minimum is " +
-               "not reached on the night." }];
+               "not reached on the night." },
+          { text: "Adding more costs you nothing yet",
+            sub: "Until the minimum is reached, anything you add comes out of this " +
+                 "top-up rather than on top of your total. Your total only moves once " +
+                 "you are past " + money(sMin) + "." }];
         if(minimumsDiffer()){
           items.push({ text: "If another date is confirmed",
             sub: "Your other dates carry different minimums, listed above. Whichever " +
@@ -2541,6 +2547,8 @@ body.pe-done .pe-rail{display:none!important;}
      in front of it actually does. */
   var CUE_VERB = (window.matchMedia && window.matchMedia("(pointer: coarse)").matches) ? "TAP" : "CLICK";
   var cueRetired = false, cueTimer = null, cueBursts = 0;
+  /* set the first time the minimum-spend bar appears, which gates the cue */
+  var progressSeen = false;
   var CUE_MAX_BURSTS = 5;   /* then it stops asking. A cue that never stops is noise. */
   var CUE_LOUD_AFTER = 2;   /* ignored twice: escalate ONCE, and only once */
   var cueVerb = $("#banner-open-verb");
@@ -2834,7 +2842,7 @@ body.pe-done .pe-rail{display:none!important;}
       ways.hidden = true;
     } else {
       var gap = prog.gap;
-      note.textContent = money(gap) + " to go." +
+      note.textContent = money(gap) + " to go. Anything you add comes out of this, not on top of your total." +
         (minimumsDiffer() ? " Your other dates carry different minimums, listed above." : "") + offNote;
       var list = waysToClose(gap, g);
       ways.innerHTML = "";
@@ -2856,6 +2864,10 @@ body.pe-done .pe-rail{display:none!important;}
     /* the expanded brief keeps it too: that is the moment someone is deciding
        what else to add, so hiding it there was hiding it when it mattered most */
     if(wrapS) wrapS.hidden = !show;
+    /* The cue waits for this bar. Before a package there is only a minimum on
+       screen and nothing to weigh it against, so prompting someone to open the
+       brief would be sending them to a near-empty summary. */
+    if(show && !progressSeen){ progressSeen = true; startCue(); }
     if(!show) return;
     /* One string of four figures was unreadable at any size that fits here, so
        it is split by importance. The GAP leads, because it is the one number
