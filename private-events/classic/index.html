@@ -231,6 +231,31 @@ html,body{overflow-x:clip;}
 .cal__day[data-rank="3"] .cal__rank{background:var(--mc-taupe);color:var(--mc-ink-dark);}
 .cal__day:disabled{cursor:default;}
 .cal__day:disabled:hover{border-color:transparent;}
+/* ---- Guest count: a stepper either side of a field sized for two digits ----
+   The count is almost always two digits and capped at 75, so a full-width box
+   invited a stray third digit and looked like a text field. Buttons match the
+   quantity steppers already used for add-ons. */
+.guests{display:flex;align-items:stretch;gap:var(--sp-3);}
+.guests__btn{flex:0 0 52px;width:52px;min-height:52px;display:flex;align-items:center;
+  justify-content:center;background:transparent;border:1px solid var(--mc-separator);
+  border-radius:var(--mc-radius);font-family:var(--mc-font-mono);font-size:26px;line-height:1;
+  color:var(--mc-oxblood);cursor:pointer;transition:border-color .15s ease,color .15s ease;}
+.guests__btn:hover:not(:disabled){border-color:var(--mc-orange);color:var(--mc-orange);}
+.guests__btn:focus-visible{outline:none;border-color:var(--mc-orange);border-width:1.5px;}
+.guests__btn:disabled{opacity:.35;cursor:default;}
+.guests__input{flex:0 0 96px;width:96px;text-align:center;font-size:22px;font-weight:500;
+  font-variant-numeric:tabular-nums;padding-inline:var(--sp-2);}
+/* the spinners duplicate the buttons and crowd a 96px field */
+.guests__input::-webkit-outer-spin-button,
+.guests__input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+.guests__input{-moz-appearance:textfield;appearance:textfield;}
+/* the figure rolls in the direction it is travelling, so a press reads as a
+   change of value rather than a redraw */
+@keyframes guests-up{from{transform:translateY(42%);opacity:.25;}to{transform:none;opacity:1;}}
+@keyframes guests-down{from{transform:translateY(-42%);opacity:.25;}to{transform:none;opacity:1;}}
+.guests__input.is-up{animation:guests-up .22s cubic-bezier(.22,.9,.3,1);}
+.guests__input.is-down{animation:guests-down .22s cubic-bezier(.22,.9,.3,1);}
+
 /* ---- Minimum spend: progress, never a deficit. No red, no error state. ----
    A total under the minimum is a perfectly normal enquiry and still submits. */
 .minspend{margin-top:var(--sp-6);padding-top:var(--sp-6);border-top:1px solid var(--mc-separator);}
@@ -293,6 +318,16 @@ html,body{overflow-x:clip;}
 .season-tag:focus-visible ~ .season-tip,
 .season-wrap.is-open .season-tip{opacity:1;visibility:visible;}
 @media (max-width:520px){ .season-tip{width:min(252px, calc(100vw - 2 * var(--mc-gutter)));} }
+/* on the orange surfaces the tag inverts, and its bubble keeps the cream
+   ground so the text stays readable rather than orange on orange */
+.season-wrap--onaccent .season-tag{color:var(--mc-cream);border-color:rgba(243,236,223,.6);}
+.season-wrap--onaccent .season-tag:focus-visible{border-color:var(--mc-cream);}
+.season-wrap--onaccent .season-tip{color:var(--mc-oxblood);background:var(--mc-cream);
+  border-color:var(--mc-cream);}
+/* in the narrow rail and the brief the tag sits on its own line rather than
+   squeezing the figure */
+.pe-brief__line .season-wrap{margin-left:0;}
+.pe-rail__foot .season-wrap,.pe-sheet__foot .season-wrap{margin-left:var(--sp-2);}
 .minspend__hours,.minspend__route{font-family:var(--mc-font-mono);font-size:11px;line-height:1.5;
   color:var(--mc-taupe);margin:var(--sp-2) 0 0;}
 .minspend__route{color:var(--mc-oxblood);}
@@ -760,6 +795,7 @@ body.pe-done .pe-rail{display:none!important;}
   .field__label-text.is-swapping,.is-reinked{animation:none;}
   .pe-guide{transition:none;} /* static arrow: no pulse, instant relocation */
   .pe-progress__fill,.rail-progress__fill,.sheet-progress__fill,.season-tip{transition:none;}
+  .guests__input.is-up,.guests__input.is-down{animation:none;}
   /* the cue still reads as a cue, it just stops moving. With the swell and the
      glow switched off, the chip carries it on its own: it goes solid cream on
      orange the moment the cue starts, which is the loudest STATIC state the
@@ -818,7 +854,11 @@ body.pe-done .pe-rail{display:none!important;}
           </div>
           <div class="field" id="f-guests">
             <label class="field__label" for="guests">GUEST COUNT</label>
-            <input class="field__input" id="guests" name="guests" type="number" min="1" inputmode="numeric" placeholder="How many are coming?">
+            <div class="guests">
+              <button class="guests__btn" id="guests-down" type="button" aria-label="One guest fewer">&minus;</button>
+              <input class="field__input guests__input" id="guests" name="guests" type="number" min="1" max="75" inputmode="numeric" placeholder="00" autocomplete="off">
+              <button class="guests__btn" id="guests-up" type="button" aria-label="One guest more">+</button>
+            </div>
             <p class="field__msg" id="guests-msg" hidden></p>
             <p class="pe-ack" id="guests-ack" hidden></p>
           </div>
@@ -1426,6 +1466,35 @@ body.pe-done .pe-rail{display:none!important;}
     $$('input[name="' + name + '"]').forEach(function(r){ r.addEventListener("change", fn); });
   }
 
+  /* ---- guest count stepper ----
+     A second way in alongside typing. Clamped to the chosen space's capacity
+     so the buttons can never walk past a cap the field would then reject. */
+  function guestsStep(delta){
+    var el = $("#guests");
+    var cap = PRICING.capacities[gv("space")] || 75;
+    var now = parseInt(el.value, 10);
+    if(isNaN(now) || now < 1) now = delta > 0 ? 0 : 1;   /* first press starts at 1 */
+    var next = Math.max(1, Math.min(cap, now + delta));
+    if(next === now) return;
+    el.value = String(next);
+    el.classList.remove("is-up", "is-down");
+    void el.offsetWidth;                                  /* restart the animation */
+    el.classList.add(delta > 0 ? "is-up" : "is-down");
+    el.dispatchEvent(new Event("input", { bubbles: true }));
+    syncGuestButtons();
+  }
+  function syncGuestButtons(){
+    var el = $("#guests"), up = $("#guests-up"), down = $("#guests-down");
+    if(!el || !up || !down) return;
+    var cap = PRICING.capacities[gv("space")] || 75;
+    var now = parseInt(el.value, 10);
+    down.disabled = !isNaN(now) && now <= 1;
+    up.disabled   = !isNaN(now) && now >= cap;
+  }
+  $("#guests-up").addEventListener("click", function(){ guestsStep(1); });
+  $("#guests-down").addEventListener("click", function(){ guestsStep(-1); });
+  $("#guests").addEventListener("input", syncGuestButtons);
+
   /* ---- 01 · The space: guest count capped by chosen space ---- */
   /* Bar Area cap of 40 is a PLACEHOLDER, TBC with venue. */
   var CAP_MSGS = {
@@ -1472,7 +1541,7 @@ body.pe-done .pe-rail{display:none!important;}
   /* the space drives the availability tier and the Tue–Sat rule as well as the
      price, so a change has to re-run the whole UX, not just the pricing */
   onGroup("space", function(){
-    clearMsg(fSpace, spaceMsg); guestsOk(); dropOffNightPicks(); refreshUX();
+    clearMsg(fSpace, spaceMsg); guestsOk(); dropOffNightPicks(); syncGuestButtons(); refreshUX();
   });
   guests.addEventListener("input", function(){ guestsOk(); refreshPricing(); });
 
@@ -1822,6 +1891,11 @@ body.pe-done .pe-rail{display:none!important;}
     banner.classList.toggle("pe-banner--bespoke", t.bespoke);
     var L = ledgerTexts();
     bannerLabel.textContent = L.label;
+    var bOld = banner.querySelector(".season-wrap"); if(bOld) bOld.remove();
+    if(calPicks.length){
+      var bt = seasonTagNode(calPicks[0], "onaccent");
+      if(bt) bannerLabel.parentNode.insertBefore(bt, bannerLabel.nextSibling);
+    }
     bannerMeta.textContent = L.meta;
     /* B2: the amount rolls like a till, but only while it is still the same
        figure. Flipping between per-head and total is a change of subject, not
@@ -2552,7 +2626,8 @@ body.pe-done .pe-rail{display:none!important;}
           text: CAL_DAYS[d.getDay()].slice(0, 3) + " " + d.getDate() + " " +
                 CAL_MONTHS[d.getMonth()].slice(0, 3) + " " + d.getFullYear() +
                 " (" + Math.round(chanceFor(d) * 100) + "% est. availability)",
-          price: dMin === null ? "pick a space" : money(dMin), plus: dMin !== null };
+          price: dMin === null ? "pick a space" : money(dMin), plus: dMin !== null,
+          seasonDate: dMin === null ? null : d };
         if(i === 0){
           row.sub = (calPicks.length > 1
             ? "Your first choice sets the minimum. "
@@ -2630,6 +2705,11 @@ body.pe-done .pe-rail{display:none!important;}
             pr.setAttribute("aria-label", it.price + " minimum");
           }
           line.appendChild(pr);
+          /* a busy-month date explains its own figure, right beside it */
+          if(it.seasonDate){
+            var stg = seasonTagNode(it.seasonDate, interactive ? "onaccent" : null);
+            if(stg) line.appendChild(stg);
+          }
         }
         item.appendChild(line);
         if(it.sub){
@@ -2654,6 +2734,8 @@ body.pe-done .pe-rail{display:none!important;}
       $("#rail-label").textContent = L.label;
       $("#rail-amount").textContent = L.amount;
       $("#rail-meta").textContent = L.meta;
+      var rOld = railFoot.querySelector(".season-wrap"); if(rOld) rOld.remove();
+      if(calPicks.length){ var rt = seasonTagNode(calPicks[0]); if(rt) $("#rail-label").after(rt); }
     }
   }
 
@@ -2715,6 +2797,10 @@ body.pe-done .pe-rail{display:none!important;}
     var L = ledgerTexts();  /* the sheet closes on the same reading the strip opened with */
     $("#sheet-label").textContent = L ? L.label : "";
     $("#sheet-amount").textContent = L ? L.amount : "";
+    var sFoot = $("#sheet-foot");
+    var sOld = sFoot.querySelector(".season-wrap"); if(sOld) sOld.remove();
+    if(L && calPicks.length){ var st = seasonTagNode(calPicks[0], "onaccent");
+      if(st) $("#sheet-label").after(st); }
     $("#sheet-meta").textContent = L ? L.meta : "";
     var dj = $('input[name="dj-type"]:checked');
     var ext = djCheck.checked && dj && dj.value === "external";
@@ -3024,27 +3110,54 @@ body.pe-done .pe-rail{display:none!important;}
     if(wrapR) wrapR.querySelector(".rail-progress__track").setAttribute("aria-label", aria);
   }
 
-  /* hover covers the mouse; tap has to be wired by hand */
-  (function(){
-    var wrap = $("#minspend-season-wrap"), tag = $("#minspend-season");
-    if(!wrap || !tag) return;
-    tag.addEventListener("click", function(e){
-      e.stopPropagation();
-      var open = wrap.classList.toggle("is-open");
-      tag.setAttribute("aria-expanded", open ? "true" : "false");
+  /* ---- season tag, built once and reused ----
+     The tag has to ride with every prominent figure, not only the one in the
+     calendar section. Someone who reads £7,400 on the sticky strip and never
+     scrolls back to a badge further up concludes the venue is simply dear. */
+  var SEASON_TIP = "Your first choice falls in one of our busiest months, so the " +
+    "minimum reflects what the venue would normally take that night. Try another " +
+    "month for a lower minimum.";
+  var seasonSeq = 0;
+  function seasonTagNode(d, variant){
+    var label = bandLabel(d);
+    if(!label) return null;                 /* quiet and standard go untagged */
+    var id = "season-tip-" + (++seasonSeq);
+    var wrap = document.createElement("span");
+    wrap.className = "season-wrap" + (variant ? " season-wrap--" + variant : "");
+    var btn = document.createElement("button");
+    btn.type = "button"; btn.className = "season-tag";
+    btn.textContent = label;
+    btn.setAttribute("data-band", minBand(d));
+    btn.setAttribute("aria-describedby", id);
+    btn.setAttribute("aria-expanded", "false");
+    var tip = document.createElement("span");
+    tip.className = "season-tip"; tip.id = id; tip.setAttribute("role", "tooltip");
+    tip.textContent = SEASON_TIP;
+    wrap.appendChild(btn); wrap.appendChild(tip);
+    return wrap;
+  }
+  /* Delegated, so it covers the static tag in the panel and every one built
+     on the fly, and so only one bubble is ever open at a time. */
+  document.addEventListener("click", function(e){
+    var btn = e.target.closest && e.target.closest(".season-tag");
+    $$(".season-wrap.is-open").forEach(function(w){
+      if(btn && w.contains(btn)) return;
+      w.classList.remove("is-open");
+      var b = w.querySelector(".season-tag"); if(b) b.setAttribute("aria-expanded", "false");
     });
-    document.addEventListener("click", function(){
-      if(!wrap.classList.contains("is-open")) return;
-      wrap.classList.remove("is-open");
-      tag.setAttribute("aria-expanded", "false");
+    if(!btn) return;
+    e.stopPropagation(); e.preventDefault();
+    var wrap = btn.closest(".season-wrap");
+    var open = wrap.classList.toggle("is-open");
+    btn.setAttribute("aria-expanded", open ? "true" : "false");
+  });
+  document.addEventListener("keydown", function(e){
+    if(e.key !== "Escape") return;
+    $$(".season-wrap.is-open").forEach(function(w){
+      w.classList.remove("is-open");
+      var b = w.querySelector(".season-tag"); if(b) b.setAttribute("aria-expanded", "false");
     });
-    document.addEventListener("keydown", function(e){
-      if(e.key === "Escape" && wrap.classList.contains("is-open")){
-        wrap.classList.remove("is-open");
-        tag.setAttribute("aria-expanded", "false");
-      }
-    });
-  })();
+  });
 
   function refreshUX(){ updateSectionTicks(); updateAck(); renderCal(); renderPicks(); renderRail(); refreshPricing(); renderMinSpend(); renderProgressBars(); updateGuide(); }
   form.addEventListener("input", refreshUX);
