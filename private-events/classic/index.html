@@ -329,22 +329,34 @@ html,body{overflow-x:clip;}
 .season-tag:focus-visible{outline:none;border-width:1.5px;padding:2.5px 6.5px;}
 /* anchored from the right so it opens inward: the tag sits well along the
    line, and a left-anchored bubble runs off the edge of a phone */
-.season-tip{position:absolute;right:0;left:auto;top:calc(100% + 6px);z-index:30;width:252px;
+/* FIXED, not absolute. The expanded brief is a scroll container with
+   overflow:auto, so an absolutely positioned bubble was being clipped by it.
+   Fixed takes the bubble out of every ancestor's clipping, and JS places it
+   against the tag's own viewport rectangle, so it follows the tag wherever
+   the tag ends up and sits with its bottom edge just above the tag's top. */
+.season-tip{position:fixed;left:0;top:0;z-index:60;width:252px;
   font-family:var(--mc-font-mono);font-size:11px;line-height:1.5;letter-spacing:0;
   text-transform:none;font-weight:400;color:var(--mc-oxblood);
   background:var(--mc-cream);border:1px solid var(--mc-orange);
   border-radius:var(--mc-radius);padding:var(--sp-3);
-  opacity:0;visibility:hidden;transition:opacity .15s ease;pointer-events:none;}
-.season-wrap:hover .season-tip,
-.season-tag:focus-visible ~ .season-tip,
-.season-wrap.is-open .season-tip{opacity:1;visibility:visible;}
+  box-shadow:0 6px 20px rgba(72,32,28,.18);
+  opacity:0;visibility:hidden;transition:opacity .14s ease;pointer-events:none;}
+.season-tip.is-shown{opacity:1;visibility:visible;}
 @media (max-width:520px){ .season-tip{width:min(252px, calc(100vw - 2 * var(--mc-gutter)));} }
-/* on the orange surfaces the tag inverts, and its bubble keeps the cream
-   ground so the text stays readable rather than orange on orange */
-.season-wrap--onaccent .season-tag{color:var(--mc-cream);border-color:rgba(243,236,223,.6);}
-.season-wrap--onaccent .season-tag:focus-visible{border-color:var(--mc-cream);}
-.season-wrap--onaccent .season-tip{color:var(--mc-oxblood);background:var(--mc-cream);
-  border-color:var(--mc-cream);}
+/* On the orange surfaces the tag fills solid cream rather than outlining in
+   it. An outlined badge on an orange ground recedes, and this is the one
+   element we cannot afford anyone to skip past. */
+.season-wrap--onaccent .season-tag{color:var(--mc-orange);background:var(--mc-cream);
+  border-color:var(--mc-cream);font-weight:700;}
+.season-wrap--onaccent .season-tag::after{border-color:var(--mc-orange);opacity:1;}
+.season-wrap--onaccent .season-tag:focus-visible{outline-color:var(--mc-cream);}
+.season-wrap--onaccent .season-tip{border-color:var(--mc-cream);}
+/* A slow ring until someone interacts with a tag for the first time, then it
+   stops for good. Pulsing forever would be ignored within seconds. */
+@keyframes season-pulse{0%{box-shadow:0 0 0 0 rgba(243,236,223,.55);}
+  70%{box-shadow:0 0 0 9px rgba(243,236,223,0);}
+  100%{box-shadow:0 0 0 0 rgba(243,236,223,0);}}
+body:not(.season-seen) .season-wrap--onaccent .season-tag{animation:season-pulse 2.4s ease-out infinite;}
 /* in the narrow rail and the brief the tag sits on its own line rather than
    squeezing the figure */
 .pe-brief__line .season-wrap{margin-left:0;}
@@ -816,6 +828,7 @@ body.pe-done .pe-rail{display:none!important;}
   .field__label-text.is-swapping,.is-reinked{animation:none;}
   .pe-guide{transition:none;} /* static arrow: no pulse, instant relocation */
   .pe-progress__fill,.rail-progress__fill,.sheet-progress__fill,.season-tip{transition:none;}
+  body:not(.season-seen) .season-wrap--onaccent .season-tag{animation:none;}
   .guests__input.is-up,.guests__input.is-down,.guests__btn.is-bump{animation:none;}
   .guests__btn,.guests__input.is-spinning{transition:none;transform:none;}
   /* the cue still reads as a cue, it just stops moving. With the swell and the
@@ -3264,28 +3277,86 @@ body.pe-done .pe-rail{display:none!important;}
     wrap.appendChild(btn); wrap.appendChild(tip);
     return wrap;
   }
-  /* Delegated, so it covers the static tag in the panel and every one built
-     on the fly, and so only one bubble is ever open at a time. */
+  /* ---- placing the bubble ----
+     It is position:fixed, so it has escaped every scroll container, which
+     means nothing positions it but us. Anchor it to the tag's own viewport
+     rectangle: bottom edge 8px above the tag's top, right edges aligned,
+     then clamp into the viewport. Re-run on scroll and resize while open, so
+     it stays welded to the tag as the brief scrolls under it. */
+  var openWrap = null, openSticky = false;
+  function placeTip(wrap){
+    var btn = wrap.querySelector(".season-tag"), tip = wrap.querySelector(".season-tip");
+    if(!btn || !tip) return;
+    var r = btn.getBoundingClientRect();
+    tip.style.left = "0px"; tip.style.top = "0px";   /* measure unconstrained */
+    var tw = tip.offsetWidth, th = tip.offsetHeight, pad = 8;
+    var left = r.right - tw;
+    left = Math.max(pad, Math.min(left, window.innerWidth - tw - pad));
+    var top = r.top - th - pad;                       /* sit above the tag */
+    if(top < pad) top = r.bottom + pad;               /* unless there is no room */
+    tip.style.left = Math.round(left) + "px";
+    tip.style.top  = Math.round(top) + "px";
+  }
+  function openTip(wrap, sticky){
+    if(openWrap && openWrap !== wrap) closeTip();
+    openWrap = wrap;
+    if(sticky) openSticky = true;
+    wrap.classList.add("is-open");
+    var btn = wrap.querySelector(".season-tag"), tip = wrap.querySelector(".season-tip");
+    btn.setAttribute("aria-expanded", "true");
+    tip.classList.add("is-shown");
+    placeTip(wrap);
+    document.body.classList.add("season-seen");       /* the pulse has done its job */
+  }
+  function closeTip(){
+    if(!openWrap) return;
+    var btn = openWrap.querySelector(".season-tag"), tip = openWrap.querySelector(".season-tip");
+    openWrap.classList.remove("is-open");
+    if(btn) btn.setAttribute("aria-expanded", "false");
+    if(tip) tip.classList.remove("is-shown");
+    openWrap = null; openSticky = false;
+  }
+  /* mouse hovers, touch taps. mouseenter does not fire on a tap, so the two
+     paths do not fight each other. */
+  document.addEventListener("mouseover", function(e){
+    var w = e.target.closest && e.target.closest(".season-wrap");
+    if(w && w !== openWrap) openTip(w);
+  });
+  document.addEventListener("mouseout", function(e){
+    if(!openWrap || openSticky) return;        /* a click pins it open */
+    var to = e.relatedTarget;
+    if(to && openWrap.contains(to)) return;
+    if(e.target.closest && e.target.closest(".season-wrap") === openWrap) closeTip();
+  });
+  /* A mouse click arrives after mouseover has already opened the bubble, so a
+     plain toggle would shut it the instant anyone clicked. Click instead PINS
+     an open bubble, and only closes one that was already pinned. */
   document.addEventListener("click", function(e){
     var btn = e.target.closest && e.target.closest(".season-tag");
-    $$(".season-wrap.is-open").forEach(function(w){
-      if(btn && w.contains(btn)) return;
-      w.classList.remove("is-open");
-      var b = w.querySelector(".season-tag"); if(b) b.setAttribute("aria-expanded", "false");
-    });
-    if(!btn) return;
+    if(!btn){ closeTip(); return; }
     e.stopPropagation(); e.preventDefault();
     var wrap = btn.closest(".season-wrap");
-    var open = wrap.classList.toggle("is-open");
-    btn.setAttribute("aria-expanded", open ? "true" : "false");
+    if(wrap === openWrap && openSticky){ closeTip(); return; }
+    openTip(wrap, true);
   });
-  document.addEventListener("keydown", function(e){
-    if(e.key !== "Escape") return;
-    $$(".season-wrap.is-open").forEach(function(w){
-      w.classList.remove("is-open");
-      var b = w.querySelector(".season-tag"); if(b) b.setAttribute("aria-expanded", "false");
-    });
+  /* Focus behaves like hover, not like a click. Opening it pinned on focusin
+     meant the focusout that follows a mouse click tore down the bubble that
+     same click had just pinned, and the ordering differed between surfaces. */
+  document.addEventListener("focusin", function(e){
+    var btn = e.target.closest && e.target.closest(".season-tag");
+    if(btn) openTip(btn.closest(".season-wrap"), false);
   });
+  document.addEventListener("focusout", function(e){
+    if(openSticky) return;                     /* a click pinned it, leave it */
+    var btn = e.target.closest && e.target.closest(".season-tag");
+    if(btn && btn.closest(".season-wrap") === openWrap) closeTip();
+  });
+  document.addEventListener("keydown", function(e){ if(e.key === "Escape") closeTip(); });
+  /* the brief scrolls under the bubble, so follow rather than drift */
+  /* The brief is its own scroll container, so a scroll listener on window
+     alone never hears it. Capture on document catches both. */
+  document.addEventListener("scroll", function(){ if(openWrap) placeTip(openWrap); }, true);
+  window.addEventListener("resize", function(){ if(openWrap) placeTip(openWrap); });
 
   function refreshUX(){ updateSectionTicks(); updateAck(); renderCal(); renderPicks(); renderRail(); refreshPricing(); renderMinSpend(); renderProgressBars(); updateGuide(); }
   form.addEventListener("input", refreshUX);
