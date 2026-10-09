@@ -235,15 +235,29 @@ html,body{overflow-x:clip;}
    The count is almost always two digits and capped at 75, so a full-width box
    invited a stray third digit and looked like a text field. Buttons match the
    quantity steppers already used for add-ons. */
-.guests{display:flex;align-items:stretch;gap:var(--sp-3);}
-.guests__btn{flex:0 0 52px;width:52px;min-height:52px;display:flex;align-items:center;
-  justify-content:center;background:transparent;border:1px solid var(--mc-separator);
-  border-radius:var(--mc-radius);font-family:var(--mc-font-mono);font-size:26px;line-height:1;
-  color:var(--mc-oxblood);cursor:pointer;transition:border-color .15s ease,color .15s ease;}
-.guests__btn:hover:not(:disabled){border-color:var(--mc-orange);color:var(--mc-orange);}
-.guests__btn:focus-visible{outline:none;border-color:var(--mc-orange);border-width:1.5px;}
-.guests__btn:disabled{opacity:.35;cursor:default;}
-.guests__input{flex:0 0 96px;width:96px;text-align:center;font-size:22px;font-weight:500;
+.guests{display:flex;align-items:center;gap:var(--sp-4);}
+/* Round by explicit request, the one place this page departs from the 0/4/8
+   radius rule. A circle reads as a repeatable control in a way a rounded
+   rectangle does not, and it is the shape people expect to press and hold. */
+.guests__btn{flex:0 0 60px;width:60px;height:60px;display:flex;align-items:center;
+  justify-content:center;background:transparent;border:2px solid var(--mc-orange);
+  border-radius:50%;font-family:var(--mc-font-mono);font-size:30px;line-height:1;
+  color:var(--mc-orange);cursor:pointer;position:relative;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;user-select:none;
+  transition:background-color .12s ease,color .12s ease,transform .12s ease,border-color .12s ease;}
+.guests__btn:hover:not(:disabled){background:rgba(250,70,22,.08);}
+.guests__btn:focus-visible{outline:2px solid var(--mc-orange);outline-offset:3px;}
+/* pressed and held: it fills, so the control looks engaged for as long as it is */
+.guests__btn.is-pressing:not(:disabled){background:var(--mc-orange);color:var(--mc-cream);
+  transform:scale(.94);}
+.guests__btn:disabled{border-color:var(--mc-separator);color:var(--mc-taupe);opacity:.55;
+  cursor:default;}
+/* a ring that pulses once when a press runs into the floor or the ceiling, so
+   nothing simply stops dead with no explanation */
+@keyframes guests-bump{0%{box-shadow:0 0 0 0 rgba(250,70,22,.5);}
+  100%{box-shadow:0 0 0 10px rgba(250,70,22,0);}}
+.guests__btn.is-bump{animation:guests-bump .4s ease-out;}
+.guests__input{flex:0 0 104px;width:104px;text-align:center;font-size:26px;font-weight:600;
   font-variant-numeric:tabular-nums;padding-inline:var(--sp-2);}
 /* the spinners duplicate the buttons and crowd a 96px field */
 .guests__input::-webkit-outer-spin-button,
@@ -255,6 +269,13 @@ html,body{overflow-x:clip;}
 @keyframes guests-down{from{transform:translateY(-42%);opacity:.25;}to{transform:none;opacity:1;}}
 .guests__input.is-up{animation:guests-up .22s cubic-bezier(.22,.9,.3,1);}
 .guests__input.is-down{animation:guests-down .22s cubic-bezier(.22,.9,.3,1);}
+/* While a press is held the figure changes many times a second, so the roll is
+   dropped for a steady lift instead. Re-firing a 220ms animation every 55ms
+   only ever looks broken. */
+.guests__input.is-spinning{animation:none;color:var(--mc-orange);transform:scale(1.06);
+  transition:transform .12s ease,color .12s ease;}
+.guests__hint{font-family:var(--mc-font-mono);font-size:11px;line-height:1.4;
+  color:var(--mc-taupe);margin:var(--sp-2) 0 0;}
 
 /* ---- Minimum spend: progress, never a deficit. No red, no error state. ----
    A total under the minimum is a perfectly normal enquiry and still submits. */
@@ -795,7 +816,8 @@ body.pe-done .pe-rail{display:none!important;}
   .field__label-text.is-swapping,.is-reinked{animation:none;}
   .pe-guide{transition:none;} /* static arrow: no pulse, instant relocation */
   .pe-progress__fill,.rail-progress__fill,.sheet-progress__fill,.season-tip{transition:none;}
-  .guests__input.is-up,.guests__input.is-down{animation:none;}
+  .guests__input.is-up,.guests__input.is-down,.guests__btn.is-bump{animation:none;}
+  .guests__btn,.guests__input.is-spinning{transition:none;transform:none;}
   /* the cue still reads as a cue, it just stops moving. With the swell and the
      glow switched off, the chip carries it on its own: it goes solid cream on
      orange the moment the cue starts, which is the loudest STATIC state the
@@ -855,10 +877,11 @@ body.pe-done .pe-rail{display:none!important;}
           <div class="field" id="f-guests">
             <label class="field__label" for="guests">GUEST COUNT</label>
             <div class="guests">
-              <button class="guests__btn" id="guests-down" type="button" aria-label="One guest fewer">&minus;</button>
+              <button class="guests__btn" id="guests-down" type="button" aria-label="One guest fewer, hold to count down">&minus;</button>
               <input class="field__input guests__input" id="guests" name="guests" type="number" min="1" max="75" inputmode="numeric" placeholder="00" autocomplete="off">
-              <button class="guests__btn" id="guests-up" type="button" aria-label="One guest more">+</button>
+              <button class="guests__btn" id="guests-up" type="button" aria-label="One guest more, hold to count up">+</button>
             </div>
+            <p class="guests__hint" id="guests-hint"></p>
             <p class="field__msg" id="guests-msg" hidden></p>
             <p class="pe-ack" id="guests-ack" hidden></p>
           </div>
@@ -1467,32 +1490,137 @@ body.pe-done .pe-rail{display:none!important;}
   }
 
   /* ---- guest count stepper ----
-     A second way in alongside typing. Clamped to the chosen space's capacity
-     so the buttons can never walk past a cap the field would then reject. */
-  function guestsStep(delta){
-    var el = $("#guests");
-    var cap = PRICING.capacities[gv("space")] || 75;
+     A press-and-hold counter, built the way steppers that feel good are built:
+
+       HOLD DELAY     420ms before any repeat, so a tap is only ever one step.
+       ACCELERATION   the repeat starts at 240ms and decays to 55ms, so a short
+                      hold is controllable and a long one is quick.
+       COARSER STEPS  after ten repeats the step grows to 5 and snaps to the
+                      multiple, because crossing 1 to 75 one unit at a time is
+                      a chore however fast the ticks are.
+       HAPTICS        a short buzz per step where the device has a motor, and a
+                      longer one at the floor or ceiling.
+       HARD STOPS     pointerup, leave, cancel, blur, Escape, and the tab
+                      losing visibility all end the repeat. A counter stuck
+                      running because a press ended somewhere unexpected is the
+                      classic way this control goes wrong.
+     Bounds are the chosen space's capacity, so it can never reach a number the
+     field would reject. */
+  var HOLD_DELAY = 420, REPEAT_FROM = 240, REPEAT_TO = 55, COARSE_AFTER = 10, COARSE_STEP = 5;
+  var holdTimer = null, holdRepeats = 0, holdBtn = null;
+
+  function guestsCap(){ return PRICING.capacities[gv("space")] || 75; }
+  function buzz(ms){ try { if(navigator.vibrate) navigator.vibrate(ms); } catch(e){} }
+
+  function guestsStep(delta, held){
+    var el = $("#guests"), cap = guestsCap();
     var now = parseInt(el.value, 10);
-    if(isNaN(now) || now < 1) now = delta > 0 ? 0 : 1;   /* first press starts at 1 */
-    var next = Math.max(1, Math.min(cap, now + delta));
-    if(next === now) return;
+    if(isNaN(now) || now < 1) now = delta > 0 ? 0 : 1;   /* first press lands on 1 */
+    var next = now + delta;
+    /* when travelling in fives, land on the multiple rather than drifting off it */
+    if(Math.abs(delta) === COARSE_STEP) next = Math.round(next / COARSE_STEP) * COARSE_STEP;
+    next = Math.max(1, Math.min(cap, next));
+    if(next === now){
+      if(holdBtn){ holdBtn.classList.remove("is-bump"); void holdBtn.offsetWidth;
+                   holdBtn.classList.add("is-bump"); }
+      buzz(28);                                           /* you have hit the end */
+      stopHold();
+      return false;
+    }
     el.value = String(next);
-    el.classList.remove("is-up", "is-down");
-    void el.offsetWidth;                                  /* restart the animation */
-    el.classList.add(delta > 0 ? "is-up" : "is-down");
+    if(held){
+      el.classList.remove("is-up", "is-down");
+      el.classList.add("is-spinning");
+    } else {
+      el.classList.remove("is-up", "is-down", "is-spinning");
+      void el.offsetWidth;
+      el.classList.add(delta > 0 ? "is-up" : "is-down");
+    }
+    buzz(held ? 6 : 10);
     el.dispatchEvent(new Event("input", { bubbles: true }));
     syncGuestButtons();
+    return true;
   }
+
+  function scheduleRepeat(delta){
+    /* ease from the slow first repeat to the fast one over roughly a second */
+    var t = Math.min(1, holdRepeats / 14);
+    var wait = REPEAT_FROM + (REPEAT_TO - REPEAT_FROM) * (1 - Math.pow(1 - t, 2));
+    holdTimer = setTimeout(function(){
+      holdRepeats++;
+      var step = holdRepeats > COARSE_AFTER ? COARSE_STEP * (delta > 0 ? 1 : -1) : delta;
+      if(guestsStep(step, true)) scheduleRepeat(delta);
+    }, wait);
+  }
+  function startHold(btn, delta){
+    stopHold();
+    holdBtn = btn; holdRepeats = 0;
+    btn.classList.add("is-pressing");
+    if(!guestsStep(delta, false)) return;                 /* the single step */
+    holdTimer = setTimeout(function(){ scheduleRepeat(delta); }, HOLD_DELAY);
+  }
+  function stopHold(){
+    if(holdTimer){ clearTimeout(holdTimer); holdTimer = null; }
+    holdRepeats = 0;
+    if(holdBtn){ holdBtn.classList.remove("is-pressing"); holdBtn = null; }
+    var el = $("#guests");
+    if(el && el.classList.contains("is-spinning")){
+      el.classList.remove("is-spinning");
+      el.classList.add("is-up");                          /* settle, not a jump */
+      setTimeout(function(){ el.classList.remove("is-up"); }, 240);
+    }
+  }
+
   function syncGuestButtons(){
     var el = $("#guests"), up = $("#guests-up"), down = $("#guests-down");
     if(!el || !up || !down) return;
-    var cap = PRICING.capacities[gv("space")] || 75;
-    var now = parseInt(el.value, 10);
+    var cap = guestsCap(), now = parseInt(el.value, 10);
     down.disabled = !isNaN(now) && now <= 1;
     up.disabled   = !isNaN(now) && now >= cap;
+    if((down.disabled || up.disabled) && holdBtn && holdBtn.disabled) stopHold();
+    var hint = $("#guests-hint");
+    if(hint) hint.textContent = isNaN(now) ? "" : "Hold to count faster. Up to " + cap + " in this space.";
   }
-  $("#guests-up").addEventListener("click", function(){ guestsStep(1); });
-  $("#guests-down").addEventListener("click", function(){ guestsStep(-1); });
+
+  [["#guests-up", 1], ["#guests-down", -1]].forEach(function(pair){
+    var btn = $(pair[0]), delta = pair[1];
+    btn.addEventListener("pointerdown", function(e){
+      if(btn.disabled) return;
+      e.preventDefault();                 /* no text selection, no 300ms tap delay */
+      if(btn.setPointerCapture && e.pointerId !== undefined){
+        try { btn.setPointerCapture(e.pointerId); } catch(err){}
+      }
+      startHold(btn, delta);
+    });
+    /* No pointerleave here, deliberately. The pointer is captured, so a finger
+       drifting off the circle during a long hold keeps counting rather than
+       stopping dead, which is what you want after three seconds of holding.
+       Releasing anywhere still ends it, via pointerup on the button and the
+       document-level listener below. */
+    ["pointerup","pointercancel","blur"].forEach(function(ev){
+      btn.addEventListener(ev, stopHold);
+    });
+    /* a long press on touch would otherwise raise the context menu */
+    btn.addEventListener("contextmenu", function(e){ e.preventDefault(); });
+    /* keyboard activation gives one step, never a repeat */
+    btn.addEventListener("keydown", function(e){
+      if(e.key === "Enter" || e.key === " "){ e.preventDefault(); guestsStep(delta, false); }
+    });
+  });
+  document.addEventListener("pointerup", stopHold);
+  document.addEventListener("keydown", function(e){ if(e.key === "Escape") stopHold(); });
+  document.addEventListener("visibilitychange", function(){ if(document.hidden) stopHold(); });
+  window.addEventListener("blur", stopHold);
+
+  /* arrows and page keys on the field itself, which is what keyboard users try */
+  $("#guests").addEventListener("keydown", function(e){
+    var map = { ArrowUp: 1, ArrowDown: -1, PageUp: 10, PageDown: -10 };
+    if(map[e.key] !== undefined){ e.preventDefault(); guestsStep(map[e.key], false); return; }
+    if(e.key === "Home"){ e.preventDefault(); $("#guests").value = "1";
+      $("#guests").dispatchEvent(new Event("input", { bubbles: true })); syncGuestButtons(); }
+    if(e.key === "End"){ e.preventDefault(); $("#guests").value = String(guestsCap());
+      $("#guests").dispatchEvent(new Event("input", { bubbles: true })); syncGuestButtons(); }
+  });
   $("#guests").addEventListener("input", syncGuestButtons);
 
   /* ---- 01 · The space: guest count capped by chosen space ---- */
