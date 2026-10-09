@@ -902,6 +902,214 @@ body.tk-clicking .cursor-pixel .px-rays{animation:tk-rays var(--tk-press) infini
   .overlay__link{justify-content:flex-start}
 }
 
+/* ============ Menu page (generated content, see build-content.mjs) ============ */
+.num{font-variant-numeric:tabular-nums}
+.t-sub{font-family:var(--f-serif);font-weight:500;font-size:clamp(26px,2.4vw,34px);line-height:1.1;color:var(--oxblood);text-align:center;margin:0}
+/* head rhythm: the specials subtitle sits close to its carousel; Full Menu opens a new chapter */
+.text-band.menu-head--specials{padding-top:56px}
+.strip-band.menu-specials{padding-top:32px}
+.text-band.menu-head--full{padding-top:112px}
+.menu-caption{text-align:center;color:var(--taupe);font-size:13px;margin:12px auto 0}
+/* band layout: desktop wide = sticky section index | list | photo column; the reveal has its own column so it never covers the list */
+.menu-band{
+  --mb-pad:clamp(40px,6.667vw,144px);--mb-gap:clamp(32px,3.6vw,56px);
+  --ix-w:clamp(172px,13vw,188px);--rv-w:clamp(240px,22vw,340px);
+  position:relative;max-width:1496px;margin:56px auto 0;padding:0 var(--mb-pad);
+}
+.menu-main{min-width:0;container-type:inline-size}
+.menu-jump{font-family:var(--f-mono);text-transform:uppercase}
+.menu-jump__label{font-family:var(--f-mono);font-size:11px;font-weight:400;letter-spacing:2px;color:var(--taupe);text-transform:uppercase}
+.menu-jump__link{position:relative;color:var(--oxblood);text-decoration:none;font-size:12px;font-weight:500;letter-spacing:1.5px;transition:color .2s ease}
+.menu-jump__num{color:var(--taupe);font-size:11px;letter-spacing:1px;transition:color .15s ease}
+.menu-jump__txt{text-underline-offset:4px;text-decoration-thickness:1px}
+.menu-jump__link:hover .menu-jump__txt{text-decoration:underline}
+.menu-jump__link:hover .menu-jump__num,.menu-jump__link.is-active .menu-jump__num{color:var(--orange)}
+@media (min-width:1100px){
+  .menu-band{display:grid;grid-template-columns:var(--ix-w) minmax(0,1fr) var(--rv-w);column-gap:var(--mb-gap);align-items:start}
+  /* sticky index under the console, numbered like the console channels; the needle dot marks the section in view */
+  .menu-jump{
+    grid-column:1;position:sticky;top:calc(var(--console-h) + 32px);
+    display:flex;flex-direction:column;gap:28px;padding:4px 0 8px 16px;margin-left:-16px;
+    max-height:calc(100vh - var(--console-h) - 64px);overflow-y:auto;scrollbar-width:none;
+  }
+  .menu-jump::-webkit-scrollbar{display:none}
+  .menu-jump__group{display:flex;flex-direction:column}
+  .menu-jump__label{margin-bottom:8px}
+  .menu-jump__link{display:flex;align-items:baseline;gap:12px;padding:4px 0;line-height:20px;white-space:nowrap}
+  .menu-jump__link::before{content:"";position:absolute;left:-14px;top:50%;width:6px;height:6px;margin-top:-3px;border-radius:50%;background:var(--orange);opacity:0;transform:scale(.4);transition:opacity .2s ease,transform .3s cubic-bezier(.22,1,.36,1)}
+  .menu-jump__link.is-active::before{opacity:1;transform:none}
+  .menu-main{grid-column:2}
+}
+/* narrower desktop and mobile: one scrollable row that sticks under the console (or the top edge on mobile).
+   Its ground is the page cream, the same rule as the console, so list text never shows through it. */
+@media (max-width:1099px){
+  .menu-jump{
+    position:sticky;top:0;z-index:5;
+    display:flex;align-items:center;gap:28px;
+    margin:0 calc(-1 * var(--mb-pad));padding:0 var(--mb-pad);
+    overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;white-space:nowrap;
+    background:var(--cream);border-bottom:1px solid var(--hairline);
+  }
+  .menu-jump::-webkit-scrollbar{display:none}
+  .menu-jump__group{display:flex;align-items:center;gap:20px;flex:none}
+  .menu-jump__link{display:inline-flex;align-items:center;min-height:44px;font-size:11px;letter-spacing:1px}
+  .menu-jump__num{display:none}
+  .menu-jump__link.is-active{color:var(--orange)}
+  .menu-jump__link.is-active .menu-jump__txt{text-decoration:underline}
+  .menu-main{margin-right:calc(var(--rv-w) + var(--mb-gap))}
+  .menu-main > .menu-group:first-child{margin-top:48px}
+}
+@media (min-width:900px) and (max-width:1099px){
+  .menu-jump{top:var(--console-h)}
+}
+.menu-group + .menu-group{margin-top:112px}
+.menu-group__title{font-family:var(--f-display);font-weight:400;color:var(--orange);font-size:clamp(30px,2.5vw,36px);line-height:1.1;letter-spacing:1px;margin:0;padding-bottom:16px;border-bottom:1px solid var(--hairline)}
+.menu-section{margin-top:56px}
+.menu-section__head{margin-bottom:16px}
+.menu-section__num{display:block;font-family:var(--f-mono);font-size:11px;letter-spacing:2px;line-height:1;color:var(--taupe);margin-bottom:12px}
+.menu-section__title{font-family:var(--f-serif);font-weight:500;font-size:clamp(28px,2.2vw,32px);line-height:1.1;color:var(--oxblood);margin:0}
+.menu-section__intro{font-family:var(--f-serif);font-style:italic;font-weight:500;font-size:20px;line-height:1.45;color:var(--oxblood);max-width:34em;margin:12px 0 0}
+.menu-list{list-style:none}
+.menu-item{position:relative;padding:16px 0;border-top:1px solid var(--separator)}
+.menu-item:last-child{border-bottom:1px solid var(--separator)}
+/* the price sits on the name's last line, as on a printed menu */
+.menu-item__row{display:flex;align-items:baseline;align-items:last baseline;gap:12px}
+.menu-item__name{font-family:var(--f-serif);font-weight:500;font-size:clamp(20px,1.6vw,23px);line-height:1.2;color:var(--oxblood);margin:0;transition:color .2s ease}
+@media (hover:hover){ .menu-item:hover .menu-item__name{color:var(--orange)} }
+.menu-item.is-open .menu-item__name{color:var(--orange)}
+.menu-item__diet{font-family:var(--f-mono);font-size:10px;letter-spacing:1.5px;color:var(--taupe);vertical-align:middle;margin-left:6px;white-space:nowrap}
+.menu-item__dots{flex:1;min-width:24px;border-bottom:1px dotted var(--taupe);opacity:.5;transform:translateY(-5px)}
+.menu-item__price{font-family:var(--f-mono);font-size:15px;color:var(--oxblood);white-space:nowrap}
+.menu-item__pair{white-space:nowrap}
+.menu-item__size{font-size:10px;letter-spacing:1px;color:var(--taupe);text-transform:uppercase}
+.menu-item__sep{color:var(--taupe)}
+.menu-item__desc{font-family:var(--f-mono);font-size:13px;line-height:1.65;color:var(--oxblood);margin:8px 0 0;max-width:38em}
+.menu-item__addons{font-family:var(--f-mono);font-size:12px;letter-spacing:.5px;color:var(--taupe);margin:6px 0 0}
+.menu-item__photo,.menu-item__media{display:none}
+/* narrow list column (mobile, or a tight desktop): multi-size prices drop to their own line under the name */
+@container (max-width:599px){
+  .menu-item__row--multi{flex-wrap:wrap}
+  .menu-item__row--multi .menu-item__name{flex:1 1 0;min-width:0}
+  .menu-item__row--multi .menu-item__dots{display:none}
+  .menu-item__row--multi .menu-item__photo{order:2}
+  .menu-item__row--multi .menu-item__price{order:3;flex:1 1 100%;white-space:normal;margin-top:2px;line-height:1.5}
+}
+.menu-reveal{position:absolute;right:var(--mb-pad);top:0;width:var(--rv-w);aspect-ratio:4/5;overflow:hidden;border-radius:2px;pointer-events:none;opacity:0;transform:translateX(24px);transition:opacity .3s ease,transform .35s cubic-bezier(.22,1,.36,1),top .3s cubic-bezier(.22,1,.36,1);z-index:2}
+.menu-reveal.is-on{opacity:1;transform:none}
+.menu-reveal.is-snap{transition:opacity .3s ease,transform .35s cubic-bezier(.22,1,.36,1)}
+.menu-reveal img{width:100%;height:100%;object-fit:cover;display:block}
+.menu-notes{list-style:none;margin:64px 0 0;padding:0;font-family:var(--f-mono);font-size:12px;line-height:1.7;color:var(--taupe)}
+.menu-notes li{max-width:44em}
+.menu-notes li + li{margin-top:6px}
+.buttons-band.menu-downloads{padding:32px 0 0;justify-content:flex-start}
+
+/* ============ Calendar page (generated content, see build-content.mjs) ============ */
+.cal-caption{text-align:center;max-width:560px;margin:16px auto 0}
+.cal-nav{max-width:430px;margin:48px auto 0;padding:0 24px}
+.cal-grid{display:none}
+.cal-grid.is-current{display:block}
+.cal-grid__head{display:flex;align-items:center;justify-content:space-between;padding:0 0 12px}
+.cal-grid__title{font-family:var(--f-mono);font-weight:600;font-size:15px;letter-spacing:.5px;color:var(--oxblood);margin:0}
+.cal-grid__year{color:var(--taupe);font-weight:400}
+.cal-grid__nav{font-family:var(--f-mono);font-size:24px;line-height:1;width:44px;height:44px;margin:0 -10px;color:var(--oxblood);display:inline-flex;align-items:center;justify-content:center;transition:color .2s ease}
+.cal-grid__nav:not(:disabled):hover{color:var(--orange)}
+.cal-grid__nav:disabled{opacity:.3;cursor:default}
+.cal-grid__wd{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;font-family:var(--f-mono);font-size:11px;font-weight:500;letter-spacing:2px;line-height:1;color:var(--taupe);padding:4px 0 12px}
+.cal-grid__cells{display:grid;grid-template-columns:repeat(7,1fr);row-gap:4px}
+.cal-grid__day{position:relative;isolation:isolate;display:flex;align-items:center;justify-content:center;height:44px;font-family:var(--f-mono);font-size:15px;color:var(--taupe);opacity:.6;text-decoration:none}
+/* a 44px square behind the number: tonight's orange cell, or the hover ring on a night */
+.cal-grid__day::before{content:"";position:absolute;top:0;left:50%;width:44px;height:44px;margin-left:-22px;border-radius:8px;z-index:-1;transition:box-shadow .2s ease}
+.cal-grid__day--pad{visibility:hidden}
+.cal-grid__day--on{color:var(--oxblood);opacity:1;font-weight:600}
+.cal-grid__day--on:hover::before,.cal-grid__day--on:focus-visible::before{box-shadow:inset 0 0 0 1.5px var(--orange)}
+.cal-grid__day--on:focus-visible{outline:none}
+.cal-grid__dot{position:absolute;bottom:6px;left:50%;width:4px;height:4px;margin-left:-2px;border-radius:50%;background:var(--orange)}
+.cal-grid__day.is-past{opacity:.5}
+.cal-grid__day.is-today{color:var(--ink);opacity:1;font-weight:600}
+.cal-grid__day.is-today::before,.cal-grid__day.is-today:hover::before{background:var(--orange);box-shadow:none}
+.cal-grid__day.is-today .cal-grid__dot{background:var(--ink)}
+.cal-legend{display:flex;align-items:center;justify-content:center;gap:8px;margin:20px 0 0;font-family:var(--f-mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--taupe)}
+.cal-legend__dot{width:6px;height:6px;border-radius:50%;background:var(--orange);display:inline-block}
+.cal-legend__today{width:14px;height:14px;border-radius:4px;background:var(--orange);display:inline-block;margin-left:16px}
+.cal-band{max-width:760px;margin:56px auto 0;padding:0 24px}
+.cal-month + .cal-month{margin-top:80px}
+.cal-month__head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding-bottom:12px;border-bottom:1px solid var(--separator)}
+.cal-month__title{font-family:var(--f-serif);font-weight:500;font-size:clamp(28px,2.4vw,36px);line-height:1.1;color:var(--oxblood);margin:0;white-space:nowrap}
+.cal-month__year{color:var(--taupe)}
+.cal-month__count{font-family:var(--f-mono);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--taupe);margin:0;white-space:nowrap}
+.cal-month__done{color:var(--oxblood);font-weight:600}
+.cal-list{list-style:none}
+/* checklist row: date stack | 28px ring | events; the tag slot lives on the time line so rows keep one height */
+.cal-day{display:grid;grid-template-columns:56px 28px minmax(0,1fr);column-gap:16px;align-items:start;padding:20px 0;border-bottom:1px solid var(--separator)}
+.cal-day__date{display:flex;flex-direction:column;font-family:var(--f-mono);line-height:1}
+.cal-day__wd{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--taupe)}
+.cal-day__num{font-size:22px;font-weight:500;color:var(--oxblood);margin-top:6px;font-variant-numeric:tabular-nums}
+.cal-day__check{position:relative;width:28px;height:28px;border-radius:50%;border:1.5px solid var(--oxblood);margin-top:4px;transition:background .2s ease,border-color .2s ease}
+.cal-day.is-past .cal-day__check{background:var(--taupe);border-color:var(--taupe)}
+.cal-day.is-past .cal-day__check::after{content:"";position:absolute;left:9px;top:5px;width:7px;height:12px;border:solid var(--cream);border-width:0 2px 2px 0;transform:rotate(45deg)}
+.cal-day.is-past .cal-event__title,.cal-day.is-past .cal-day__num,.cal-day.is-past .cal-event__sub{color:var(--taupe)}
+.cal-day.is-past .cal-tag{opacity:.6}
+.cal-day.is-today .cal-day__check{border-color:var(--orange);border-width:2px}
+.cal-day.is-today .cal-day__wd{color:var(--orange)}
+.cal-day__events{list-style:none;display:flex;flex-direction:column;gap:20px;min-width:0}
+.cal-event{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"time tags" "stack stack";column-gap:12px;align-items:center}
+.cal-event__time{grid-area:time;font-family:var(--f-mono);font-size:12px;line-height:20px;letter-spacing:.5px;color:var(--taupe)}
+.cal-event__stack{grid-area:stack;min-width:0}
+.cal-event__title{font-family:var(--f-serif);font-weight:500;font-size:clamp(20px,1.6vw,23px);line-height:1.2;color:var(--oxblood);margin:2px 0 0;transition:color .2s ease}
+.cal-event__sub{font-family:var(--f-mono);font-size:13px;line-height:1.5;color:var(--oxblood);margin:4px 0 0}
+.cal-event__tags{grid-area:tags;justify-self:end;display:flex;gap:6px}
+.cal-tag{position:relative;font-family:var(--f-mono);font-size:10px;letter-spacing:1.5px;line-height:1;color:var(--oxblood);border:1px solid var(--hairline);border-radius:999px;padding:4px 8px;text-decoration:none;white-space:nowrap}
+.cal-tag--link::after{content:"";position:absolute;inset:-12px -6px}
+.cal-tag--link:hover{border-color:var(--oxblood)}
+.cal-tag--live{color:var(--orange);border-color:var(--orange)}
+.cal-month__poster{margin:32px 0 0;display:flex;justify-content:flex-start}
+/* wide desktop: the month grid stays put on the left while the nights scroll on the right */
+@media (min-width:1100px){
+  .cal-split{display:grid;grid-template-columns:400px minmax(0,680px);column-gap:clamp(64px,7vw,112px);justify-content:center;align-items:start;max-width:1344px;margin:64px auto 0;padding:0 48px}
+  .cal-split .cal-nav{position:sticky;top:calc(var(--console-h) + 40px);max-width:none;margin:0;padding:0}
+  .cal-split .cal-band{max-width:none;margin:0;padding:0}
+  .cal-split .cal-legend{justify-content:flex-start}
+}
+@media (max-width:899px){
+  .menu-head .t-sub{text-align:left}
+  .menu-caption{text-align:left;margin-left:0}
+  .text-band.menu-head--specials{padding-top:32px}
+  .strip-band.menu-specials{padding-top:20px}
+  .text-band.menu-head--full{padding-top:64px}
+  .menu-band{--mb-pad:24px;margin-top:24px}
+  .menu-main{margin-right:0}
+  .menu-main > .menu-group:first-child{margin-top:32px}
+  .menu-group + .menu-group{margin-top:72px}
+  .menu-group__title{font-size:26px;padding-bottom:12px}
+  .menu-section{margin-top:40px}
+  .menu-section__num{margin-bottom:8px}
+  .menu-section__title{font-size:26px}
+  .menu-section__intro{font-size:18px;line-height:1.45}
+  .menu-reveal{display:none}
+  .menu-item__row{cursor:pointer;-webkit-tap-highlight-color:transparent}
+  .menu-item__name{font-size:20px}
+  /* 44px tap target around a small + that turns to a cross when the photo is open */
+  .menu-item__photo{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;margin:-12px -14px -12px -4px;flex:none;align-self:center;color:var(--orange);font-family:var(--f-mono);font-size:20px;line-height:1}
+  .menu-item__photo::before{content:"+";transition:transform .25s cubic-bezier(.22,1,.36,1)}
+  .menu-item.is-open .menu-item__photo::before{transform:rotate(45deg)}
+  .menu-item__media{display:block;margin:16px 0 4px;aspect-ratio:4/3;overflow:hidden;border-radius:2px}
+  .menu-item__media:not([hidden]){animation:menu-media-in .35s cubic-bezier(.22,1,.36,1)}
+  .menu-item__media[hidden]{display:none}
+  .menu-item__media img{width:100%;height:100%;object-fit:cover}
+  .menu-notes{margin-top:48px}
+  .buttons-band.menu-downloads{padding-top:24px}
+  .cal-caption{text-align:left;margin-left:0}
+  .cal-nav{margin-top:32px;max-width:430px}
+  .cal-band{padding:0 24px;margin-top:48px}
+  .cal-month + .cal-month{margin-top:64px}
+  .cal-month__head{flex-direction:column;align-items:flex-start;gap:6px}
+  .cal-day{grid-template-columns:40px 28px minmax(0,1fr);column-gap:12px;padding:16px 0}
+  .cal-day__num{font-size:20px}
+  .cal-day__events{gap:16px}
+  .cal-month__poster .btn{width:100%}
+}
+@keyframes menu-media-in{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;scroll-behavior:auto !important}
   .band{opacity:1;transform:none}
@@ -913,6 +1121,7 @@ body.tk-clicking .cursor-pixel .px-rays{animation:tk-rays var(--tk-press) infini
   /* Ticker: click affordance, reduced motion: no pointer, static cue label */
   .tk-ptr,.cursor-pixel{display:none}
   .ticker-link{animation:none;text-shadow:none}
+  .menu-reveal{transition:none}
   .ticker-link .tk-label,.ticker-link::after{opacity:1;animation:none}
   .ticker-link::after{width:336px}   /* longer static label needs a wider edge fade */
   @media (max-width:899px){
@@ -1220,8 +1429,8 @@ body.tk-clicking .cursor-pixel .px-rays{animation:tk-rays var(--tk-press) infini
       <p class="strip-caption"><span>DRAG</span><span>&middot;</span><span class="strip-index">01 / 06</span></p>
     </div>
     <div class="band buttons-band buttons-band--stack">
-      <a class="btn btn--primary" href="#calendar">SEE FULL CALENDAR</a>
-      <a class="btn btn--secondary" href="#food-menu">FOOD &amp; DRINKS MENU</a>
+      <a class="btn btn--primary" href="#/calendar">SEE FULL CALENDAR</a>
+      <a class="btn btn--secondary" href="#/menu">FOOD &amp; DRINKS MENU</a>
     </div>
     <div class="band acc-band acc-band--wide">
       <div class="accordion">
@@ -1281,6 +1490,1146 @@ body.tk-clicking .cursor-pixel .px-rays{animation:tk-rays var(--tk-press) infini
         </div>
       </div>
     </div>
+  </section>
+
+  <!-- ============ CALENDAR (generated from content/events.json by build-content.mjs) ============ -->
+  <section class="route" data-route="/calendar" aria-label="Full music calendar">
+<!-- calendar:start -->
+    <a class="band marquee marquee--title marq-band ticker-link" href="#/this-week" aria-label="This week at Mad Cats: see what is on">
+      <span class="marquee__track" aria-hidden="true"><span>This Week at Mad Cats &middot;&nbsp; This Week at Mad Cats &middot;&nbsp; This Week at Mad Cats &middot;&nbsp; This Week at Mad Cats &middot;&nbsp; This Week at Mad Cats &middot;&nbsp; This Week at Mad Cats &middot;&nbsp; This Week at Mad Cats &middot;&nbsp; This Week at Mad Cats &middot;&nbsp; </span><span>This Week at Mad Cats &middot;&nbsp; This Week at Mad Cats &middot;&nbsp; This Week at Mad Cats &middot;&nbsp; This Week at Mad Cats &middot;&nbsp; This Week at Mad Cats &middot;&nbsp; This Week at Mad Cats &middot;&nbsp; This Week at Mad Cats &middot;&nbsp; This Week at Mad Cats &middot;&nbsp; </span></span>
+    </a>
+    <div class="band text-band">
+      <h1 class="t-page t-page--hand">Every Night, One Needle</h1>
+      <p class="intro-caption cal-caption">Live jazz every Sunday from 4pm. Guest selectors from 8pm the rest of the week. Nights already played are ticked off.</p>
+    </div>
+    <div class="cal-split">
+    <div class="band cal-nav">
+      <div class="cal-grid" data-month="2026-09" role="group" aria-label="September 2026">
+        <div class="cal-grid__head">
+          <button class="cal-grid__nav cal-grid__nav--prev" type="button" data-grid="prev" aria-label="Previous month" disabled>&lsaquo;</button>
+          <h2 class="cal-grid__title">September <span class="cal-grid__year num">2026</span></h2>
+          <button class="cal-grid__nav cal-grid__nav--next" type="button" data-grid="next" aria-label="Next month">&rsaquo;</button>
+        </div>
+        <div class="cal-grid__wd" aria-hidden="true"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+        <div class="cal-grid__cells"><span class="cal-grid__day cal-grid__day--pad" aria-hidden="true"></span><span class="cal-grid__day" data-date="2026-09-01"><span class="num">1</span></span><span class="cal-grid__day" data-date="2026-09-02"><span class="num">2</span></span><a class="cal-grid__day cal-grid__day--on" href="#/calendar" data-jump="cal-day-2026-09-03" data-date="2026-09-03" aria-label="Thu 3 September"><span class="num">3</span><span class="cal-grid__dot" aria-hidden="true"></span></a><a class="cal-grid__day cal-grid__day--on" href="#/calendar" data-jump="cal-day-2026-09-04" data-date="2026-09-04" aria-label="Fri 4 September"><span class="num">4</span><span class="cal-grid__dot" aria-hidden="true"></span></a><a class="cal-grid__day cal-grid__day--on" href="#/calendar" data-jump="cal-day-2026-09-05" data-date="2026-09-05" aria-label="Sat 5 September"><span class="num">5</span><span class="cal-grid__dot" aria-hidden="true"></span></a><a class="cal-grid__day cal-grid__day--on" href="#/calendar" data-jump="cal-day-2026-09-06" data-date="2026-09-06" aria-label="Sun 6 September"><span class="num">6</span><span class="cal-grid__dot" aria-hidden="true"></span></a><span class="cal-grid__day" data-date="2026-09-07"><span class="num">7</span></span><span class="cal-grid__day" data-date="2026-09-08"><span class="num">8</span></span><span class="cal-grid__day" data-date="2026-09-09"><span class="num">9</span></span><a class="cal-grid__day cal-grid__day--on" href="#/calendar" data-jump="cal-day-2026-09-10" data-date="2026-09-10" aria-label="Thu 10 September"><span class="num">10</span><span class="cal-grid__dot" aria-hidden="true"></span></a><a class="cal-grid__day cal-grid__day--on" href="#/calendar" data-jump="cal-day-2026-09-11" data-date="2026-09-11" aria-label="Fri 11 September"><span class="num">11</span><span class="cal-grid__dot" aria-hidden="true"></span></a><a class="cal-grid__day cal-grid__day--on" href="#/calendar" data-jump="cal-day-2026-09-12" data-date="2026-09-12" aria-label="Sat 12 September"><span class="num">12</span><span class="cal-grid__dot" aria-hidden="true"></span></a><a class="cal-grid__day cal-grid__day--on" href="#/calendar" data-jump="cal-day-2026-09-13" data-date="2026-09-13" aria-label="Sun 13 September"><span class="num">13</span><span class="cal-grid__dot" aria-hidden="true"></span></a><span class="cal-grid__day" data-date="2026-09-14"><span class="num">14</span></span><span class="cal-grid__day" data-date="2026-09-15"><span class="num">15</span></span><span class="cal-grid__day" data-date="2026-09-16"><span class="num">16</span></span><a class="cal-grid__day cal-grid__day--on" href="#/calendar" data-jump="cal-day-2026-09-17" data-date="2026-09-17" aria-label="Thu 17 September"><span class="num">17</span><span class="cal-grid__dot" aria-hidden="true"></span></a><a class="cal-grid__day cal-grid__day--on" href="#/calendar" data-jump="cal-day-2026-09-18" data-date="2026-09-18" aria-label="Fri 18 September"><span class="num">18</span><span class="cal-grid__dot" aria-hidden="true"></span></a><a class="cal-grid__day cal-grid__day--on" href="#/calendar" data-jump="cal-day-2026-09-19" data-date="2026-09-19" aria-label="Sat 19 September"><span class="num">19</span><span class="cal-grid__dot" aria-hidden="true"></span></a><a class="cal-grid__day cal-grid__day--on" href="#/calendar" data-jump="cal-day-2026-09-20" data-date="2026-09-20" aria-label="Sun 20 September"><span class="num">20</span><span class="cal-grid__dot" aria-hidden="true"></span></a><span class="cal-grid__day" data-date="2026-09-21"><span class="num">21</span></span><span class="cal-grid__day" data-date="2026-09-22"><span class="num">22</span></span><span class="cal-grid__day" data-date="2026-09-23"><span class="num">23</span></span><a class="cal-grid__day cal-grid__day--on" href="#/calendar" data-jump="cal-day-2026-09-24" data-date="2026-09-24" aria-label="Thu 24 September"><span class="num">24</span><span class="cal-grid__dot" aria-hidden="true"></span></a><a class="cal-grid__day cal-grid__day--on" href="#/calendar" data-jump="cal-day-2026-09-25" data-date="2026-09-25" aria-label="Fri 25 September"><span class="num">25</span><span class="cal-grid__dot" aria-hidden="true"></span></a><a class="cal-grid__day cal-grid__day--on" href="#/calendar" data-jump="cal-day-2026-09-26" data-date="2026-09-26" aria-label="Sat 26 September"><span class="num">26</span><span class="cal-grid__dot" aria-hidden="true"></span></a><a class="cal-grid__day cal-grid__day--on" href="#/calendar" data-jump="cal-day-2026-09-27" data-date="2026-09-27" aria-label="Sun 27 September"><span class="num">27</span><span class="cal-grid__dot" aria-hidden="true"></span></a><span class="cal-grid__day" data-date="2026-09-28"><span class="num">28</span></span><span class="cal-grid__day" data-date="2026-09-29"><span class="num">29</span></span><span class="cal-grid__day" data-date="2026-09-30"><span class="num">30</span></span></div>
+      </div>
+      <div class="cal-grid is-current" data-month="2026-10" role="group" aria-label="October 2026">
+        <div class="cal-grid__head">
+          <button class="cal-grid__nav cal-grid__nav--prev" type="button" data-grid="prev" aria-label="Previous month">&lsaquo;</button>
+          <h2 class="cal-grid__title">October <span class="cal-grid__year num">2026</span></h2>
+          <button class="cal-grid__nav cal-grid__nav--next" type="button" data-grid="next" aria-label="Next month" disabled>&rsaquo;</button>
+        </div>
+        <div class="cal-grid__wd" aria-hidden="true"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+        <div class="cal-grid__cells"><span class="cal-grid__day cal-grid__day--pad" aria-hidden="true"></span><span class="cal-grid__day cal-grid__day--pad" aria-hidden="true"></span><span class="cal-grid__day cal-grid__day--pad" aria-hidden="true"></span><span class="cal-grid__day" data-date="2026-10-01"><span class="num">1</span></span><span class="cal-grid__day" data-date="2026-10-02"><span class="num">2</span></span><span class="cal-grid__day" data-date="2026-10-03"><span class="num">3</span></span><a class="cal-grid__day cal-grid__day--on" href="#/calendar" data-jump="cal-day-2026-10-04" data-date="2026-10-04" aria-label="Sun 4 October"><span class="num">4</span><span class="cal-grid__dot" aria-hidden="true"></span></a><span class="cal-grid__day" data-date="2026-10-05"><span class="num">5</span></span><span class="cal-grid__day" data-date="2026-10-06"><span class="num">6</span></span><span class="cal-grid__day" data-date="2026-10-07"><span class="num">7</span></span><span class="cal-grid__day" data-date="2026-10-08"><span class="num">8</span></span><span class="cal-grid__day" data-date="2026-10-09"><span class="num">9</span></span><span class="cal-grid__day" data-date="2026-10-10"><span class="num">10</span></span><a class="cal-grid__day cal-grid__day--on" href="#/calendar" data-jump="cal-day-2026-10-11" data-date="2026-10-11" aria-label="Sun 11 October"><span class="num">11</span><span class="cal-grid__dot" aria-hidden="true"></span></a><span class="cal-grid__day" data-date="2026-10-12"><span class="num">12</span></span><span class="cal-grid__day" data-date="2026-10-13"><span class="num">13</span></span><span class="cal-grid__day" data-date="2026-10-14"><span class="num">14</span></span><span class="cal-grid__day" data-date="2026-10-15"><span class="num">15</span></span><span class="cal-grid__day" data-date="2026-10-16"><span class="num">16</span></span><span class="cal-grid__day" data-date="2026-10-17"><span class="num">17</span></span><a class="cal-grid__day cal-grid__day--on" href="#/calendar" data-jump="cal-day-2026-10-18" data-date="2026-10-18" aria-label="Sun 18 October"><span class="num">18</span><span class="cal-grid__dot" aria-hidden="true"></span></a><span class="cal-grid__day" data-date="2026-10-19"><span class="num">19</span></span><span class="cal-grid__day" data-date="2026-10-20"><span class="num">20</span></span><span class="cal-grid__day" data-date="2026-10-21"><span class="num">21</span></span><span class="cal-grid__day" data-date="2026-10-22"><span class="num">22</span></span><span class="cal-grid__day" data-date="2026-10-23"><span class="num">23</span></span><span class="cal-grid__day" data-date="2026-10-24"><span class="num">24</span></span><a class="cal-grid__day cal-grid__day--on" href="#/calendar" data-jump="cal-day-2026-10-25" data-date="2026-10-25" aria-label="Sun 25 October"><span class="num">25</span><span class="cal-grid__dot" aria-hidden="true"></span></a><span class="cal-grid__day" data-date="2026-10-26"><span class="num">26</span></span><span class="cal-grid__day" data-date="2026-10-27"><span class="num">27</span></span><span class="cal-grid__day" data-date="2026-10-28"><span class="num">28</span></span><span class="cal-grid__day" data-date="2026-10-29"><span class="num">29</span></span><span class="cal-grid__day" data-date="2026-10-30"><span class="num">30</span></span><span class="cal-grid__day" data-date="2026-10-31"><span class="num">31</span></span></div>
+      </div>
+      <p class="cal-legend"><span class="cal-legend__dot" aria-hidden="true"></span> a night on the calendar <span class="cal-legend__today" aria-hidden="true"></span> tonight</p>
+    </div>
+    <div class="band cal-band">
+      <section class="cal-month" id="cal-2026-09" data-month="2026-09" aria-labelledby="cal-2026-09-title">
+        <header class="cal-month__head">
+          <h2 class="cal-month__title" id="cal-2026-09-title">September <span class="cal-month__year">2026</span></h2>
+          <p class="cal-month__count"><span class="cal-month__done">0</span> of 17 nights played</p>
+        </header>
+        <ol class="cal-list">
+          <li class="cal-day" id="cal-day-2026-09-03" data-date="2026-09-03">
+            <div class="cal-day__date" aria-hidden="true"><span class="cal-day__wd">Thu</span><span class="cal-day__num">03</span></div>
+            <span class="cal-day__check" aria-hidden="true"></span>
+            <ul class="cal-day__events">
+              <li class="cal-event cal-event--dj" id="ev-2026-09-03-bbe-music-residency">
+                <time class="cal-event__time" datetime="2026-09-03T20:00">8pm to 1.30am</time>
+                <div class="cal-event__stack">
+                  <h3 class="cal-event__title">BBE Music Residency</h3>
+                  <p class="cal-event__sub">w/ Johnny Reckless, Sean Innit</p>
+                </div>
+                <span class="cal-event__tags"></span>
+              </li>
+            </ul>
+          </li>
+          <li class="cal-day" id="cal-day-2026-09-04" data-date="2026-09-04">
+            <div class="cal-day__date" aria-hidden="true"><span class="cal-day__wd">Fri</span><span class="cal-day__num">04</span></div>
+            <span class="cal-day__check" aria-hidden="true"></span>
+            <ul class="cal-day__events">
+              <li class="cal-event cal-event--dj" id="ev-2026-09-04-ray-mang-magic-touch">
+                <time class="cal-event__time" datetime="2026-09-04T20:00">8pm to 2.30am</time>
+                <div class="cal-event__stack">
+                  <h3 class="cal-event__title">Ray Mang, Magic Touch</h3>
+                </div>
+                <span class="cal-event__tags"></span>
+              </li>
+            </ul>
+          </li>
+          <li class="cal-day" id="cal-day-2026-09-05" data-date="2026-09-05">
+            <div class="cal-day__date" aria-hidden="true"><span class="cal-day__wd">Sat</span><span class="cal-day__num">05</span></div>
+            <span class="cal-day__check" aria-hidden="true"></span>
+            <ul class="cal-day__events">
+              <li class="cal-event cal-event--dj" id="ev-2026-09-05-rodriguez">
+                <time class="cal-event__time" datetime="2026-09-05T20:00">8pm to 2.30am</time>
+                <div class="cal-event__stack">
+                  <h3 class="cal-event__title">Rodriguez</h3>
+                  <p class="cal-event__sub">Unkompress, Berlin</p>
+                </div>
+                <span class="cal-event__tags"></span>
+              </li>
+            </ul>
+          </li>
+          <li class="cal-day" id="cal-day-2026-09-06" data-date="2026-09-06">
+            <div class="cal-day__date" aria-hidden="true"><span class="cal-day__wd">Sun</span><span class="cal-day__num">06</span></div>
+            <span class="cal-day__check" aria-hidden="true"></span>
+            <ul class="cal-day__events">
+              <li class="cal-event cal-event--live cal-event--recurring" id="ev-2026-09-06-the-hoxton-organ-combo">
+                <time class="cal-event__time" datetime="2026-09-06T16:00">4pm to 6pm</time>
+                <div class="cal-event__stack">
+                  <h3 class="cal-event__title">The Hoxton Organ Combo</h3>
+                  <p class="cal-event__sub">Live Jazz</p>
+                </div>
+                <span class="cal-event__tags"><span class="cal-tag cal-tag--live">LIVE</span></span>
+              </li>
+              <li class="cal-event cal-event--dj" id="ev-2026-09-06-dj-greg-boraman">
+                <time class="cal-event__time" datetime="2026-09-06T18:00">6pm to 8pm</time>
+                <div class="cal-event__stack">
+                  <h3 class="cal-event__title">DJ Greg Boraman</h3>
+                </div>
+                <span class="cal-event__tags"></span>
+              </li>
+            </ul>
+          </li>
+          <li class="cal-day" id="cal-day-2026-09-10" data-date="2026-09-10">
+            <div class="cal-day__date" aria-hidden="true"><span class="cal-day__wd">Thu</span><span class="cal-day__num">10</span></div>
+            <span class="cal-day__check" aria-hidden="true"></span>
+            <ul class="cal-day__events">
+              <li class="cal-event cal-event--special" id="ev-2026-09-10-ibibio-sound-machine-album-playback">
+                <time class="cal-event__time" datetime="2026-09-10T20:00">8pm to 1.30am</time>
+                <div class="cal-event__stack">
+                  <h3 class="cal-event__title">Ibibio Sound Machine Album Playback</h3>
+                  <p class="cal-event__sub">DJ set: Unek Ibok</p>
+                </div>
+                <span class="cal-event__tags"></span>
+              </li>
+            </ul>
+          </li>
+          <li class="cal-day" id="cal-day-2026-09-11" data-date="2026-09-11">
+            <div class="cal-day__date" aria-hidden="true"><span class="cal-day__wd">Fri</span><span class="cal-day__num">11</span></div>
+            <span class="cal-day__check" aria-hidden="true"></span>
+            <ul class="cal-day__events">
+              <li class="cal-event cal-event--dj" id="ev-2026-09-11-peace-frequency">
+                <time class="cal-event__time" datetime="2026-09-11T20:00">8pm to 2.30am</time>
+                <div class="cal-event__stack">
+                  <h3 class="cal-event__title">Peace Frequency</h3>
+                  <p class="cal-event__sub">w/ Sean Innit &amp; Simon Lee (Faze Action)</p>
+                </div>
+                <span class="cal-event__tags"></span>
+              </li>
+            </ul>
+          </li>
+          <li class="cal-day" id="cal-day-2026-09-12" data-date="2026-09-12">
+            <div class="cal-day__date" aria-hidden="true"><span class="cal-day__wd">Sat</span><span class="cal-day__num">12</span></div>
+            <span class="cal-day__check" aria-hidden="true"></span>
+            <ul class="cal-day__events">
+              <li class="cal-event cal-event--dj" id="ev-2026-09-12-leopold">
+                <time class="cal-event__time" datetime="2026-09-12T20:00">8pm to 2.30am</time>
+                <div class="cal-event__stack">
+                  <h3 class="cal-event__title">Leopold</h3>
+                </div>
+                <span class="cal-event__tags"></span>
+              </li>
+            </ul>
+          </li>
+          <li class="cal-day" id="cal-day-2026-09-13" data-date="2026-09-13">
+            <div class="cal-day__date" aria-hidden="true"><span class="cal-day__wd">Sun</span><span class="cal-day__num">13</span></div>
+            <span class="cal-day__check" aria-hidden="true"></span>
+            <ul class="cal-day__events">
+              <li class="cal-event cal-event--live cal-event--recurring" id="ev-2026-09-13-eno-williams">
+                <time class="cal-event__time" datetime="2026-09-13T16:00">4pm to 6pm</time>
+                <div class="cal-event__stack">
+                  <h3 class="cal-event__title">Eno Williams</h3>
+                  <p class="cal-event__sub">Live Jazz</p>
+                </div>
+                <span class="cal-event__tags"><span class="cal-tag cal-tag--live">LIVE</span></span>
+              </li>
+            </ul>
+          </li>
+          <li class="cal-day" id="cal-day-2026-09-17" data-date="2026-09-17">
+            <div class="cal-day__date" aria-hidden="true"><span class="cal-day__wd">Thu</span><span class="cal-day__num">17</span></div>
+            <span class="cal-day__check" aria-hidden="true"></span>
+            <ul class="cal-day__events">
+              <li class="cal-event cal-event--dj" id="ev-2026-09-17-paratonel-records">
+                <time class="cal-event__time" datetime="2026-09-17T20:00">8pm to 1.30am</time>
+                <div class="cal-event__stack">
+                  <h3 class="cal-event__title">Paratonel Records</h3>
+                </div>
+                <span class="cal-event__tags"></span>
+              </li>
+            </ul>
+          </li>
+          <li class="cal-day" id="cal-day-2026-09-18" data-date="2026-09-18">
+            <div class="cal-day__date" aria-hidden="true"><span class="cal-day__wd">Fri</span><span class="cal-day__num">18</span></div>
+            <span class="cal-day__check" aria-hidden="true"></span>
+            <ul class="cal-day__events">
+              <li class="cal-event cal-event--dj" id="ev-2026-09-18-candace-horn">
+                <time class="cal-event__time" datetime="2026-09-18T20:00">8pm to 2.30am</time>
+                <div class="cal-event__stack">
+                  <h3 class="cal-event__title">Candace Horn</h3>
+                  <p class="cal-event__sub">Deep Funk</p>
+                </div>
+                <span class="cal-event__tags"></span>
+              </li>
+            </ul>
+          </li>
+          <li class="cal-day" id="cal-day-2026-09-19" data-date="2026-09-19">
+            <div class="cal-day__date" aria-hidden="true"><span class="cal-day__wd">Sat</span><span class="cal-day__num">19</span></div>
+            <span class="cal-day__check" aria-hidden="true"></span>
+            <ul class="cal-day__events">
+              <li class="cal-event cal-event--dj" id="ev-2026-09-19-tall-nico">
+                <time class="cal-event__time" datetime="2026-09-19T20:00">8pm to 2.30am</time>
+                <div class="cal-event__stack">
+                  <h3 class="cal-event__title">Tall Nico</h3>
+                </div>
+                <span class="cal-event__tags"></span>
+              </li>
+            </ul>
+          </li>
+          <li class="cal-day" id="cal-day-2026-09-20" data-date="2026-09-20">
+            <div class="cal-day__date" aria-hidden="true"><span class="cal-day__wd">Sun</span><span class="cal-day__num">20</span></div>
+            <span class="cal-day__check" aria-hidden="true"></span>
+            <ul class="cal-day__events">
+              <li class="cal-event cal-event--live cal-event--recurring" id="ev-2026-09-20-tenderlonius-friends">
+                <time class="cal-event__time" datetime="2026-09-20T16:00">4pm to 6pm</time>
+                <div class="cal-event__stack">
+                  <h3 class="cal-event__title">Tenderlonius &amp; friends</h3>
+                  <p class="cal-event__sub">Live Jazz: interpret North Indian Music</p>
+                </div>
+                <span class="cal-event__tags"><span class="cal-tag cal-tag--live">LIVE</span></span>
+              </li>
+            </ul>
+          </li>
+          <li class="cal-day" id="cal-day-2026-09-24" data-date="2026-09-24">
+            <div class="cal-day__date" aria-hidden="true"><span class="cal-day__wd">Thu</span><span class="cal-day__num">24</span></div>
+            <span class="cal-day__check" aria-hidden="true"></span>
+            <ul class="cal-day__events">
+              <li class="cal-event cal-event--dj" id="ev-2026-09-24-the-tall-buzzardz">
+                <time class="cal-event__time" datetime="2026-09-24T20:00">8pm to 1.30am</time>
+                <div class="cal-event__stack">
+                  <h3 class="cal-event__title">The Tall Buzzardz</h3>
+                </div>
+                <span class="cal-event__tags"></span>
+              </li>
+            </ul>
+          </li>
+          <li class="cal-day" id="cal-day-2026-09-25" data-date="2026-09-25">
+            <div class="cal-day__date" aria-hidden="true"><span class="cal-day__wd">Fri</span><span class="cal-day__num">25</span></div>
+            <span class="cal-day__check" aria-hidden="true"></span>
+            <ul class="cal-day__events">
+              <li class="cal-event cal-event--dj" id="ev-2026-09-25-stu-patterson-tim-keenoy">
+                <time class="cal-event__time" datetime="2026-09-25T20:00">8pm to 2.30am</time>
+                <div class="cal-event__stack">
+                  <h3 class="cal-event__title">Stu Patterson, Tim Keenoy</h3>
+                </div>
+                <span class="cal-event__tags"></span>
+              </li>
+            </ul>
+          </li>
+          <li class="cal-day" id="cal-day-2026-09-26" data-date="2026-09-26">
+            <div class="cal-day__date" aria-hidden="true"><span class="cal-day__wd">Sat</span><span class="cal-day__num">26</span></div>
+            <span class="cal-day__check" aria-hidden="true"></span>
+            <ul class="cal-day__events">
+              <li class="cal-event cal-event--dj" id="ev-2026-09-26-dj-hugo">
+                <time class="cal-event__time" datetime="2026-09-26T20:00">8pm to 2.30am</time>
+                <div class="cal-event__stack">
+                  <h3 class="cal-event__title">DJ Hugo</h3>
+                </div>
+                <span class="cal-event__tags"></span>
+              </li>
+            </ul>
+          </li>
+          <li class="cal-day" id="cal-day-2026-09-27" data-date="2026-09-27">
+            <div class="cal-day__date" aria-hidden="true"><span class="cal-day__wd">Sun</span><span class="cal-day__num">27</span></div>
+            <span class="cal-day__check" aria-hidden="true"></span>
+            <ul class="cal-day__events">
+              <li class="cal-event cal-event--live cal-event--recurring" id="ev-2026-09-27-carolyna-invites-netto-rosa">
+                <time class="cal-event__time" datetime="2026-09-27T16:00">4pm to 6pm</time>
+                <div class="cal-event__stack">
+                  <h3 class="cal-event__title">Carolyna invites Netto Rosa</h3>
+                  <p class="cal-event__sub">Live Jazz</p>
+                </div>
+                <span class="cal-event__tags"><span class="cal-tag cal-tag--live">LIVE</span></span>
+              </li>
+            </ul>
+          </li>
+        </ol>
+        <p class="cal-month__poster"><a class="btn btn--secondary" href="https://madcats.uk/wp-content/uploads/2026/09/Music_September.pdf" target="_blank" rel="noopener">SEPTEMBER POSTER PDF</a></p>
+      </section>
+      <section class="cal-month" id="cal-2026-10" data-month="2026-10" aria-labelledby="cal-2026-10-title">
+        <header class="cal-month__head">
+          <h2 class="cal-month__title" id="cal-2026-10-title">October <span class="cal-month__year">2026</span></h2>
+          <p class="cal-month__count"><span class="cal-month__done">0</span> of 4 nights played</p>
+        </header>
+        <ol class="cal-list">
+          <li class="cal-day" id="cal-day-2026-10-04" data-date="2026-10-04">
+            <div class="cal-day__date" aria-hidden="true"><span class="cal-day__wd">Sun</span><span class="cal-day__num">04</span></div>
+            <span class="cal-day__check" aria-hidden="true"></span>
+            <ul class="cal-day__events">
+              <li class="cal-event cal-event--live cal-event--recurring" id="ev-2026-10-04-live-jazz-sundays">
+                <time class="cal-event__time" datetime="2026-10-04T16:00">4pm to 6pm</time>
+                <div class="cal-event__stack">
+                  <h3 class="cal-event__title">Live Jazz Sundays</h3>
+                  <p class="cal-event__sub">Live ensemble, line-up to be announced</p>
+                </div>
+                <span class="cal-event__tags"><span class="cal-tag cal-tag--live">LIVE</span></span>
+              </li>
+            </ul>
+          </li>
+          <li class="cal-day" id="cal-day-2026-10-11" data-date="2026-10-11">
+            <div class="cal-day__date" aria-hidden="true"><span class="cal-day__wd">Sun</span><span class="cal-day__num">11</span></div>
+            <span class="cal-day__check" aria-hidden="true"></span>
+            <ul class="cal-day__events">
+              <li class="cal-event cal-event--live cal-event--recurring" id="ev-2026-10-11-live-jazz-sundays">
+                <time class="cal-event__time" datetime="2026-10-11T16:00">4pm to 6pm</time>
+                <div class="cal-event__stack">
+                  <h3 class="cal-event__title">Live Jazz Sundays</h3>
+                  <p class="cal-event__sub">Live ensemble, line-up to be announced</p>
+                </div>
+                <span class="cal-event__tags"><span class="cal-tag cal-tag--live">LIVE</span></span>
+              </li>
+            </ul>
+          </li>
+          <li class="cal-day" id="cal-day-2026-10-18" data-date="2026-10-18">
+            <div class="cal-day__date" aria-hidden="true"><span class="cal-day__wd">Sun</span><span class="cal-day__num">18</span></div>
+            <span class="cal-day__check" aria-hidden="true"></span>
+            <ul class="cal-day__events">
+              <li class="cal-event cal-event--live cal-event--recurring" id="ev-2026-10-18-live-jazz-sundays">
+                <time class="cal-event__time" datetime="2026-10-18T16:00">4pm to 6pm</time>
+                <div class="cal-event__stack">
+                  <h3 class="cal-event__title">Live Jazz Sundays</h3>
+                  <p class="cal-event__sub">Live ensemble, line-up to be announced</p>
+                </div>
+                <span class="cal-event__tags"><span class="cal-tag cal-tag--live">LIVE</span></span>
+              </li>
+            </ul>
+          </li>
+          <li class="cal-day" id="cal-day-2026-10-25" data-date="2026-10-25">
+            <div class="cal-day__date" aria-hidden="true"><span class="cal-day__wd">Sun</span><span class="cal-day__num">25</span></div>
+            <span class="cal-day__check" aria-hidden="true"></span>
+            <ul class="cal-day__events">
+              <li class="cal-event cal-event--live cal-event--recurring" id="ev-2026-10-25-live-jazz-sundays">
+                <time class="cal-event__time" datetime="2026-10-25T16:00">4pm to 6pm</time>
+                <div class="cal-event__stack">
+                  <h3 class="cal-event__title">Live Jazz Sundays</h3>
+                  <p class="cal-event__sub">Live ensemble, line-up to be announced</p>
+                </div>
+                <span class="cal-event__tags"><span class="cal-tag cal-tag--live">LIVE</span></span>
+              </li>
+            </ul>
+          </li>
+        </ol>
+      </section>
+    </div>
+    </div>
+    <script type="application/ld+json">[{"@context":"https://schema.org","@type":"MusicEvent","@id":"https://madcats.uk/calendar/#ev-2026-09-03-bbe-music-residency","name":"BBE Music Residency","description":"w/ Johnny Reckless, Sean Innit","startDate":"2026-09-03T20:00:00+01:00","endDate":"2026-09-03T01:30:00+01:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"MusicVenue","@id":"https://madcats.uk/#restaurant","name":"Mad Cats London","address":{"@type":"PostalAddress","streetAddress":"107 Redchurch Street","addressLocality":"London","postalCode":"E2 7DL","addressCountry":"GB"}},"organizer":{"@type":"Organization","name":"Mad Cats London","url":"https://madcats.uk"}},{"@context":"https://schema.org","@type":"MusicEvent","@id":"https://madcats.uk/calendar/#ev-2026-09-04-ray-mang-magic-touch","name":"Ray Mang, Magic Touch","startDate":"2026-09-04T20:00:00+01:00","endDate":"2026-09-04T02:30:00+01:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"MusicVenue","@id":"https://madcats.uk/#restaurant","name":"Mad Cats London","address":{"@type":"PostalAddress","streetAddress":"107 Redchurch Street","addressLocality":"London","postalCode":"E2 7DL","addressCountry":"GB"}},"organizer":{"@type":"Organization","name":"Mad Cats London","url":"https://madcats.uk"}},{"@context":"https://schema.org","@type":"MusicEvent","@id":"https://madcats.uk/calendar/#ev-2026-09-05-rodriguez","name":"Rodriguez","description":"Unkompress, Berlin","startDate":"2026-09-05T20:00:00+01:00","endDate":"2026-09-05T02:30:00+01:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"MusicVenue","@id":"https://madcats.uk/#restaurant","name":"Mad Cats London","address":{"@type":"PostalAddress","streetAddress":"107 Redchurch Street","addressLocality":"London","postalCode":"E2 7DL","addressCountry":"GB"}},"organizer":{"@type":"Organization","name":"Mad Cats London","url":"https://madcats.uk"}},{"@context":"https://schema.org","@type":"MusicEvent","@id":"https://madcats.uk/calendar/#ev-2026-09-06-the-hoxton-organ-combo","name":"The Hoxton Organ Combo","description":"Live Jazz","startDate":"2026-09-06T16:00:00+01:00","endDate":"2026-09-06T18:00:00+01:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"MusicVenue","@id":"https://madcats.uk/#restaurant","name":"Mad Cats London","address":{"@type":"PostalAddress","streetAddress":"107 Redchurch Street","addressLocality":"London","postalCode":"E2 7DL","addressCountry":"GB"}},"organizer":{"@type":"Organization","name":"Mad Cats London","url":"https://madcats.uk"}},{"@context":"https://schema.org","@type":"MusicEvent","@id":"https://madcats.uk/calendar/#ev-2026-09-06-dj-greg-boraman","name":"DJ Greg Boraman","startDate":"2026-09-06T18:00:00+01:00","endDate":"2026-09-06T20:00:00+01:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"MusicVenue","@id":"https://madcats.uk/#restaurant","name":"Mad Cats London","address":{"@type":"PostalAddress","streetAddress":"107 Redchurch Street","addressLocality":"London","postalCode":"E2 7DL","addressCountry":"GB"}},"organizer":{"@type":"Organization","name":"Mad Cats London","url":"https://madcats.uk"}},{"@context":"https://schema.org","@type":"MusicEvent","@id":"https://madcats.uk/calendar/#ev-2026-09-10-ibibio-sound-machine-album-playback","name":"Ibibio Sound Machine Album Playback","description":"DJ set: Unek Ibok","startDate":"2026-09-10T20:00:00+01:00","endDate":"2026-09-10T01:30:00+01:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"MusicVenue","@id":"https://madcats.uk/#restaurant","name":"Mad Cats London","address":{"@type":"PostalAddress","streetAddress":"107 Redchurch Street","addressLocality":"London","postalCode":"E2 7DL","addressCountry":"GB"}},"organizer":{"@type":"Organization","name":"Mad Cats London","url":"https://madcats.uk"}},{"@context":"https://schema.org","@type":"MusicEvent","@id":"https://madcats.uk/calendar/#ev-2026-09-11-peace-frequency","name":"Peace Frequency","description":"w/ Sean Innit & Simon Lee (Faze Action)","startDate":"2026-09-11T20:00:00+01:00","endDate":"2026-09-11T02:30:00+01:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"MusicVenue","@id":"https://madcats.uk/#restaurant","name":"Mad Cats London","address":{"@type":"PostalAddress","streetAddress":"107 Redchurch Street","addressLocality":"London","postalCode":"E2 7DL","addressCountry":"GB"}},"organizer":{"@type":"Organization","name":"Mad Cats London","url":"https://madcats.uk"}},{"@context":"https://schema.org","@type":"MusicEvent","@id":"https://madcats.uk/calendar/#ev-2026-09-12-leopold","name":"Leopold","startDate":"2026-09-12T20:00:00+01:00","endDate":"2026-09-12T02:30:00+01:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"MusicVenue","@id":"https://madcats.uk/#restaurant","name":"Mad Cats London","address":{"@type":"PostalAddress","streetAddress":"107 Redchurch Street","addressLocality":"London","postalCode":"E2 7DL","addressCountry":"GB"}},"organizer":{"@type":"Organization","name":"Mad Cats London","url":"https://madcats.uk"}},{"@context":"https://schema.org","@type":"MusicEvent","@id":"https://madcats.uk/calendar/#ev-2026-09-13-eno-williams","name":"Eno Williams","description":"Live Jazz","startDate":"2026-09-13T16:00:00+01:00","endDate":"2026-09-13T18:00:00+01:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"MusicVenue","@id":"https://madcats.uk/#restaurant","name":"Mad Cats London","address":{"@type":"PostalAddress","streetAddress":"107 Redchurch Street","addressLocality":"London","postalCode":"E2 7DL","addressCountry":"GB"}},"organizer":{"@type":"Organization","name":"Mad Cats London","url":"https://madcats.uk"}},{"@context":"https://schema.org","@type":"MusicEvent","@id":"https://madcats.uk/calendar/#ev-2026-09-17-paratonel-records","name":"Paratonel Records","startDate":"2026-09-17T20:00:00+01:00","endDate":"2026-09-17T01:30:00+01:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"MusicVenue","@id":"https://madcats.uk/#restaurant","name":"Mad Cats London","address":{"@type":"PostalAddress","streetAddress":"107 Redchurch Street","addressLocality":"London","postalCode":"E2 7DL","addressCountry":"GB"}},"organizer":{"@type":"Organization","name":"Mad Cats London","url":"https://madcats.uk"}},{"@context":"https://schema.org","@type":"MusicEvent","@id":"https://madcats.uk/calendar/#ev-2026-09-18-candace-horn","name":"Candace Horn","description":"Deep Funk","startDate":"2026-09-18T20:00:00+01:00","endDate":"2026-09-18T02:30:00+01:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"MusicVenue","@id":"https://madcats.uk/#restaurant","name":"Mad Cats London","address":{"@type":"PostalAddress","streetAddress":"107 Redchurch Street","addressLocality":"London","postalCode":"E2 7DL","addressCountry":"GB"}},"organizer":{"@type":"Organization","name":"Mad Cats London","url":"https://madcats.uk"}},{"@context":"https://schema.org","@type":"MusicEvent","@id":"https://madcats.uk/calendar/#ev-2026-09-19-tall-nico","name":"Tall Nico","startDate":"2026-09-19T20:00:00+01:00","endDate":"2026-09-19T02:30:00+01:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"MusicVenue","@id":"https://madcats.uk/#restaurant","name":"Mad Cats London","address":{"@type":"PostalAddress","streetAddress":"107 Redchurch Street","addressLocality":"London","postalCode":"E2 7DL","addressCountry":"GB"}},"organizer":{"@type":"Organization","name":"Mad Cats London","url":"https://madcats.uk"}},{"@context":"https://schema.org","@type":"MusicEvent","@id":"https://madcats.uk/calendar/#ev-2026-09-20-tenderlonius-friends","name":"Tenderlonius & friends","description":"Live Jazz: interpret North Indian Music","startDate":"2026-09-20T16:00:00+01:00","endDate":"2026-09-20T18:00:00+01:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"MusicVenue","@id":"https://madcats.uk/#restaurant","name":"Mad Cats London","address":{"@type":"PostalAddress","streetAddress":"107 Redchurch Street","addressLocality":"London","postalCode":"E2 7DL","addressCountry":"GB"}},"organizer":{"@type":"Organization","name":"Mad Cats London","url":"https://madcats.uk"}},{"@context":"https://schema.org","@type":"MusicEvent","@id":"https://madcats.uk/calendar/#ev-2026-09-24-the-tall-buzzardz","name":"The Tall Buzzardz","startDate":"2026-09-24T20:00:00+01:00","endDate":"2026-09-24T01:30:00+01:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"MusicVenue","@id":"https://madcats.uk/#restaurant","name":"Mad Cats London","address":{"@type":"PostalAddress","streetAddress":"107 Redchurch Street","addressLocality":"London","postalCode":"E2 7DL","addressCountry":"GB"}},"organizer":{"@type":"Organization","name":"Mad Cats London","url":"https://madcats.uk"}},{"@context":"https://schema.org","@type":"MusicEvent","@id":"https://madcats.uk/calendar/#ev-2026-09-25-stu-patterson-tim-keenoy","name":"Stu Patterson, Tim Keenoy","startDate":"2026-09-25T20:00:00+01:00","endDate":"2026-09-25T02:30:00+01:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"MusicVenue","@id":"https://madcats.uk/#restaurant","name":"Mad Cats London","address":{"@type":"PostalAddress","streetAddress":"107 Redchurch Street","addressLocality":"London","postalCode":"E2 7DL","addressCountry":"GB"}},"organizer":{"@type":"Organization","name":"Mad Cats London","url":"https://madcats.uk"}},{"@context":"https://schema.org","@type":"MusicEvent","@id":"https://madcats.uk/calendar/#ev-2026-09-26-dj-hugo","name":"DJ Hugo","startDate":"2026-09-26T20:00:00+01:00","endDate":"2026-09-26T02:30:00+01:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"MusicVenue","@id":"https://madcats.uk/#restaurant","name":"Mad Cats London","address":{"@type":"PostalAddress","streetAddress":"107 Redchurch Street","addressLocality":"London","postalCode":"E2 7DL","addressCountry":"GB"}},"organizer":{"@type":"Organization","name":"Mad Cats London","url":"https://madcats.uk"}},{"@context":"https://schema.org","@type":"MusicEvent","@id":"https://madcats.uk/calendar/#ev-2026-09-27-carolyna-invites-netto-rosa","name":"Carolyna invites Netto Rosa","description":"Live Jazz","startDate":"2026-09-27T16:00:00+01:00","endDate":"2026-09-27T18:00:00+01:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"MusicVenue","@id":"https://madcats.uk/#restaurant","name":"Mad Cats London","address":{"@type":"PostalAddress","streetAddress":"107 Redchurch Street","addressLocality":"London","postalCode":"E2 7DL","addressCountry":"GB"}},"organizer":{"@type":"Organization","name":"Mad Cats London","url":"https://madcats.uk"}},{"@context":"https://schema.org","@type":"MusicEvent","@id":"https://madcats.uk/calendar/#ev-2026-10-04-live-jazz-sundays","name":"Live Jazz Sundays","description":"Live ensemble, line-up to be announced","startDate":"2026-10-04T16:00:00+01:00","endDate":"2026-10-04T18:00:00+01:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"MusicVenue","@id":"https://madcats.uk/#restaurant","name":"Mad Cats London","address":{"@type":"PostalAddress","streetAddress":"107 Redchurch Street","addressLocality":"London","postalCode":"E2 7DL","addressCountry":"GB"}},"organizer":{"@type":"Organization","name":"Mad Cats London","url":"https://madcats.uk"}},{"@context":"https://schema.org","@type":"MusicEvent","@id":"https://madcats.uk/calendar/#ev-2026-10-11-live-jazz-sundays","name":"Live Jazz Sundays","description":"Live ensemble, line-up to be announced","startDate":"2026-10-11T16:00:00+01:00","endDate":"2026-10-11T18:00:00+01:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"MusicVenue","@id":"https://madcats.uk/#restaurant","name":"Mad Cats London","address":{"@type":"PostalAddress","streetAddress":"107 Redchurch Street","addressLocality":"London","postalCode":"E2 7DL","addressCountry":"GB"}},"organizer":{"@type":"Organization","name":"Mad Cats London","url":"https://madcats.uk"}},{"@context":"https://schema.org","@type":"MusicEvent","@id":"https://madcats.uk/calendar/#ev-2026-10-18-live-jazz-sundays","name":"Live Jazz Sundays","description":"Live ensemble, line-up to be announced","startDate":"2026-10-18T16:00:00+01:00","endDate":"2026-10-18T18:00:00+01:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"MusicVenue","@id":"https://madcats.uk/#restaurant","name":"Mad Cats London","address":{"@type":"PostalAddress","streetAddress":"107 Redchurch Street","addressLocality":"London","postalCode":"E2 7DL","addressCountry":"GB"}},"organizer":{"@type":"Organization","name":"Mad Cats London","url":"https://madcats.uk"}},{"@context":"https://schema.org","@type":"MusicEvent","@id":"https://madcats.uk/calendar/#ev-2026-10-25-live-jazz-sundays","name":"Live Jazz Sundays","description":"Live ensemble, line-up to be announced","startDate":"2026-10-25T16:00:00+01:00","endDate":"2026-10-25T18:00:00+01:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"MusicVenue","@id":"https://madcats.uk/#restaurant","name":"Mad Cats London","address":{"@type":"PostalAddress","streetAddress":"107 Redchurch Street","addressLocality":"London","postalCode":"E2 7DL","addressCountry":"GB"}},"organizer":{"@type":"Organization","name":"Mad Cats London","url":"https://madcats.uk"}}]</script>
+<!-- calendar:end -->
+  </section>
+
+  <!-- ============ MENU (generated from content/menu.json + content/specials.json by build-content.mjs) ============ -->
+  <section class="route" data-route="/menu" aria-label="Food and drinks menu">
+<!-- menu:start -->
+    <a class="band marquee marquee--title marq-band ticker-link" href="#/this-week" aria-label="This week at Mad Cats: see what is on">
+      <span class="marquee__track" aria-hidden="true"><span>This Week at Mad Cats &middot;&nbsp; This Week at Mad Cats &middot;&nbsp; This Week at Mad Cats &middot;&nbsp; This Week at Mad Cats &middot;&nbsp; This Week at Mad Cats &middot;&nbsp; This Week at Mad Cats &middot;&nbsp; This Week at Mad Cats &middot;&nbsp; This Week at Mad Cats &middot;&nbsp; </span><span>This Week at Mad Cats &middot;&nbsp; This Week at Mad Cats &middot;&nbsp; This Week at Mad Cats &middot;&nbsp; This Week at Mad Cats &middot;&nbsp; This Week at Mad Cats &middot;&nbsp; This Week at Mad Cats &middot;&nbsp; This Week at Mad Cats &middot;&nbsp; This Week at Mad Cats &middot;&nbsp; </span></span>
+    </a>
+    <div class="band text-band">
+      <h1 class="t-page t-page--hand">Eat, Drink, Listen</h1>
+    </div>
+    <div class="band text-band text-band--tight menu-head menu-head--specials">
+      <h2 class="t-sub" id="menu-specials-title">This Week's Specials</h2>
+    </div>
+    <div class="band strip-band strip-band--sheet menu-specials" aria-labelledby="menu-specials-title">
+      <div class="strip-wrap">
+        <div class="filmstrip filmstrip--sheet" tabindex="0" role="group" aria-label="This week's specials, browse with your mouse or arrow keys">
+          <figure><img src="assets-opt/menu/specials/pickle-of-the-week.jpg" alt="Pickle of the Week: Smacked cucumber, Sichuan vinegar, toasted sesame, £4.50"><figcaption>01 / 04</figcaption></figure>
+          <figure><img src="assets-opt/menu/specials/bread-of-the-day.jpg" alt="Bread of the Day: Za'atar flatbread, miso butter on the side, £4"><figcaption>02 / 04</figcaption></figure>
+          <figure><img src="assets-opt/menu/specials/sake-of-the-week.jpg" alt="Sake of the Week: Mad Cats House Junmai, served chilled, 100ml, £12"><figcaption>03 / 04</figcaption></figure>
+          <figure><img src="assets-opt/menu/specials/selector-s-pour.jpg" alt="The Selector's Pour: Jungle Soul, the zero-proof highball Sean plays records to, £13"><figcaption>04 / 04</figcaption></figure>
+        </div>
+        <div class="strip-dots" role="tablist" aria-label="Slides"></div>
+      </div>
+      <p class="strip-caption"><span>DRAG</span><span>&middot;</span><span class="strip-index">01 / 04</span></p>
+    </div>
+    <div class="band text-band text-band--tight menu-head menu-head--full">
+      <h2 class="t-sub" id="menu-full-title">Full Menu</h2>
+      <p class="intro-caption menu-caption">Summer 2026. Tap a dish for a photo, or hover on desktop.</p>
+    </div>
+    <div class="band menu-band" aria-labelledby="menu-full-title">
+      <nav class="menu-jump" aria-label="Menu sections">
+        <div class="menu-jump__group"><span class="menu-jump__label">Food</span><a class="menu-jump__link" href="#/menu" data-jump="menu-served-all-night"><span class="menu-jump__num num" aria-hidden="true">01</span><span class="menu-jump__txt">Served All Night</span></a><a class="menu-jump__link" href="#/menu" data-jump="menu-snacks"><span class="menu-jump__num num" aria-hidden="true">02</span><span class="menu-jump__txt">Snacks</span></a><a class="menu-jump__link" href="#/menu" data-jump="menu-for-the-table"><span class="menu-jump__num num" aria-hidden="true">03</span><span class="menu-jump__txt">For the Table</span></a><a class="menu-jump__link" href="#/menu" data-jump="menu-sweets"><span class="menu-jump__num num" aria-hidden="true">04</span><span class="menu-jump__txt">Sweets</span></a></div>
+        <div class="menu-jump__group"><span class="menu-jump__label">Drinks</span><a class="menu-jump__link" href="#/menu" data-jump="menu-white-wine"><span class="menu-jump__num num" aria-hidden="true">05</span><span class="menu-jump__txt">White Wine</span></a><a class="menu-jump__link" href="#/menu" data-jump="menu-red-wine"><span class="menu-jump__num num" aria-hidden="true">06</span><span class="menu-jump__txt">Red Wine</span></a><a class="menu-jump__link" href="#/menu" data-jump="menu-rose-wine"><span class="menu-jump__num num" aria-hidden="true">07</span><span class="menu-jump__txt">Rosé Wine</span></a><a class="menu-jump__link" href="#/menu" data-jump="menu-orange-wine"><span class="menu-jump__num num" aria-hidden="true">08</span><span class="menu-jump__txt">Orange Wine</span></a><a class="menu-jump__link" href="#/menu" data-jump="menu-sparkling-wine"><span class="menu-jump__num num" aria-hidden="true">09</span><span class="menu-jump__txt">Sparkling Wine</span></a><a class="menu-jump__link" href="#/menu" data-jump="menu-sake"><span class="menu-jump__num num" aria-hidden="true">10</span><span class="menu-jump__txt">Sake</span></a><a class="menu-jump__link" href="#/menu" data-jump="menu-cocktails"><span class="menu-jump__num num" aria-hidden="true">11</span><span class="menu-jump__txt">Cocktails</span></a><a class="menu-jump__link" href="#/menu" data-jump="menu-martini"><span class="menu-jump__num num" aria-hidden="true">12</span><span class="menu-jump__txt">Martini</span></a><a class="menu-jump__link" href="#/menu" data-jump="menu-non-alcoholic"><span class="menu-jump__num num" aria-hidden="true">13</span><span class="menu-jump__txt">Non-Alcoholic</span></a><a class="menu-jump__link" href="#/menu" data-jump="menu-arak"><span class="menu-jump__num num" aria-hidden="true">14</span><span class="menu-jump__txt">Arak</span></a><a class="menu-jump__link" href="#/menu" data-jump="menu-beers-ciders"><span class="menu-jump__num num" aria-hidden="true">15</span><span class="menu-jump__txt">Beers &amp; Ciders</span></a><a class="menu-jump__link" href="#/menu" data-jump="menu-whisky-flight"><span class="menu-jump__num num" aria-hidden="true">16</span><span class="menu-jump__txt">Whisky Flight</span></a><a class="menu-jump__link" href="#/menu" data-jump="menu-soft-mixers"><span class="menu-jump__num num" aria-hidden="true">17</span><span class="menu-jump__txt">Soft &amp; Mixers</span></a><a class="menu-jump__link" href="#/menu" data-jump="menu-tea-coffee"><span class="menu-jump__num num" aria-hidden="true">18</span><span class="menu-jump__txt">Tea &amp; Coffee</span></a></div>
+      </nav>
+      <div class="menu-main">
+      <section class="menu-group menu-group--food" id="menu-food" aria-labelledby="menu-food-title">
+        <h3 class="menu-group__title" id="menu-food-title">Food</h3>
+        <section class="menu-section" id="menu-served-all-night" aria-labelledby="menu-served-all-night-title">
+          <header class="menu-section__head">
+            <span class="menu-section__num num" aria-hidden="true">01</span>
+            <h4 class="menu-section__title" id="menu-served-all-night-title">Served All Night</h4>
+          </header>
+          <ul class="menu-list">
+          <li class="menu-item" id="menu-item-spicy-house-mixed-nuts" data-image="assets-opt/dinner/dinner-dsc00505.jpg">
+            <div class="menu-item__row">
+              <h5 class="menu-item__name">Spicy House Mixed Nuts</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price">£4.50</span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-spicy-house-mixed-nuts-media"><span class="sr-only">Show a photo of Spicy House Mixed Nuts</span></button>
+            </div>
+            <figure class="menu-item__media" id="menu-item-spicy-house-mixed-nuts-media" hidden><img src="assets-opt/dinner/dinner-dsc00505.jpg" alt="Spicy House Mixed Nuts" loading="lazy"></figure>
+          </li>
+          <li class="menu-item" id="menu-item-lebanese-green-olives" data-image="assets-opt/dinner/dinner-dsc00519.jpg">
+            <div class="menu-item__row">
+              <h5 class="menu-item__name">Lebanese Green Olives</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price">£4.50</span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-lebanese-green-olives-media"><span class="sr-only">Show a photo of Lebanese Green Olives</span></button>
+            </div>
+            <figure class="menu-item__media" id="menu-item-lebanese-green-olives-media" hidden><img src="assets-opt/dinner/dinner-dsc00519.jpg" alt="Lebanese Green Olives" loading="lazy"></figure>
+          </li>
+          <li class="menu-item" id="menu-item-pickle-of-the-week" data-image="assets-opt/dinner/dinner-dsc00567.jpg">
+            <div class="menu-item__row">
+              <h5 class="menu-item__name">Pickle of the Week</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price">£4.50</span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-pickle-of-the-week-media"><span class="sr-only">Show a photo of Pickle of the Week</span></button>
+            </div>
+            <figure class="menu-item__media" id="menu-item-pickle-of-the-week-media" hidden><img src="assets-opt/dinner/dinner-dsc00567.jpg" alt="Pickle of the Week" loading="lazy"></figure>
+          </li>
+          <li class="menu-item" id="menu-item-whipped-mascarpone-w-greek-pita" data-image="assets-opt/dinner/dinner-dsc00655.jpg">
+            <div class="menu-item__row">
+              <h5 class="menu-item__name">Whipped Mascarpone w/ Greek Pita</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price">£10.50</span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-whipped-mascarpone-w-greek-pita-media"><span class="sr-only">Show a photo of Whipped Mascarpone w/ Greek Pita</span></button>
+            </div>
+            <p class="menu-item__desc">Infused with shiitake dashi, finished with samphire oil &amp; ikura</p>
+            <figure class="menu-item__media" id="menu-item-whipped-mascarpone-w-greek-pita-media" hidden><img src="assets-opt/dinner/dinner-dsc00655.jpg" alt="Whipped Mascarpone w/ Greek Pita" loading="lazy"></figure>
+          </li>
+          <li class="menu-item" id="menu-item-roasted-pepper-hummus-w-pane-carasau" data-image="assets-opt/dinner/dinner-dsc06808.jpg">
+            <div class="menu-item__row">
+              <h5 class="menu-item__name">Roasted Pepper Hummus w/ Pane Carasau</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price">£8.50</span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-roasted-pepper-hummus-w-pane-carasau-media"><span class="sr-only">Show a photo of Roasted Pepper Hummus w/ Pane Carasau</span></button>
+            </div>
+            <p class="menu-item__desc">Finished with crispy chickpeas &amp; chilli oil</p>
+            <figure class="menu-item__media" id="menu-item-roasted-pepper-hummus-w-pane-carasau-media" hidden><img src="assets-opt/dinner/dinner-dsc06808.jpg" alt="Roasted Pepper Hummus w/ Pane Carasau" loading="lazy"></figure>
+          </li>
+          <li class="menu-item" id="menu-item-pandan-creme-brulee-served-all-night" data-image="assets-opt/dinner/dinner-dsc00505.jpg">
+            <div class="menu-item__row">
+              <h5 class="menu-item__name">Pandan Crème Brulée</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price">£10</span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-pandan-creme-brulee-served-all-night-media"><span class="sr-only">Show a photo of Pandan Crème Brulée</span></button>
+            </div>
+            <figure class="menu-item__media" id="menu-item-pandan-creme-brulee-served-all-night-media" hidden><img src="assets-opt/dinner/dinner-dsc00505.jpg" alt="Pandan Crème Brulée" loading="lazy"></figure>
+          </li>
+          </ul>
+        </section>
+        <section class="menu-section" id="menu-snacks" aria-labelledby="menu-snacks-title">
+          <header class="menu-section__head">
+            <span class="menu-section__num num" aria-hidden="true">02</span>
+            <h4 class="menu-section__title" id="menu-snacks-title">Snacks</h4>
+            <p class="menu-section__intro">The kitchen firmly believes that sharing food is one of life's great pleasures. This belief tends to disappear the moment someone reaches for the last bite without asking.</p>
+          </header>
+          <ul class="menu-list">
+          <li class="menu-item" id="menu-item-otoro-handroll" data-image="assets-opt/dinner/dinner-dsc00519.jpg">
+            <div class="menu-item__row">
+              <h5 class="menu-item__name">Otoro Handroll</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price">£9</span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-otoro-handroll-media"><span class="sr-only">Show a photo of Otoro Handroll</span></button>
+            </div>
+            <p class="menu-item__desc">Chopped tuna belly with yuzu ponzu, black truffle and a touch of caviar</p>
+            <figure class="menu-item__media" id="menu-item-otoro-handroll-media" hidden><img src="assets-opt/dinner/dinner-dsc00519.jpg" alt="Otoro Handroll" loading="lazy"></figure>
+          </li>
+          <li class="menu-item" id="menu-item-steak-tartare-handroll" data-image="assets-opt/dinner/dinner-dsc00567.jpg">
+            <div class="menu-item__row">
+              <h5 class="menu-item__name">Steak Tartare Handroll</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price">£9</span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-steak-tartare-handroll-media"><span class="sr-only">Show a photo of Steak Tartare Handroll</span></button>
+            </div>
+            <p class="menu-item__desc">Hand cut and finished in a bonito aioli, topped with fried capers</p>
+            <figure class="menu-item__media" id="menu-item-steak-tartare-handroll-media" hidden><img src="assets-opt/dinner/dinner-dsc00567.jpg" alt="Steak Tartare Handroll" loading="lazy"></figure>
+          </li>
+          <li class="menu-item" id="menu-item-bread-of-the-day" data-image="assets-opt/dinner/dinner-dsc00655.jpg">
+            <div class="menu-item__row">
+              <h5 class="menu-item__name">Bread of the Day</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price">£4</span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-bread-of-the-day-media"><span class="sr-only">Show a photo of Bread of the Day</span></button>
+            </div>
+            <p class="menu-item__addons">+ Miso Butter £2</p>
+            <figure class="menu-item__media" id="menu-item-bread-of-the-day-media" hidden><img src="assets-opt/dinner/dinner-dsc00655.jpg" alt="Bread of the Day" loading="lazy"></figure>
+          </li>
+          </ul>
+        </section>
+        <section class="menu-section" id="menu-for-the-table" aria-labelledby="menu-for-the-table-title">
+          <header class="menu-section__head">
+            <span class="menu-section__num num" aria-hidden="true">03</span>
+            <h4 class="menu-section__title" id="menu-for-the-table-title">For the Table</h4>
+          </header>
+          <ul class="menu-list">
+          <li class="menu-item" id="menu-item-hamachi-carpaccio" data-image="assets-opt/dinner/dinner-dsc06808.jpg">
+            <div class="menu-item__row">
+              <h5 class="menu-item__name">Hamachi Carpaccio</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price">£16.50</span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-hamachi-carpaccio-media"><span class="sr-only">Show a photo of Hamachi Carpaccio</span></button>
+            </div>
+            <p class="menu-item__desc">Delicately sliced yellowtail with bright ponzu, jalapeño sauce and fresh lime zest</p>
+            <figure class="menu-item__media" id="menu-item-hamachi-carpaccio-media" hidden><img src="assets-opt/dinner/dinner-dsc06808.jpg" alt="Hamachi Carpaccio" loading="lazy"></figure>
+          </li>
+          <li class="menu-item" id="menu-item-crab-brioche" data-image="assets-opt/dinner/dinner-dsc00505.jpg">
+            <div class="menu-item__row">
+              <h5 class="menu-item__name">Crab Brioche</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price">£18.50</span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-crab-brioche-media"><span class="sr-only">Show a photo of Crab Brioche</span></button>
+            </div>
+            <p class="menu-item__desc">Sweet Devon crab on toasted brioche with homemade gochujang aioli, smoked napa cabbage and tobiko</p>
+            <figure class="menu-item__media" id="menu-item-crab-brioche-media" hidden><img src="assets-opt/dinner/dinner-dsc00505.jpg" alt="Crab Brioche" loading="lazy"></figure>
+          </li>
+          <li class="menu-item" id="menu-item-shish-barak-dumplings" data-image="assets-opt/dinner/dinner-dsc00519.jpg">
+            <div class="menu-item__row">
+              <h5 class="menu-item__name">Shish Barak Dumplings</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price">£22</span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-shish-barak-dumplings-media"><span class="sr-only">Show a photo of Shish Barak Dumplings</span></button>
+            </div>
+            <p class="menu-item__desc">Hand-folded beef and lamb parcels on a bed of labneh, mint pesto, topped with chilli oil and toasted pine nuts</p>
+            <figure class="menu-item__media" id="menu-item-shish-barak-dumplings-media" hidden><img src="assets-opt/dinner/dinner-dsc00519.jpg" alt="Shish Barak Dumplings" loading="lazy"></figure>
+          </li>
+          <li class="menu-item" id="menu-item-pulled-jackfruit-slaw" data-image="assets-opt/dinner/dinner-dsc00567.jpg">
+            <div class="menu-item__row">
+              <h5 class="menu-item__name">Pulled Jackfruit Slaw <span class="menu-item__diet" aria-label="VG">VG</span></h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price">£16.50</span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-pulled-jackfruit-slaw-media"><span class="sr-only">Show a photo of Pulled Jackfruit Slaw</span></button>
+            </div>
+            <p class="menu-item__desc">Slow-cooked pulled jackfruit with crisp Korean pear and roasted cashews</p>
+            <figure class="menu-item__media" id="menu-item-pulled-jackfruit-slaw-media" hidden><img src="assets-opt/dinner/dinner-dsc00567.jpg" alt="Pulled Jackfruit Slaw" loading="lazy"></figure>
+          </li>
+          <li class="menu-item" id="menu-item-vitello-tonnato" data-image="assets-opt/dinner/dinner-dsc00655.jpg">
+            <div class="menu-item__row">
+              <h5 class="menu-item__name">Vitello Tonnato</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price">£16.50</span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-vitello-tonnato-media"><span class="sr-only">Show a photo of Vitello Tonnato</span></button>
+            </div>
+            <p class="menu-item__desc">Thinly sliced veal topped with anchovy foam, veal jus and pomegranate molasses</p>
+            <figure class="menu-item__media" id="menu-item-vitello-tonnato-media" hidden><img src="assets-opt/dinner/dinner-dsc00655.jpg" alt="Vitello Tonnato" loading="lazy"></figure>
+          </li>
+          <li class="menu-item" id="menu-item-charred-honey-octopus" data-image="assets-opt/dinner/dinner-dsc06808.jpg">
+            <div class="menu-item__row">
+              <h5 class="menu-item__name">Charred Honey Octopus</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price">£23</span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-charred-honey-octopus-media"><span class="sr-only">Show a photo of Charred Honey Octopus</span></button>
+            </div>
+            <p class="menu-item__desc">Charred and glazed with honey, served with kombu fava purée and samphire emulsion</p>
+            <figure class="menu-item__media" id="menu-item-charred-honey-octopus-media" hidden><img src="assets-opt/dinner/dinner-dsc06808.jpg" alt="Charred Honey Octopus" loading="lazy"></figure>
+          </li>
+          <li class="menu-item" id="menu-item-wild-mushrooms-gnocchi" data-image="assets-opt/dinner/dinner-dsc00505.jpg">
+            <div class="menu-item__row">
+              <h5 class="menu-item__name">Wild Mushrooms Gnocchi <span class="menu-item__diet" aria-label="V">V</span></h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price">£21</span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-wild-mushrooms-gnocchi-media"><span class="sr-only">Show a photo of Wild Mushrooms Gnocchi</span></button>
+            </div>
+            <p class="menu-item__desc">Soft gnocchi with wild mushrooms and a silky sake-smoked sage emulsion</p>
+            <figure class="menu-item__media" id="menu-item-wild-mushrooms-gnocchi-media" hidden><img src="assets-opt/dinner/dinner-dsc00505.jpg" alt="Wild Mushrooms Gnocchi" loading="lazy"></figure>
+          </li>
+          <li class="menu-item" id="menu-item-roasted-poussin" data-image="assets-opt/dinner/dinner-dsc00519.jpg">
+            <div class="menu-item__row">
+              <h5 class="menu-item__name">Roasted Poussin</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price">£21</span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-roasted-poussin-media"><span class="sr-only">Show a photo of Roasted Poussin</span></button>
+            </div>
+            <p class="menu-item__desc">Spatchcocked and roasted, served with red pepper sauce, Asian salsa and crisp matchstick fries</p>
+            <figure class="menu-item__media" id="menu-item-roasted-poussin-media" hidden><img src="assets-opt/dinner/dinner-dsc00519.jpg" alt="Roasted Poussin" loading="lazy"></figure>
+          </li>
+          </ul>
+        </section>
+        <section class="menu-section" id="menu-sweets" aria-labelledby="menu-sweets-title">
+          <header class="menu-section__head">
+            <span class="menu-section__num num" aria-hidden="true">04</span>
+            <h4 class="menu-section__title" id="menu-sweets-title">Sweets</h4>
+          </header>
+          <ul class="menu-list">
+          <li class="menu-item" id="menu-item-pandan-creme-brulee" data-image="assets-opt/dinner/dinner-dsc00567.jpg">
+            <div class="menu-item__row">
+              <h5 class="menu-item__name">Pandan Crème Brulée</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price">£10</span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-pandan-creme-brulee-media"><span class="sr-only">Show a photo of Pandan Crème Brulée</span></button>
+            </div>
+            <p class="menu-item__desc">Infused with house-made pandan extract and Madagascan vanilla, finished with a crisp caramelised top</p>
+            <figure class="menu-item__media" id="menu-item-pandan-creme-brulee-media" hidden><img src="assets-opt/dinner/dinner-dsc00567.jpg" alt="Pandan Crème Brulée" loading="lazy"></figure>
+          </li>
+          <li class="menu-item" id="menu-item-black-sesame-tres-leches" data-image="assets-opt/dinner/dinner-dsc00655.jpg">
+            <div class="menu-item__row">
+              <h5 class="menu-item__name">Black Sesame Tres Leches</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price">£9.50</span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-black-sesame-tres-leches-media"><span class="sr-only">Show a photo of Black Sesame Tres Leches</span></button>
+            </div>
+            <p class="menu-item__desc">Finished with lightly whipped tahini cream and fresh orange zest</p>
+            <figure class="menu-item__media" id="menu-item-black-sesame-tres-leches-media" hidden><img src="assets-opt/dinner/dinner-dsc00655.jpg" alt="Black Sesame Tres Leches" loading="lazy"></figure>
+          </li>
+          <li class="menu-item" id="menu-item-white-peach-jalapeno-sorbet" data-image="assets-opt/dinner/dinner-dsc06808.jpg">
+            <div class="menu-item__row">
+              <h5 class="menu-item__name">White Peach Jalapeño Sorbet</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price">£3.50</span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-white-peach-jalapeno-sorbet-media"><span class="sr-only">Show a photo of White Peach Jalapeño Sorbet</span></button>
+            </div>
+            <p class="menu-item__desc">Refreshing and lightly spiced, finished with bright lime zest</p>
+            <figure class="menu-item__media" id="menu-item-white-peach-jalapeno-sorbet-media" hidden><img src="assets-opt/dinner/dinner-dsc06808.jpg" alt="White Peach Jalapeño Sorbet" loading="lazy"></figure>
+          </li>
+          </ul>
+        </section>
+      </section>
+      <section class="menu-group menu-group--drinks" id="menu-drinks" aria-labelledby="menu-drinks-title">
+        <h3 class="menu-group__title" id="menu-drinks-title">Drinks</h3>
+        <section class="menu-section" id="menu-white-wine" aria-labelledby="menu-white-wine-title">
+          <header class="menu-section__head">
+            <span class="menu-section__num num" aria-hidden="true">05</span>
+            <h4 class="menu-section__title" id="menu-white-wine-title">White Wine</h4>
+            <p class="menu-section__intro">Every bottle begins life expecting to improve with age. Most simply wait long enough for everyone else's standards to decline, at which point Tuesday becomes a perfectly respectable special occasion.</p>
+          </header>
+          <ul class="menu-list">
+          <li class="menu-item" id="menu-item-cibadies-sauvignon-blanc-france" data-image="assets-opt/bar/bar-cocktails-8.jpg">
+            <div class="menu-item__row menu-item__row--multi">
+              <h5 class="menu-item__name">Cibadies, Sauvignon Blanc, France</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price menu-item__price--multi"><span class="menu-item__pair"><span class="menu-item__size">125ml</span> £9.50</span><span class="menu-item__sep" aria-hidden="true"> · </span><span class="menu-item__pair"><span class="menu-item__size">750ml</span> £55</span></span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-cibadies-sauvignon-blanc-france-media"><span class="sr-only">Show a photo of Cibadies, Sauvignon Blanc, France</span></button>
+            </div>
+            <p class="menu-item__desc">White Peach, Complex, Structured</p>
+            <figure class="menu-item__media" id="menu-item-cibadies-sauvignon-blanc-france-media" hidden><img src="assets-opt/bar/bar-cocktails-8.jpg" alt="Cibadies, Sauvignon Blanc, France" loading="lazy"></figure>
+          </li>
+          <li class="menu-item" id="menu-item-les-katz-riesling-sec-alsace" data-image="assets-opt/bar/bar-dsc07092-3.jpg">
+            <div class="menu-item__row menu-item__row--multi">
+              <h5 class="menu-item__name">Les Katz, Riesling Sec, Alsace</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price menu-item__price--multi"><span class="menu-item__pair"><span class="menu-item__size">125ml</span> £11.65</span><span class="menu-item__sep" aria-hidden="true"> · </span><span class="menu-item__pair"><span class="menu-item__size">750ml</span> £65</span></span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-les-katz-riesling-sec-alsace-media"><span class="sr-only">Show a photo of Les Katz, Riesling Sec, Alsace</span></button>
+            </div>
+            <p class="menu-item__desc">Dry, Citrus Fruit, Green Apple</p>
+            <figure class="menu-item__media" id="menu-item-les-katz-riesling-sec-alsace-media" hidden><img src="assets-opt/bar/bar-dsc07092-3.jpg" alt="Les Katz, Riesling Sec, Alsace" loading="lazy"></figure>
+          </li>
+          <li class="menu-item" id="menu-item-chalk-hill-chardonnay-california" data-image="assets-opt/bar/bar-dsc07259.jpg">
+            <div class="menu-item__row">
+              <h5 class="menu-item__name">Chalk Hill, Chardonnay, California</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price">£69</span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-chalk-hill-chardonnay-california-media"><span class="sr-only">Show a photo of Chalk Hill, Chardonnay, California</span></button>
+            </div>
+            <p class="menu-item__desc">Rich, Balanced, Long Finish</p>
+            <figure class="menu-item__media" id="menu-item-chalk-hill-chardonnay-california-media" hidden><img src="assets-opt/bar/bar-dsc07259.jpg" alt="Chalk Hill, Chardonnay, California" loading="lazy"></figure>
+          </li>
+          </ul>
+        </section>
+        <section class="menu-section" id="menu-red-wine" aria-labelledby="menu-red-wine-title">
+          <header class="menu-section__head">
+            <span class="menu-section__num num" aria-hidden="true">06</span>
+            <h4 class="menu-section__title" id="menu-red-wine-title">Red Wine</h4>
+          </header>
+          <ul class="menu-list">
+          <li class="menu-item" id="menu-item-perdido-tempranillo-ribera-spain" data-image="assets-opt/bar/bar-dsc07418.jpg">
+            <div class="menu-item__row menu-item__row--multi">
+              <h5 class="menu-item__name">Perdido Tempranillo, Ribera, Spain</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price menu-item__price--multi"><span class="menu-item__pair"><span class="menu-item__size">125ml</span> £9.50</span><span class="menu-item__sep" aria-hidden="true"> · </span><span class="menu-item__pair"><span class="menu-item__size">750ml</span> £55</span></span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-perdido-tempranillo-ribera-spain-media"><span class="sr-only">Show a photo of Perdido Tempranillo, Ribera, Spain</span></button>
+            </div>
+            <p class="menu-item__desc">Dark Ripe Berries, Smooth</p>
+            <figure class="menu-item__media" id="menu-item-perdido-tempranillo-ribera-spain-media" hidden><img src="assets-opt/bar/bar-dsc07418.jpg" alt="Perdido Tempranillo, Ribera, Spain" loading="lazy"></figure>
+          </li>
+          <li class="menu-item" id="menu-item-man-o-war-island-blend-new-zealand" data-image="assets-opt/bar/bar-img20260114.jpg">
+            <div class="menu-item__row">
+              <h5 class="menu-item__name">Man O' War Island Blend, New Zealand</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price">£59</span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-man-o-war-island-blend-new-zealand-media"><span class="sr-only">Show a photo of Man O' War Island Blend, New Zealand</span></button>
+            </div>
+            <p class="menu-item__desc">Bordeaux Blend, Full Body, Balanced Oak</p>
+            <figure class="menu-item__media" id="menu-item-man-o-war-island-blend-new-zealand-media" hidden><img src="assets-opt/bar/bar-img20260114.jpg" alt="Man O' War Island Blend, New Zealand" loading="lazy"></figure>
+          </li>
+          <li class="menu-item" id="menu-item-chat-fou-grenache-rhone" data-image="assets-opt/bar/bar-cocktails-8.jpg">
+            <div class="menu-item__row menu-item__row--multi">
+              <h5 class="menu-item__name">Chat Fou, Grenache, Rhône</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price menu-item__price--multi"><span class="menu-item__pair"><span class="menu-item__size">125ml</span> £11.50</span><span class="menu-item__sep" aria-hidden="true"> · </span><span class="menu-item__pair"><span class="menu-item__size">750ml</span> £65</span></span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-chat-fou-grenache-rhone-media"><span class="sr-only">Show a photo of Chat Fou, Grenache, Rhône</span></button>
+            </div>
+            <p class="menu-item__desc">The Mad Cat, Vibrant, Red Fruits. Chat Fou is the playful signature of Éric Texier, a former nuclear engineer turned Rhône winemaker. A fresh, light &quot;vin bistro&quot; of Grenache, Cinsault and Clairette, certified-organic, fermented with indigenous yeasts and aged in concrete. Bright red fruits, a touch of florality, best served chilled. Named, fittingly, after his cat.</p>
+            <figure class="menu-item__media" id="menu-item-chat-fou-grenache-rhone-media" hidden><img src="assets-opt/bar/bar-cocktails-8.jpg" alt="Chat Fou, Grenache, Rhône" loading="lazy"></figure>
+          </li>
+          </ul>
+        </section>
+        <section class="menu-section" id="menu-rose-wine" aria-labelledby="menu-rose-wine-title">
+          <header class="menu-section__head">
+            <span class="menu-section__num num" aria-hidden="true">07</span>
+            <h4 class="menu-section__title" id="menu-rose-wine-title">Rosé Wine</h4>
+          </header>
+          <ul class="menu-list">
+          <li class="menu-item" id="menu-item-felicette-grenache-rose-languedoc" data-image="assets-opt/bar/bar-dsc07092-3.jpg">
+            <div class="menu-item__row menu-item__row--multi">
+              <h5 class="menu-item__name">Felicette, Grenache Rose, Languedoc</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price menu-item__price--multi"><span class="menu-item__pair"><span class="menu-item__size">125ml</span> £9.50</span><span class="menu-item__sep" aria-hidden="true"> · </span><span class="menu-item__pair"><span class="menu-item__size">750ml</span> £55</span></span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-felicette-grenache-rose-languedoc-media"><span class="sr-only">Show a photo of Felicette, Grenache Rose, Languedoc</span></button>
+            </div>
+            <p class="menu-item__desc">Aromatic, Delicate Red Fruits</p>
+            <figure class="menu-item__media" id="menu-item-felicette-grenache-rose-languedoc-media" hidden><img src="assets-opt/bar/bar-dsc07092-3.jpg" alt="Felicette, Grenache Rose, Languedoc" loading="lazy"></figure>
+          </li>
+          <li class="menu-item" id="menu-item-mirabeau-pure-grenache-provence" data-image="assets-opt/bar/bar-dsc07259.jpg">
+            <div class="menu-item__row">
+              <h5 class="menu-item__name">Mirabeau Pure, Grenache, Provence</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price">£59</span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-mirabeau-pure-grenache-provence-media"><span class="sr-only">Show a photo of Mirabeau Pure, Grenache, Provence</span></button>
+            </div>
+            <p class="menu-item__desc">Pale, Fresh Minerality</p>
+            <figure class="menu-item__media" id="menu-item-mirabeau-pure-grenache-provence-media" hidden><img src="assets-opt/bar/bar-dsc07259.jpg" alt="Mirabeau Pure, Grenache, Provence" loading="lazy"></figure>
+          </li>
+          </ul>
+        </section>
+        <section class="menu-section" id="menu-orange-wine" aria-labelledby="menu-orange-wine-title">
+          <header class="menu-section__head">
+            <span class="menu-section__num num" aria-hidden="true">08</span>
+            <h4 class="menu-section__title" id="menu-orange-wine-title">Orange Wine</h4>
+          </header>
+          <ul class="menu-list">
+          <li class="menu-item" id="menu-item-felicette-first-contact-rousillion" data-image="assets-opt/bar/bar-dsc07418.jpg">
+            <div class="menu-item__row menu-item__row--multi">
+              <h5 class="menu-item__name">Felicette, First Contact, Rousillion</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price menu-item__price--multi"><span class="menu-item__pair"><span class="menu-item__size">125ml</span> £10</span><span class="menu-item__sep" aria-hidden="true"> · </span><span class="menu-item__pair"><span class="menu-item__size">750ml</span> £56</span></span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-felicette-first-contact-rousillion-media"><span class="sr-only">Show a photo of Felicette, First Contact, Rousillion</span></button>
+            </div>
+            <p class="menu-item__desc">Bright, Citrus, Exotic Spices</p>
+            <figure class="menu-item__media" id="menu-item-felicette-first-contact-rousillion-media" hidden><img src="assets-opt/bar/bar-dsc07418.jpg" alt="Felicette, First Contact, Rousillion" loading="lazy"></figure>
+          </li>
+          <li class="menu-item" id="menu-item-pureza-anfora-moscatel-alicante" data-image="assets-opt/bar/bar-img20260114.jpg">
+            <div class="menu-item__row">
+              <h5 class="menu-item__name">Pureza Ánfora, Moscatel, Alicante</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price">£69</span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-pureza-anfora-moscatel-alicante-media"><span class="sr-only">Show a photo of Pureza Ánfora, Moscatel, Alicante</span></button>
+            </div>
+            <p class="menu-item__desc">Coastal, Floral, Orange Blossom</p>
+            <figure class="menu-item__media" id="menu-item-pureza-anfora-moscatel-alicante-media" hidden><img src="assets-opt/bar/bar-img20260114.jpg" alt="Pureza Ánfora, Moscatel, Alicante" loading="lazy"></figure>
+          </li>
+          </ul>
+        </section>
+        <section class="menu-section" id="menu-sparkling-wine" aria-labelledby="menu-sparkling-wine-title">
+          <header class="menu-section__head">
+            <span class="menu-section__num num" aria-hidden="true">09</span>
+            <h4 class="menu-section__title" id="menu-sparkling-wine-title">Sparkling Wine</h4>
+          </header>
+          <ul class="menu-list">
+          <li class="menu-item" id="menu-item-amore-della-vita-extra-dry-prosecco-nv" data-image="assets-opt/bar/bar-cocktails-8.jpg">
+            <div class="menu-item__row menu-item__row--multi">
+              <h5 class="menu-item__name">Amore Della Vita Extra Dry Prosecco, NV</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price menu-item__price--multi"><span class="menu-item__pair"><span class="menu-item__size">125ml</span> £9.50</span><span class="menu-item__sep" aria-hidden="true"> · </span><span class="menu-item__pair"><span class="menu-item__size">750ml</span> £55</span></span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-amore-della-vita-extra-dry-prosecco-nv-media"><span class="sr-only">Show a photo of Amore Della Vita Extra Dry Prosecco, NV</span></button>
+            </div>
+            <p class="menu-item__desc">Crisp Green Apple, Dry</p>
+            <figure class="menu-item__media" id="menu-item-amore-della-vita-extra-dry-prosecco-nv-media" hidden><img src="assets-opt/bar/bar-cocktails-8.jpg" alt="Amore Della Vita Extra Dry Prosecco, NV" loading="lazy"></figure>
+          </li>
+          <li class="menu-item" id="menu-item-cuvee-meow-cremant-alsace" data-image="assets-opt/bar/bar-dsc07092-3.jpg">
+            <div class="menu-item__row">
+              <h5 class="menu-item__name">Cuvee Meow, Crémant, Alsace</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price">£74</span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-cuvee-meow-cremant-alsace-media"><span class="sr-only">Show a photo of Cuvee Meow, Crémant, Alsace</span></button>
+            </div>
+            <p class="menu-item__desc">Citrus, Bright, Buttery</p>
+            <figure class="menu-item__media" id="menu-item-cuvee-meow-cremant-alsace-media" hidden><img src="assets-opt/bar/bar-dsc07092-3.jpg" alt="Cuvee Meow, Crémant, Alsace" loading="lazy"></figure>
+          </li>
+          <li class="menu-item" id="menu-item-moet-chandon-imperial-champagne" data-image="assets-opt/bar/bar-dsc07259.jpg">
+            <div class="menu-item__row menu-item__row--multi">
+              <h5 class="menu-item__name">Moët &amp; Chandon, Imperial, Champagne</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price menu-item__price--multi"><span class="menu-item__pair"><span class="menu-item__size">125ml</span> £19</span><span class="menu-item__sep" aria-hidden="true"> · </span><span class="menu-item__pair"><span class="menu-item__size">750ml</span> £115</span></span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-moet-chandon-imperial-champagne-media"><span class="sr-only">Show a photo of Moët &amp; Chandon, Imperial, Champagne</span></button>
+            </div>
+            <p class="menu-item__desc">Elegant, Balanced</p>
+            <figure class="menu-item__media" id="menu-item-moet-chandon-imperial-champagne-media" hidden><img src="assets-opt/bar/bar-dsc07259.jpg" alt="Moët &amp; Chandon, Imperial, Champagne" loading="lazy"></figure>
+          </li>
+          </ul>
+        </section>
+        <section class="menu-section" id="menu-sake" aria-labelledby="menu-sake-title">
+          <header class="menu-section__head">
+            <span class="menu-section__num num" aria-hidden="true">10</span>
+            <h4 class="menu-section__title" id="menu-sake-title">Sake</h4>
+          </header>
+          <ul class="menu-list">
+          <li class="menu-item" id="menu-item-mad-cats-house-junmai" data-image="assets-opt/bar/bar-dsc07418.jpg">
+            <div class="menu-item__row menu-item__row--multi">
+              <h5 class="menu-item__name">Mad Cats House Junmai</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price menu-item__price--multi"><span class="menu-item__pair"><span class="menu-item__size">100ml</span> £12</span><span class="menu-item__sep" aria-hidden="true"> · </span><span class="menu-item__pair"><span class="menu-item__size">300ml</span> £33</span><span class="menu-item__sep" aria-hidden="true"> · </span><span class="menu-item__pair"><span class="menu-item__size">720ml</span> £80</span></span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-mad-cats-house-junmai-media"><span class="sr-only">Show a photo of Mad Cats House Junmai</span></button>
+            </div>
+            <p class="menu-item__desc">Vibrant, Citrus. Mad Cats' own House Junmai: pure rice sake, no additives, no shortcuts. Clean, vibrant and citrus-bright, it's everything a good house pour should be: unpretentious, food-friendly and made to be refilled.</p>
+            <figure class="menu-item__media" id="menu-item-mad-cats-house-junmai-media" hidden><img src="assets-opt/bar/bar-dsc07418.jpg" alt="Mad Cats House Junmai" loading="lazy"></figure>
+          </li>
+          <li class="menu-item" id="menu-item-okuroku-unite" data-image="assets-opt/bar/bar-img20260114.jpg">
+            <div class="menu-item__row menu-item__row--multi">
+              <h5 class="menu-item__name">Okuroku Unite</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price menu-item__price--multi"><span class="menu-item__pair"><span class="menu-item__size">100ml</span> £13</span><span class="menu-item__sep" aria-hidden="true"> · </span><span class="menu-item__pair"><span class="menu-item__size">300ml</span> £40</span><span class="menu-item__sep" aria-hidden="true"> · </span><span class="menu-item__pair"><span class="menu-item__size">720ml</span> £90</span></span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-okuroku-unite-media"><span class="sr-only">Show a photo of Okuroku Unite</span></button>
+            </div>
+            <p class="menu-item__desc">Fresh, Fruity</p>
+            <figure class="menu-item__media" id="menu-item-okuroku-unite-media" hidden><img src="assets-opt/bar/bar-img20260114.jpg" alt="Okuroku Unite" loading="lazy"></figure>
+          </li>
+          <li class="menu-item" id="menu-item-hachi-hachi-junmai" data-image="assets-opt/bar/bar-cocktails-8.jpg">
+            <div class="menu-item__row menu-item__row--multi">
+              <h5 class="menu-item__name">Hachi Hachi Junmai</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price menu-item__price--multi"><span class="menu-item__pair"><span class="menu-item__size">100ml</span> £14.50</span><span class="menu-item__sep" aria-hidden="true"> · </span><span class="menu-item__pair"><span class="menu-item__size">300ml</span> £43</span><span class="menu-item__sep" aria-hidden="true"> · </span><span class="menu-item__pair"><span class="menu-item__size">720ml</span> £98</span></span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-hachi-hachi-junmai-media"><span class="sr-only">Show a photo of Hachi Hachi Junmai</span></button>
+            </div>
+            <p class="menu-item__desc">Olive, Mineral, Aromatic</p>
+            <figure class="menu-item__media" id="menu-item-hachi-hachi-junmai-media" hidden><img src="assets-opt/bar/bar-cocktails-8.jpg" alt="Hachi Hachi Junmai" loading="lazy"></figure>
+          </li>
+          <li class="menu-item" id="menu-item-zaku-miyabi-no-tomo" data-image="assets-opt/bar/bar-dsc07092-3.jpg">
+            <div class="menu-item__row menu-item__row--multi">
+              <h5 class="menu-item__name">Zaku Miyabi No Tomo</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price menu-item__price--multi"><span class="menu-item__pair"><span class="menu-item__size">100ml</span> £16</span><span class="menu-item__sep" aria-hidden="true"> · </span><span class="menu-item__pair"><span class="menu-item__size">300ml</span> £47</span><span class="menu-item__sep" aria-hidden="true"> · </span><span class="menu-item__pair"><span class="menu-item__size">720ml</span> £112</span></span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-zaku-miyabi-no-tomo-media"><span class="sr-only">Show a photo of Zaku Miyabi No Tomo</span></button>
+            </div>
+            <p class="menu-item__desc">Green Apple, Citrus, Silky</p>
+            <figure class="menu-item__media" id="menu-item-zaku-miyabi-no-tomo-media" hidden><img src="assets-opt/bar/bar-dsc07092-3.jpg" alt="Zaku Miyabi No Tomo" loading="lazy"></figure>
+          </li>
+          <li class="menu-item" id="menu-item-sparkling-sake-rose-japan" data-image="assets-opt/bar/bar-dsc07259.jpg">
+            <div class="menu-item__row">
+              <h5 class="menu-item__name">Sparkling Sake Rose, Japan</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price">£110</span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-sparkling-sake-rose-japan-media"><span class="sr-only">Show a photo of Sparkling Sake Rose, Japan</span></button>
+            </div>
+            <p class="menu-item__desc">Elegant, Complex, Fruity</p>
+            <figure class="menu-item__media" id="menu-item-sparkling-sake-rose-japan-media" hidden><img src="assets-opt/bar/bar-dsc07259.jpg" alt="Sparkling Sake Rose, Japan" loading="lazy"></figure>
+          </li>
+          </ul>
+        </section>
+        <section class="menu-section" id="menu-cocktails" aria-labelledby="menu-cocktails-title">
+          <header class="menu-section__head">
+            <span class="menu-section__num num" aria-hidden="true">11</span>
+            <h4 class="menu-section__title" id="menu-cocktails-title">Cocktails</h4>
+          </header>
+          <ul class="menu-list">
+          <li class="menu-item" id="menu-item-orchid-highball" data-image="assets-opt/bar/bar-dsc07418.jpg">
+            <div class="menu-item__row">
+              <h5 class="menu-item__name">Orchid Highball</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price">£15</span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-orchid-highball-media"><span class="sr-only">Show a photo of Orchid Highball</span></button>
+            </div>
+            <p class="menu-item__desc">House of Suntory Roku · Yellow Pepper · Cucumber · Muyu Jasmine · Schweppes Soda. Inspired by Singapore's Botanical Gardens and the orchid, its national flower. Yellow pepper-infused Roku Gin, cucumber and vanilla syrup, Muyu Jasmine and Yellow Chartreuse, topped with soda. Fresh, floral, botanical.</p>
+            <figure class="menu-item__media" id="menu-item-orchid-highball-media" hidden><img src="assets-opt/bar/bar-dsc07418.jpg" alt="Orchid Highball" loading="lazy"></figure>
+          </li>
+          <li class="menu-item" id="menu-item-mango-dream" data-image="assets-opt/bar/bar-img20260114.jpg">
+            <div class="menu-item__row">
+              <h5 class="menu-item__name">Mango Dream</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price">£15</span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-mango-dream-media"><span class="sr-only">Show a photo of Mango Dream</span></button>
+            </div>
+            <p class="menu-item__desc">Dream Sake · Mango · Desi Daru Vodka · Schofields Dry Vermouth. A vibrant, sun-soaked cocktail. Juicy tropical fruit meets delicate sake notes and crisp vermouth for a refreshing sip inspired by the warmth of Southeast Asian summers.</p>
+            <figure class="menu-item__media" id="menu-item-mango-dream-media" hidden><img src="assets-opt/bar/bar-img20260114.jpg" alt="Mango Dream" loading="lazy"></figure>
+          </li>
+          <li class="menu-item" id="menu-item-king-krimson" data-image="assets-opt/bar/bar-cocktails-8.jpg">
+            <div class="menu-item__row">
+              <h5 class="menu-item__name">King Krimson</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price">£16</span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-king-krimson-media"><span class="sr-only">Show a photo of King Krimson</span></button>
+            </div>
+            <p class="menu-item__desc">El Rayo Tequila · Ojo de Dios · Spiced Cashew · Cranberry · Sumac Syrup. Head Chef Raf's spiced cashew-infused El Rayo Tequila meets Ojo de Dios mezcal, cranberry and sumac. Nutty, smoky, and berry-forward with a citrus-spiced finish: a Mediterranean twist on tiki.</p>
+            <figure class="menu-item__media" id="menu-item-king-krimson-media" hidden><img src="assets-opt/bar/bar-cocktails-8.jpg" alt="King Krimson" loading="lazy"></figure>
+          </li>
+          <li class="menu-item" id="menu-item-white-chicks" data-image="assets-opt/bar/bar-dsc07092-3.jpg">
+            <div class="menu-item__row">
+              <h5 class="menu-item__name">White Chicks</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price">£16</span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-white-chicks-media"><span class="sr-only">Show a photo of White Chicks</span></button>
+            </div>
+            <p class="menu-item__desc">Nikka Days · White Chocolate · Raspberry · Lemon · Domaine de la Flaguerie Blanche. White chocolate fat-washed Nikka Days, homemade raspberry eau de vie and fresh lemon juice. Fruity, lightly sweet with a crisp finish.</p>
+            <figure class="menu-item__media" id="menu-item-white-chicks-media" hidden><img src="assets-opt/bar/bar-dsc07092-3.jpg" alt="White Chicks" loading="lazy"></figure>
+          </li>
+          <li class="menu-item" id="menu-item-cherry-bomb" data-image="assets-opt/bar/bar-dsc07259.jpg">
+            <div class="menu-item__row">
+              <h5 class="menu-item__name">Cherry Bomb</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price">£15</span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-cherry-bomb-media"><span class="sr-only">Show a photo of Cherry Bomb</span></button>
+            </div>
+            <p class="menu-item__desc">Hennessy VS · Hennessy VSOP · Schweppes · Cherry Pepper Reduction · Woodruff · Cocchi de Torino · Shiitake. Hennessy VS and VSOP, a cherry pepper reduction, and woodruff-infused Cocchi di Torino. A dash of house shiitake bitters adds earthy depth. Dark fruit, spice, and savoury balance.</p>
+            <figure class="menu-item__media" id="menu-item-cherry-bomb-media" hidden><img src="assets-opt/bar/bar-dsc07259.jpg" alt="Cherry Bomb" loading="lazy"></figure>
+          </li>
+          <li class="menu-item" id="menu-item-cupids-chokehold" data-image="assets-opt/bar/bar-dsc07418.jpg">
+            <div class="menu-item__row">
+              <h5 class="menu-item__name">Cupids Chokehold</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price">£16</span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-cupids-chokehold-media"><span class="sr-only">Show a photo of Cupids Chokehold</span></button>
+            </div>
+            <p class="menu-item__desc">Eminente Ambar Rum · Coffee · Banana · Miso · Cocchi Dry. Banana and coconut oil-washed rum, house banana skin syrup, miso and coffee-infused vermouth, topped with a foam made from the spent infusion bananas. Savoury, roasted, and balanced: Southeast Asian coffee culture meets a Mediterranean aperitif.</p>
+            <figure class="menu-item__media" id="menu-item-cupids-chokehold-media" hidden><img src="assets-opt/bar/bar-dsc07418.jpg" alt="Cupids Chokehold" loading="lazy"></figure>
+          </li>
+          </ul>
+        </section>
+        <section class="menu-section" id="menu-martini" aria-labelledby="menu-martini-title">
+          <header class="menu-section__head">
+            <span class="menu-section__num num" aria-hidden="true">12</span>
+            <h4 class="menu-section__title" id="menu-martini-title">Martini</h4>
+          </header>
+          <ul class="menu-list">
+          <li class="menu-item" id="menu-item-lebanese-dirty-martini" data-image="assets-opt/bar/bar-img20260114.jpg">
+            <div class="menu-item__row">
+              <h5 class="menu-item__name">Lebanese Dirty Martini</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price">£16</span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-lebanese-dirty-martini-media"><span class="sr-only">Show a photo of Lebanese Dirty Martini</span></button>
+            </div>
+            <p class="menu-item__desc">Haymans Gin · Za'atar · Olive Brine · Arak. The Dirty Martini, reimagined with a Lebanese passport. Hayman's Gin, Cocchi Dry Vermouth, olive brine and aromatic Za'atar liqueur create a bold, savoury cocktail with a distinctly Mediterranean finish.</p>
+            <figure class="menu-item__media" id="menu-item-lebanese-dirty-martini-media" hidden><img src="assets-opt/bar/bar-img20260114.jpg" alt="Lebanese Dirty Martini" loading="lazy"></figure>
+          </li>
+          <li class="menu-item" id="menu-item-lemon-vesper" data-image="assets-opt/bar/bar-cocktails-8.jpg">
+            <div class="menu-item__row">
+              <h5 class="menu-item__name">Lemon Vesper</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price">£15</span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-lemon-vesper-media"><span class="sr-only">Show a photo of Lemon Vesper</span></button>
+            </div>
+            <p class="menu-item__desc">Boatyard Vodka · Gin · Lemon · Cocchi Dry · Yogurt</p>
+            <figure class="menu-item__media" id="menu-item-lemon-vesper-media" hidden><img src="assets-opt/bar/bar-cocktails-8.jpg" alt="Lemon Vesper" loading="lazy"></figure>
+          </li>
+          <li class="menu-item" id="menu-item-ruby" data-image="assets-opt/bar/bar-dsc07092-3.jpg">
+            <div class="menu-item__row">
+              <h5 class="menu-item__name">Ruby</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price">£15</span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-ruby-media"><span class="sr-only">Show a photo of Ruby</span></button>
+            </div>
+            <p class="menu-item__desc">Sake · Hojicha · Shiitake · Hibiscus Vermouth</p>
+            <figure class="menu-item__media" id="menu-item-ruby-media" hidden><img src="assets-opt/bar/bar-dsc07092-3.jpg" alt="Ruby" loading="lazy"></figure>
+          </li>
+          </ul>
+        </section>
+        <section class="menu-section" id="menu-non-alcoholic" aria-labelledby="menu-non-alcoholic-title">
+          <header class="menu-section__head">
+            <span class="menu-section__num num" aria-hidden="true">13</span>
+            <h4 class="menu-section__title" id="menu-non-alcoholic-title">Non-Alcoholic</h4>
+          </header>
+          <ul class="menu-list">
+          <li class="menu-item" id="menu-item-jungle-soul" data-image="assets-opt/bar/bar-dsc07259.jpg">
+            <div class="menu-item__row">
+              <h5 class="menu-item__name">Jungle Soul</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price">£13</span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-jungle-soul-media"><span class="sr-only">Show a photo of Jungle Soul</span></button>
+            </div>
+            <p class="menu-item__desc">Smiling Wolf Agave · Everleaf Forest · Mango · Garam Masala · Pineapple</p>
+            <figure class="menu-item__media" id="menu-item-jungle-soul-media" hidden><img src="assets-opt/bar/bar-dsc07259.jpg" alt="Jungle Soul" loading="lazy"></figure>
+          </li>
+          <li class="menu-item" id="menu-item-mountain-highball" data-image="assets-opt/bar/bar-dsc07418.jpg">
+            <div class="menu-item__row">
+              <h5 class="menu-item__name">Mountain Highball</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price">£12.50</span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-mountain-highball-media"><span class="sr-only">Show a photo of Mountain Highball</span></button>
+            </div>
+            <p class="menu-item__desc">Everleaf Mountain · Cherry Blossom · Pink Grapefruit</p>
+            <figure class="menu-item__media" id="menu-item-mountain-highball-media" hidden><img src="assets-opt/bar/bar-dsc07418.jpg" alt="Mountain Highball" loading="lazy"></figure>
+          </li>
+          <li class="menu-item" id="menu-item-amaro-no" data-image="assets-opt/bar/bar-img20260114.jpg">
+            <div class="menu-item__row">
+              <h5 class="menu-item__name">Amaro-No</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price">£12.50</span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-amaro-no-media"><span class="sr-only">Show a photo of Amaro-No</span></button>
+            </div>
+            <p class="menu-item__desc">Lyre's Amaretti · Lemon · Maraschino</p>
+            <figure class="menu-item__media" id="menu-item-amaro-no-media" hidden><img src="assets-opt/bar/bar-img20260114.jpg" alt="Amaro-No" loading="lazy"></figure>
+          </li>
+          </ul>
+        </section>
+        <section class="menu-section" id="menu-arak" aria-labelledby="menu-arak-title">
+          <header class="menu-section__head">
+            <span class="menu-section__num num" aria-hidden="true">14</span>
+            <h4 class="menu-section__title" id="menu-arak-title">Arak</h4>
+          </header>
+          <ul class="menu-list">
+          <li class="menu-item" id="menu-item-lebanese-arak" data-image="assets-opt/bar/bar-cocktails-8.jpg">
+            <div class="menu-item__row menu-item__row--multi">
+              <h5 class="menu-item__name">Lebanese Arak</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price menu-item__price--multi"><span class="menu-item__pair"><span class="menu-item__size">glass</span> £10</span><span class="menu-item__sep" aria-hidden="true"> · </span><span class="menu-item__pair"><span class="menu-item__size">carafe</span> £28</span></span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-lebanese-arak-media"><span class="sr-only">Show a photo of Lebanese Arak</span></button>
+            </div>
+            <p class="menu-item__desc">Triple Distilled Aniseed Spirit, Anise Biscuits</p>
+            <figure class="menu-item__media" id="menu-item-lebanese-arak-media" hidden><img src="assets-opt/bar/bar-cocktails-8.jpg" alt="Lebanese Arak" loading="lazy"></figure>
+          </li>
+          </ul>
+        </section>
+        <section class="menu-section" id="menu-beers-ciders" aria-labelledby="menu-beers-ciders-title">
+          <header class="menu-section__head">
+            <span class="menu-section__num num" aria-hidden="true">15</span>
+            <h4 class="menu-section__title" id="menu-beers-ciders-title">Beers &amp; Ciders</h4>
+          </header>
+          <ul class="menu-list">
+          <li class="menu-item" id="menu-item-pillars-pale-ale" data-image="assets-opt/bar/bar-dsc07092-3.jpg">
+            <div class="menu-item__row">
+              <h5 class="menu-item__name">Pillars Pale Ale</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price">£7.50</span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-pillars-pale-ale-media"><span class="sr-only">Show a photo of Pillars Pale Ale</span></button>
+            </div>
+            <p class="menu-item__desc">Light, Citrus, Hoppy</p>
+            <figure class="menu-item__media" id="menu-item-pillars-pale-ale-media" hidden><img src="assets-opt/bar/bar-dsc07092-3.jpg" alt="Pillars Pale Ale" loading="lazy"></figure>
+          </li>
+          <li class="menu-item" id="menu-item-pillars-haus-lager" data-image="assets-opt/bar/bar-dsc07259.jpg">
+            <div class="menu-item__row">
+              <h5 class="menu-item__name">Pillars Haus Lager</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price">£7.50</span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-pillars-haus-lager-media"><span class="sr-only">Show a photo of Pillars Haus Lager</span></button>
+            </div>
+            <p class="menu-item__desc">Crisp, Clean, Refreshing</p>
+            <figure class="menu-item__media" id="menu-item-pillars-haus-lager-media" hidden><img src="assets-opt/bar/bar-dsc07259.jpg" alt="Pillars Haus Lager" loading="lazy"></figure>
+          </li>
+          <li class="menu-item" id="menu-item-wata-dry-cider" data-image="assets-opt/bar/bar-dsc07418.jpg">
+            <div class="menu-item__row">
+              <h5 class="menu-item__name">Wata Dry Cider</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price">£7.50</span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-wata-dry-cider-media"><span class="sr-only">Show a photo of Wata Dry Cider</span></button>
+            </div>
+            <p class="menu-item__desc">Lebanese Craft Cider, Crisp</p>
+            <figure class="menu-item__media" id="menu-item-wata-dry-cider-media" hidden><img src="assets-opt/bar/bar-dsc07418.jpg" alt="Wata Dry Cider" loading="lazy"></figure>
+          </li>
+          <li class="menu-item" id="menu-item-lucky-saint" data-image="assets-opt/bar/bar-img20260114.jpg">
+            <div class="menu-item__row">
+              <h5 class="menu-item__name">Lucky Saint</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price">£7</span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-lucky-saint-media"><span class="sr-only">Show a photo of Lucky Saint</span></button>
+            </div>
+            <p class="menu-item__desc">Dry, Fresh, Hoppy</p>
+            <figure class="menu-item__media" id="menu-item-lucky-saint-media" hidden><img src="assets-opt/bar/bar-img20260114.jpg" alt="Lucky Saint" loading="lazy"></figure>
+          </li>
+          </ul>
+        </section>
+        <section class="menu-section" id="menu-whisky-flight" aria-labelledby="menu-whisky-flight-title">
+          <header class="menu-section__head">
+            <span class="menu-section__num num" aria-hidden="true">16</span>
+            <h4 class="menu-section__title" id="menu-whisky-flight-title">Whisky Flight</h4>
+          </header>
+          <ul class="menu-list">
+          <li class="menu-item" id="menu-item-dealers-choice" data-image="assets-opt/bar/bar-cocktails-8.jpg">
+            <div class="menu-item__row">
+              <h5 class="menu-item__name">Dealer's Choice</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price">£25</span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-dealers-choice-media"><span class="sr-only">Show a photo of Dealer's Choice</span></button>
+            </div>
+            <p class="menu-item__desc">3 from our collection</p>
+            <figure class="menu-item__media" id="menu-item-dealers-choice-media" hidden><img src="assets-opt/bar/bar-cocktails-8.jpg" alt="Dealer's Choice" loading="lazy"></figure>
+          </li>
+          </ul>
+        </section>
+        <section class="menu-section" id="menu-soft-mixers" aria-labelledby="menu-soft-mixers-title">
+          <header class="menu-section__head">
+            <span class="menu-section__num num" aria-hidden="true">17</span>
+            <h4 class="menu-section__title" id="menu-soft-mixers-title">Soft &amp; Mixers</h4>
+          </header>
+          <ul class="menu-list">
+          <li class="menu-item" id="menu-item-soft-drinks" data-image="assets-opt/bar/bar-dsc07092-3.jpg">
+            <div class="menu-item__row">
+              <h5 class="menu-item__name">Soft Drinks</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price">£4</span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-soft-drinks-media"><span class="sr-only">Show a photo of Soft Drinks</span></button>
+            </div>
+            <p class="menu-item__desc">Coca Cola, Coke Zero, Lemonade, Ginger Ale, Ginger Beer</p>
+            <figure class="menu-item__media" id="menu-item-soft-drinks-media" hidden><img src="assets-opt/bar/bar-dsc07092-3.jpg" alt="Soft Drinks" loading="lazy"></figure>
+          </li>
+          <li class="menu-item" id="menu-item-schweppes-mixers" data-image="assets-opt/bar/bar-dsc07259.jpg">
+            <div class="menu-item__row">
+              <h5 class="menu-item__name">Schweppes Mixers</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price">£4</span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-schweppes-mixers-media"><span class="sr-only">Show a photo of Schweppes Mixers</span></button>
+            </div>
+            <p class="menu-item__desc">Tonic, Light Tonic, Soda, Pink Grapefruit Soda</p>
+            <figure class="menu-item__media" id="menu-item-schweppes-mixers-media" hidden><img src="assets-opt/bar/bar-dsc07259.jpg" alt="Schweppes Mixers" loading="lazy"></figure>
+          </li>
+          <li class="menu-item" id="menu-item-juice" data-image="assets-opt/bar/bar-dsc07418.jpg">
+            <div class="menu-item__row">
+              <h5 class="menu-item__name">Juice</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price">£5</span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-juice-media"><span class="sr-only">Show a photo of Juice</span></button>
+            </div>
+            <p class="menu-item__desc">Apple, Orange, Cranberry, Pineapple</p>
+            <figure class="menu-item__media" id="menu-item-juice-media" hidden><img src="assets-opt/bar/bar-dsc07418.jpg" alt="Juice" loading="lazy"></figure>
+          </li>
+          </ul>
+        </section>
+        <section class="menu-section" id="menu-tea-coffee" aria-labelledby="menu-tea-coffee-title">
+          <header class="menu-section__head">
+            <span class="menu-section__num num" aria-hidden="true">18</span>
+            <h4 class="menu-section__title" id="menu-tea-coffee-title">Tea &amp; Coffee</h4>
+          </header>
+          <ul class="menu-list">
+          <li class="menu-item" id="menu-item-pot-of-tea" data-image="assets-opt/bar/bar-img20260114.jpg">
+            <div class="menu-item__row">
+              <h5 class="menu-item__name">Pot of Tea</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price">£6</span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-pot-of-tea-media"><span class="sr-only">Show a photo of Pot of Tea</span></button>
+            </div>
+            <p class="menu-item__desc">Fresh Mint, Black, Green, Rooibos. Served with biscuits.</p>
+            <figure class="menu-item__media" id="menu-item-pot-of-tea-media" hidden><img src="assets-opt/bar/bar-img20260114.jpg" alt="Pot of Tea" loading="lazy"></figure>
+          </li>
+          <li class="menu-item" id="menu-item-espresso" data-image="assets-opt/bar/bar-cocktails-8.jpg">
+            <div class="menu-item__row">
+              <h5 class="menu-item__name">Espresso</h5>
+              <span class="menu-item__dots" aria-hidden="true"></span>
+              <span class="menu-item__price">£5</span>
+              <button class="menu-item__photo" type="button" aria-expanded="false" aria-controls="menu-item-espresso-media"><span class="sr-only">Show a photo of Espresso</span></button>
+            </div>
+            <p class="menu-item__desc">Served with biscuits.</p>
+            <figure class="menu-item__media" id="menu-item-espresso-media" hidden><img src="assets-opt/bar/bar-cocktails-8.jpg" alt="Espresso" loading="lazy"></figure>
+          </li>
+          </ul>
+        </section>
+      </section>
+      <ul class="menu-notes"><li>A discretionary 12.5% service charge will be added to the bill.</li><li>All prices are inclusive of VAT.</li><li>Please inform a server of any allergies or dietary requirements.</li><li>All water served at the bar is filtered through a high-quality water filter tap.</li><li>Please ask your server if you would like to discuss classic cocktails or any spirit not listed on the menu.</li></ul>
+      <div class="buttons-band buttons-band--stack menu-downloads">
+        <a class="btn btn--secondary" href="https://madcats.uk/wp-content/uploads/2026/09/Summer-Food-Menu-2026.pdf" target="_blank" rel="noopener">FOOD MENU PDF</a>
+        <a class="btn btn--secondary" href="https://madcats.uk/wp-content/uploads/2026/09/Summer-Drinks-Menu.pdf" target="_blank" rel="noopener">DRINKS MENU PDF</a>
+      </div>
+      </div>
+      <div class="menu-reveal" aria-hidden="true"><img src="" alt=""></div>
+    </div>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"Menu","@id":"https://madcats.uk/menu/#menu","name":"Mad Cats London Menu, Summer 2026","url":"https://madcats.uk/menu/","inLanguage":"en-GB","mainEntityOfPage":{"@type":"WebPage","@id":"https://madcats.uk/menu/"},"hasMenuSection":[{"@type":"MenuSection","name":"Served All Night","hasMenuItem":[{"@type":"MenuItem","name":"Spicy House Mixed Nuts","offers":{"@type":"Offer","price":"4.50","priceCurrency":"GBP"}},{"@type":"MenuItem","name":"Lebanese Green Olives","offers":{"@type":"Offer","price":"4.50","priceCurrency":"GBP"}},{"@type":"MenuItem","name":"Pickle of the Week","offers":{"@type":"Offer","price":"4.50","priceCurrency":"GBP"}},{"@type":"MenuItem","name":"Whipped Mascarpone w/ Greek Pita","description":"Infused with shiitake dashi, finished with samphire oil & ikura","offers":{"@type":"Offer","price":"10.50","priceCurrency":"GBP"}},{"@type":"MenuItem","name":"Roasted Pepper Hummus w/ Pane Carasau","description":"Finished with crispy chickpeas & chilli oil","offers":{"@type":"Offer","price":"8.50","priceCurrency":"GBP"}},{"@type":"MenuItem","name":"Pandan Crème Brulée","offers":{"@type":"Offer","price":"10.00","priceCurrency":"GBP"}}]},{"@type":"MenuSection","name":"Snacks","description":"The kitchen firmly believes that sharing food is one of life's great pleasures. This belief tends to disappear the moment someone reaches for the last bite without asking.","hasMenuItem":[{"@type":"MenuItem","name":"Otoro Handroll","description":"Chopped tuna belly with yuzu ponzu, black truffle and a touch of caviar","offers":{"@type":"Offer","price":"9.00","priceCurrency":"GBP"}},{"@type":"MenuItem","name":"Steak Tartare Handroll","description":"Hand cut and finished in a bonito aioli, topped with fried capers","offers":{"@type":"Offer","price":"9.00","priceCurrency":"GBP"}},{"@type":"MenuItem","name":"Bread of the Day","offers":{"@type":"Offer","price":"4.00","priceCurrency":"GBP"}}]},{"@type":"MenuSection","name":"For the Table","hasMenuItem":[{"@type":"MenuItem","name":"Hamachi Carpaccio","description":"Delicately sliced yellowtail with bright ponzu, jalapeño sauce and fresh lime zest","offers":{"@type":"Offer","price":"16.50","priceCurrency":"GBP"}},{"@type":"MenuItem","name":"Crab Brioche","description":"Sweet Devon crab on toasted brioche with homemade gochujang aioli, smoked napa cabbage and tobiko","offers":{"@type":"Offer","price":"18.50","priceCurrency":"GBP"}},{"@type":"MenuItem","name":"Shish Barak Dumplings","description":"Hand-folded beef and lamb parcels on a bed of labneh, mint pesto, topped with chilli oil and toasted pine nuts","offers":{"@type":"Offer","price":"22.00","priceCurrency":"GBP"}},{"@type":"MenuItem","name":"Pulled Jackfruit Slaw","description":"Slow-cooked pulled jackfruit with crisp Korean pear and roasted cashews","offers":{"@type":"Offer","price":"16.50","priceCurrency":"GBP"},"suitableForDiet":["https://schema.org/VeganDiet"]},{"@type":"MenuItem","name":"Vitello Tonnato","description":"Thinly sliced veal topped with anchovy foam, veal jus and pomegranate molasses","offers":{"@type":"Offer","price":"16.50","priceCurrency":"GBP"}},{"@type":"MenuItem","name":"Charred Honey Octopus","description":"Charred and glazed with honey, served with kombu fava purée and samphire emulsion","offers":{"@type":"Offer","price":"23.00","priceCurrency":"GBP"}},{"@type":"MenuItem","name":"Wild Mushrooms Gnocchi","description":"Soft gnocchi with wild mushrooms and a silky sake-smoked sage emulsion","offers":{"@type":"Offer","price":"21.00","priceCurrency":"GBP"},"suitableForDiet":["https://schema.org/VegetarianDiet"]},{"@type":"MenuItem","name":"Roasted Poussin","description":"Spatchcocked and roasted, served with red pepper sauce, Asian salsa and crisp matchstick fries","offers":{"@type":"Offer","price":"21.00","priceCurrency":"GBP"}}]},{"@type":"MenuSection","name":"Sweets","hasMenuItem":[{"@type":"MenuItem","name":"Pandan Crème Brulée","description":"Infused with house-made pandan extract and Madagascan vanilla, finished with a crisp caramelised top","offers":{"@type":"Offer","price":"10.00","priceCurrency":"GBP"}},{"@type":"MenuItem","name":"Black Sesame Tres Leches","description":"Finished with lightly whipped tahini cream and fresh orange zest","offers":{"@type":"Offer","price":"9.50","priceCurrency":"GBP"}},{"@type":"MenuItem","name":"White Peach Jalapeño Sorbet","description":"Refreshing and lightly spiced, finished with bright lime zest","offers":{"@type":"Offer","price":"3.50","priceCurrency":"GBP"}}]},{"@type":"MenuSection","name":"White Wine","description":"Every bottle begins life expecting to improve with age. Most simply wait long enough for everyone else's standards to decline, at which point Tuesday becomes a perfectly respectable special occasion.","hasMenuItem":[{"@type":"MenuItem","name":"Cibadies, Sauvignon Blanc, France","description":"White Peach, Complex, Structured","offers":[{"@type":"Offer","name":"125ml","price":"9.50","priceCurrency":"GBP"},{"@type":"Offer","name":"750ml","price":"55.00","priceCurrency":"GBP"}]},{"@type":"MenuItem","name":"Les Katz, Riesling Sec, Alsace","description":"Dry, Citrus Fruit, Green Apple","offers":[{"@type":"Offer","name":"125ml","price":"11.65","priceCurrency":"GBP"},{"@type":"Offer","name":"750ml","price":"65.00","priceCurrency":"GBP"}]},{"@type":"MenuItem","name":"Chalk Hill, Chardonnay, California","description":"Rich, Balanced, Long Finish","offers":{"@type":"Offer","price":"69.00","priceCurrency":"GBP"}}]},{"@type":"MenuSection","name":"Red Wine","hasMenuItem":[{"@type":"MenuItem","name":"Perdido Tempranillo, Ribera, Spain","description":"Dark Ripe Berries, Smooth","offers":[{"@type":"Offer","name":"125ml","price":"9.50","priceCurrency":"GBP"},{"@type":"Offer","name":"750ml","price":"55.00","priceCurrency":"GBP"}]},{"@type":"MenuItem","name":"Man O' War Island Blend, New Zealand","description":"Bordeaux Blend, Full Body, Balanced Oak","offers":{"@type":"Offer","price":"59.00","priceCurrency":"GBP"}},{"@type":"MenuItem","name":"Chat Fou, Grenache, Rhône","description":"The Mad Cat, Vibrant, Red Fruits. Chat Fou is the playful signature of Éric Texier, a former nuclear engineer turned Rhône winemaker. A fresh, light \"vin bistro\" of Grenache, Cinsault and Clairette, certified-organic, fermented with indigenous yeasts and aged in concrete. Bright red fruits, a touch of florality, best served chilled. Named, fittingly, after his cat.","offers":[{"@type":"Offer","name":"125ml","price":"11.50","priceCurrency":"GBP"},{"@type":"Offer","name":"750ml","price":"65.00","priceCurrency":"GBP"}]}]},{"@type":"MenuSection","name":"Rosé Wine","hasMenuItem":[{"@type":"MenuItem","name":"Felicette, Grenache Rose, Languedoc","description":"Aromatic, Delicate Red Fruits","offers":[{"@type":"Offer","name":"125ml","price":"9.50","priceCurrency":"GBP"},{"@type":"Offer","name":"750ml","price":"55.00","priceCurrency":"GBP"}]},{"@type":"MenuItem","name":"Mirabeau Pure, Grenache, Provence","description":"Pale, Fresh Minerality","offers":{"@type":"Offer","price":"59.00","priceCurrency":"GBP"}}]},{"@type":"MenuSection","name":"Orange Wine","hasMenuItem":[{"@type":"MenuItem","name":"Felicette, First Contact, Rousillion","description":"Bright, Citrus, Exotic Spices","offers":[{"@type":"Offer","name":"125ml","price":"10.00","priceCurrency":"GBP"},{"@type":"Offer","name":"750ml","price":"56.00","priceCurrency":"GBP"}]},{"@type":"MenuItem","name":"Pureza Ánfora, Moscatel, Alicante","description":"Coastal, Floral, Orange Blossom","offers":{"@type":"Offer","price":"69.00","priceCurrency":"GBP"}}]},{"@type":"MenuSection","name":"Sparkling Wine","hasMenuItem":[{"@type":"MenuItem","name":"Amore Della Vita Extra Dry Prosecco, NV","description":"Crisp Green Apple, Dry","offers":[{"@type":"Offer","name":"125ml","price":"9.50","priceCurrency":"GBP"},{"@type":"Offer","name":"750ml","price":"55.00","priceCurrency":"GBP"}]},{"@type":"MenuItem","name":"Cuvee Meow, Crémant, Alsace","description":"Citrus, Bright, Buttery","offers":{"@type":"Offer","price":"74.00","priceCurrency":"GBP"}},{"@type":"MenuItem","name":"Moët & Chandon, Imperial, Champagne","description":"Elegant, Balanced","offers":[{"@type":"Offer","name":"125ml","price":"19.00","priceCurrency":"GBP"},{"@type":"Offer","name":"750ml","price":"115.00","priceCurrency":"GBP"}]}]},{"@type":"MenuSection","name":"Sake","hasMenuItem":[{"@type":"MenuItem","name":"Mad Cats House Junmai","description":"Vibrant, Citrus. Mad Cats' own House Junmai: pure rice sake, no additives, no shortcuts. Clean, vibrant and citrus-bright, it's everything a good house pour should be: unpretentious, food-friendly and made to be refilled.","offers":[{"@type":"Offer","name":"100ml","price":"12.00","priceCurrency":"GBP"},{"@type":"Offer","name":"300ml","price":"33.00","priceCurrency":"GBP"},{"@type":"Offer","name":"720ml","price":"80.00","priceCurrency":"GBP"}]},{"@type":"MenuItem","name":"Okuroku Unite","description":"Fresh, Fruity","offers":[{"@type":"Offer","name":"100ml","price":"13.00","priceCurrency":"GBP"},{"@type":"Offer","name":"300ml","price":"40.00","priceCurrency":"GBP"},{"@type":"Offer","name":"720ml","price":"90.00","priceCurrency":"GBP"}]},{"@type":"MenuItem","name":"Hachi Hachi Junmai","description":"Olive, Mineral, Aromatic","offers":[{"@type":"Offer","name":"100ml","price":"14.50","priceCurrency":"GBP"},{"@type":"Offer","name":"300ml","price":"43.00","priceCurrency":"GBP"},{"@type":"Offer","name":"720ml","price":"98.00","priceCurrency":"GBP"}]},{"@type":"MenuItem","name":"Zaku Miyabi No Tomo","description":"Green Apple, Citrus, Silky","offers":[{"@type":"Offer","name":"100ml","price":"16.00","priceCurrency":"GBP"},{"@type":"Offer","name":"300ml","price":"47.00","priceCurrency":"GBP"},{"@type":"Offer","name":"720ml","price":"112.00","priceCurrency":"GBP"}]},{"@type":"MenuItem","name":"Sparkling Sake Rose, Japan","description":"Elegant, Complex, Fruity","offers":{"@type":"Offer","price":"110.00","priceCurrency":"GBP"}}]},{"@type":"MenuSection","name":"Cocktails","hasMenuItem":[{"@type":"MenuItem","name":"Orchid Highball","description":"House of Suntory Roku · Yellow Pepper · Cucumber · Muyu Jasmine · Schweppes Soda. Inspired by Singapore's Botanical Gardens and the orchid, its national flower. Yellow pepper-infused Roku Gin, cucumber and vanilla syrup, Muyu Jasmine and Yellow Chartreuse, topped with soda. Fresh, floral, botanical.","offers":{"@type":"Offer","price":"15.00","priceCurrency":"GBP"}},{"@type":"MenuItem","name":"Mango Dream","description":"Dream Sake · Mango · Desi Daru Vodka · Schofields Dry Vermouth. A vibrant, sun-soaked cocktail. Juicy tropical fruit meets delicate sake notes and crisp vermouth for a refreshing sip inspired by the warmth of Southeast Asian summers.","offers":{"@type":"Offer","price":"15.00","priceCurrency":"GBP"}},{"@type":"MenuItem","name":"King Krimson","description":"El Rayo Tequila · Ojo de Dios · Spiced Cashew · Cranberry · Sumac Syrup. Head Chef Raf's spiced cashew-infused El Rayo Tequila meets Ojo de Dios mezcal, cranberry and sumac. Nutty, smoky, and berry-forward with a citrus-spiced finish: a Mediterranean twist on tiki.","offers":{"@type":"Offer","price":"16.00","priceCurrency":"GBP"}},{"@type":"MenuItem","name":"White Chicks","description":"Nikka Days · White Chocolate · Raspberry · Lemon · Domaine de la Flaguerie Blanche. White chocolate fat-washed Nikka Days, homemade raspberry eau de vie and fresh lemon juice. Fruity, lightly sweet with a crisp finish.","offers":{"@type":"Offer","price":"16.00","priceCurrency":"GBP"}},{"@type":"MenuItem","name":"Cherry Bomb","description":"Hennessy VS · Hennessy VSOP · Schweppes · Cherry Pepper Reduction · Woodruff · Cocchi de Torino · Shiitake. Hennessy VS and VSOP, a cherry pepper reduction, and woodruff-infused Cocchi di Torino. A dash of house shiitake bitters adds earthy depth. Dark fruit, spice, and savoury balance.","offers":{"@type":"Offer","price":"15.00","priceCurrency":"GBP"}},{"@type":"MenuItem","name":"Cupids Chokehold","description":"Eminente Ambar Rum · Coffee · Banana · Miso · Cocchi Dry. Banana and coconut oil-washed rum, house banana skin syrup, miso and coffee-infused vermouth, topped with a foam made from the spent infusion bananas. Savoury, roasted, and balanced: Southeast Asian coffee culture meets a Mediterranean aperitif.","offers":{"@type":"Offer","price":"16.00","priceCurrency":"GBP"}}]},{"@type":"MenuSection","name":"Martini","hasMenuItem":[{"@type":"MenuItem","name":"Lebanese Dirty Martini","description":"Haymans Gin · Za'atar · Olive Brine · Arak. The Dirty Martini, reimagined with a Lebanese passport. Hayman's Gin, Cocchi Dry Vermouth, olive brine and aromatic Za'atar liqueur create a bold, savoury cocktail with a distinctly Mediterranean finish.","offers":{"@type":"Offer","price":"16.00","priceCurrency":"GBP"}},{"@type":"MenuItem","name":"Lemon Vesper","description":"Boatyard Vodka · Gin · Lemon · Cocchi Dry · Yogurt","offers":{"@type":"Offer","price":"15.00","priceCurrency":"GBP"}},{"@type":"MenuItem","name":"Ruby","description":"Sake · Hojicha · Shiitake · Hibiscus Vermouth","offers":{"@type":"Offer","price":"15.00","priceCurrency":"GBP"}}]},{"@type":"MenuSection","name":"Non-Alcoholic","hasMenuItem":[{"@type":"MenuItem","name":"Jungle Soul","description":"Smiling Wolf Agave · Everleaf Forest · Mango · Garam Masala · Pineapple","offers":{"@type":"Offer","price":"13.00","priceCurrency":"GBP"}},{"@type":"MenuItem","name":"Mountain Highball","description":"Everleaf Mountain · Cherry Blossom · Pink Grapefruit","offers":{"@type":"Offer","price":"12.50","priceCurrency":"GBP"}},{"@type":"MenuItem","name":"Amaro-No","description":"Lyre's Amaretti · Lemon · Maraschino","offers":{"@type":"Offer","price":"12.50","priceCurrency":"GBP"}}]},{"@type":"MenuSection","name":"Arak","hasMenuItem":[{"@type":"MenuItem","name":"Lebanese Arak","description":"Triple Distilled Aniseed Spirit, Anise Biscuits","offers":[{"@type":"Offer","name":"glass","price":"10.00","priceCurrency":"GBP"},{"@type":"Offer","name":"carafe","price":"28.00","priceCurrency":"GBP"}]}]},{"@type":"MenuSection","name":"Beers & Ciders","hasMenuItem":[{"@type":"MenuItem","name":"Pillars Pale Ale","description":"Light, Citrus, Hoppy","offers":{"@type":"Offer","price":"7.50","priceCurrency":"GBP"}},{"@type":"MenuItem","name":"Pillars Haus Lager","description":"Crisp, Clean, Refreshing","offers":{"@type":"Offer","price":"7.50","priceCurrency":"GBP"}},{"@type":"MenuItem","name":"Wata Dry Cider","description":"Lebanese Craft Cider, Crisp","offers":{"@type":"Offer","price":"7.50","priceCurrency":"GBP"}},{"@type":"MenuItem","name":"Lucky Saint","description":"Dry, Fresh, Hoppy","offers":{"@type":"Offer","price":"7.00","priceCurrency":"GBP"}}]},{"@type":"MenuSection","name":"Whisky Flight","hasMenuItem":[{"@type":"MenuItem","name":"Dealer's Choice","description":"3 from our collection","offers":{"@type":"Offer","price":"25.00","priceCurrency":"GBP"}}]},{"@type":"MenuSection","name":"Soft & Mixers","hasMenuItem":[{"@type":"MenuItem","name":"Soft Drinks","description":"Coca Cola, Coke Zero, Lemonade, Ginger Ale, Ginger Beer","offers":{"@type":"Offer","price":"4.00","priceCurrency":"GBP"}},{"@type":"MenuItem","name":"Schweppes Mixers","description":"Tonic, Light Tonic, Soda, Pink Grapefruit Soda","offers":{"@type":"Offer","price":"4.00","priceCurrency":"GBP"}},{"@type":"MenuItem","name":"Juice","description":"Apple, Orange, Cranberry, Pineapple","offers":{"@type":"Offer","price":"5.00","priceCurrency":"GBP"}}]},{"@type":"MenuSection","name":"Tea & Coffee","hasMenuItem":[{"@type":"MenuItem","name":"Pot of Tea","description":"Fresh Mint, Black, Green, Rooibos. Served with biscuits.","offers":{"@type":"Offer","price":"6.00","priceCurrency":"GBP"}},{"@type":"MenuItem","name":"Espresso","description":"Served with biscuits.","offers":{"@type":"Offer","price":"5.00","priceCurrency":"GBP"}}]}]}</script>
+<!-- menu:end -->
   </section>
 
   <!-- ============ OCCASIONS (chooser) ============ -->
@@ -1769,13 +3118,15 @@ body.tk-clicking .cursor-pixel .px-rays{animation:tk-rays var(--tk-press) infini
   var mqDesktop = window.matchMedia('(min-width: 900px)');
 
   /* ============ Router ============ */
-  var routes = ['/', '/dinner', '/bar', '/music', '/this-week', '/special-occasions', '/special-occasions/corporate', '/special-occasions/private', '/collabs', '/merch', '/faq', '/contact'];
+  var routes = ['/', '/dinner', '/bar', '/music', '/this-week', '/calendar', '/menu', '/special-occasions', '/special-occasions/corporate', '/special-occasions/private', '/collabs', '/merch', '/faq', '/contact'];
   var titles = {
     '/': 'Mad Cats London · Neighbourhood Kitchen & Hi-Fi Bar',
     '/dinner': 'Dinner · Mad Cats London',
     '/bar': 'The Bar · Mad Cats London',
     '/music': 'Music · Mad Cats London',
     '/this-week': 'This Week · Mad Cats London',
+    '/calendar': 'Calendar · Mad Cats London',
+    '/menu': 'Food & Drinks Menu · Mad Cats London',
     '/special-occasions': 'Special Occasions · Mad Cats London',
     '/special-occasions/corporate': 'Corporate Events · Mad Cats London',
     '/special-occasions/private': 'Private Parties & Co · Mad Cats London',
@@ -2418,17 +3769,27 @@ body.tk-clicking .cursor-pixel .px-rays{animation:tk-rays var(--tk-press) infini
      week open by default; earlier days stay closed. The day is the venue's
      (Europe/London), and a night runs until 5am: at 1am on Saturday the
      Friday card is still "tonight". Monday (closed) opens the whole week. */
+  /* The venue's "tonight": Europe/London date and weekday (Mon=1 .. Sun=7); before 5am
+     it is still the night before. Shared by This Week and the Calendar. */
+  function londonTonight(){
+    var now = new Date(), ymd, day, hour;
+    try {
+      var parts = new Intl.DateTimeFormat('en-GB', {timeZone:'Europe/London', weekday:'short', year:'numeric', month:'2-digit', day:'2-digit', hour:'numeric', hourCycle:'h23'}).formatToParts(now);
+      var w = {}; parts.forEach(function(p){ w[p.type] = p.value; });
+      day = {Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6,Sun:7}[w.weekday]; hour = parseInt(w.hour, 10);
+      ymd = w.year + '-' + w.month + '-' + w.day;
+    } catch (e) {}
+    if (!day) { day = now.getDay() || 7; hour = now.getHours(); ymd = now.toISOString().slice(0, 10); }
+    if (hour < 5) {   /* small hours belong to the night before */
+      day = day === 1 ? 7 : day - 1;
+      var t = new Date(ymd + 'T12:00:00Z'); t.setUTCDate(t.getUTCDate() - 1); ymd = t.toISOString().slice(0, 10);
+    }
+    return { ymd: ymd, day: day, hour: hour };
+  }
   (function(){
     var accs = d.querySelectorAll('.route[data-route="/this-week"] .acc[data-day]');
     if (!accs.length) return;
-    var now = new Date(), day, hour;
-    try {
-      var parts = new Intl.DateTimeFormat('en-GB', {timeZone:'Europe/London', weekday:'short', hour:'numeric', hourCycle:'h23'}).formatToParts(now);
-      var wd = {}; parts.forEach(function(p){ wd[p.type] = p.value; });
-      day = {Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6,Sun:7}[wd.weekday]; hour = parseInt(wd.hour, 10);
-    } catch (e) {}
-    if (!day) { day = now.getDay() || 7; hour = now.getHours(); }
-    if (hour < 5) day = day === 1 ? 7 : day - 1;   /* small hours belong to the night before */
+    var day = londonTonight().day;
     [].forEach.call(accs, function(acc){
       var open = parseInt(acc.getAttribute('data-day'), 10) >= day;
       acc.classList.toggle('is-open', open);
@@ -2436,6 +3797,148 @@ body.tk-clicking .cursor-pixel .px-rays{animation:tk-rays var(--tk-press) infini
       if (head) head.setAttribute('aria-expanded', open ? 'true' : 'false');
       acc.classList.toggle('is-today', parseInt(acc.getAttribute('data-day'), 10) === day);
     });
+  })();
+
+  /* ============ Menu + Calendar: jump links, dish photo reveal, month grid, ticked nights ============ */
+  (function(){
+    var mqRowNav = window.matchMedia('(max-width: 1099px)');   /* the menu index is a sticky row below this width */
+    var mjump = d.querySelector('.menu-jump');
+    /* height of whatever is pinned to the top edge above the target: the console, and the menu's row nav */
+    function pinnedTop(el){
+      var top = mqDesktop.matches ? 64 : 0;
+      if (mjump && mqRowNav.matches && el.closest && el.closest('.menu-band')) top += mjump.offsetHeight;
+      return top;
+    }
+    /* in-page jump links: scroll to an id without changing the route hash */
+    d.addEventListener('click', function(e){
+      var a = e.target.closest && e.target.closest('[data-jump]');
+      if (!a) return;
+      var el = d.getElementById(a.getAttribute('data-jump'));
+      if (!el) return;
+      e.preventDefault();
+      var y = el.getBoundingClientRect().top + window.pageYOffset - pinnedTop(el) - 24;
+      window.scrollTo({ top: Math.max(0, y), behavior: reduceMotion ? 'auto' : 'smooth' });
+    });
+
+    /* menu: desktop hover slips the dish photo out in its own column beside the list (as the home index
+       rows do); mobile taps the row for an inline photo. Image source = data-image on the item. */
+    var mband = d.querySelector('.menu-band');
+    var mrev = mband && mband.querySelector('.menu-reveal');
+    var mimg = mrev && mrev.querySelector('img');
+    [].forEach.call(d.querySelectorAll('.menu-item'), function(item){
+      var src = item.getAttribute('data-image');
+      var btn = item.querySelector('.menu-item__photo');
+      var fig = item.querySelector('.menu-item__media');
+      item.addEventListener('mouseenter', function(){
+        if (!mqDesktop.matches || !finePointer || !mrev) return;
+        if (mimg.getAttribute('src') !== src) mimg.src = src;
+        var br = mband.getBoundingClientRect(), ir = item.getBoundingClientRect(), h = mrev.offsetHeight;
+        /* top edge level with the hovered row, kept inside the visible window and inside the band */
+        var vTop = ir.top + 16;
+        var vMax = window.innerHeight - 24 - h, vMin = 64 + 24;
+        if (vTop > vMax) vTop = vMax;
+        if (vTop < vMin) vTop = Math.min(vMin, ir.top + 16);
+        var top = Math.max(0, Math.min(mband.offsetHeight - h, vTop - br.top));
+        var wasOn = mrev.classList.contains('is-on');
+        mrev.classList.toggle('is-snap', !wasOn);   /* first show lands in place; later moves glide */
+        mrev.style.top = top + 'px';
+        mrev.classList.add('is-on');
+      });
+      item.addEventListener('mouseleave', function(){ if (mrev) mrev.classList.remove('is-on'); });
+      function toggle(){
+        var open = !item.classList.contains('is-open');
+        item.classList.toggle('is-open', open);
+        if (fig) fig.hidden = !open;
+        if (btn) btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      }
+      if (btn) btn.addEventListener('click', function(e){ e.stopPropagation(); toggle(); });
+      var row = item.querySelector('.menu-item__row');
+      if (row) row.addEventListener('click', function(){ if (!mqDesktop.matches) toggle(); });
+    });
+
+    /* menu index: highlight the section in view (geometry check, as the Reserve bar does) */
+    if (mjump && mband){
+      var jlinks = [].slice.call(mjump.querySelectorAll('.menu-jump__link'));
+      var jsecs = jlinks.map(function(a){ return d.getElementById(a.getAttribute('data-jump')); });
+      var jActive = -1, jTick = false;
+      function syncJump(){
+        jTick = false;
+        if (!mband.offsetParent) return;   /* menu route not showing */
+        var line = pinnedTop(mband) + 96, idx = 0;
+        for (var i = 0; i < jsecs.length; i++){ if (jsecs[i] && jsecs[i].getBoundingClientRect().top <= line) idx = i; }
+        if (idx === jActive) return;
+        jActive = idx;
+        jlinks.forEach(function(a, k){
+          a.classList.toggle('is-active', k === idx);
+          if (k === idx) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current');
+        });
+        /* the row nav keeps the current link centred in view */
+        if (mqRowNav.matches){
+          var a = jlinks[idx];
+          var left = a.offsetLeft + a.offsetWidth / 2 - mjump.clientWidth / 2;
+          mjump.scrollTo({ left: Math.max(0, left), behavior: reduceMotion ? 'auto' : 'smooth' });
+        }
+      }
+      function queueJump(){ if (!jTick){ jTick = true; requestAnimationFrame(syncJump); } }
+      window.addEventListener('scroll', queueJump, {passive:true});
+      window.addEventListener('resize', function(){ jActive = -1; queueJump(); });
+      window.addEventListener('hashchange', function(){ jActive = -1; setTimeout(queueJump, 50); });
+      queueJump();
+    }
+
+    /* the menu list and the night list are each one tall band: let them enter as soon as their top edge
+       shows (the shared observer waits for 5% of a band, which is most of a screen on these) */
+    if (!reduceMotion && 'IntersectionObserver' in window){
+      var tallIo = new IntersectionObserver(function(entries){
+        entries.forEach(function(en){ if (en.isIntersecting){ en.target.classList.add('is-in'); tallIo.unobserve(en.target); } });
+      }, {rootMargin: '0px 0px -10% 0px', threshold: 0});
+      [].forEach.call(d.querySelectorAll('.menu-band, .cal-band'), function(b){ tallIo.observe(b); });
+    }
+
+    /* calendar: nights already played are ticked off, tonight is marked, the grid shows this month */
+    var cdays = d.querySelectorAll('.cal-day[data-date]');
+    if (cdays.length){
+      var tonight = londonTonight().ymd;
+      [].forEach.call(cdays, function(day){
+        var date = day.getAttribute('data-date');
+        day.classList.toggle('is-past', date < tonight);
+        day.classList.toggle('is-today', date === tonight);
+      });
+      [].forEach.call(d.querySelectorAll('.cal-grid__day[data-date]'), function(cell){
+        var date = cell.getAttribute('data-date');
+        cell.classList.toggle('is-past', date < tonight);
+        cell.classList.toggle('is-today', date === tonight);
+        if (date === tonight) cell.setAttribute('aria-current', 'date');
+      });
+      [].forEach.call(d.querySelectorAll('.cal-month'), function(m){
+        var done = m.querySelectorAll('.cal-day.is-past .cal-event').length;
+        var el = m.querySelector('.cal-month__done'); if (el) el.textContent = done;
+      });
+      var grids = [].slice.call(d.querySelectorAll('.cal-grid'));
+      function showGrid(i){
+        grids.forEach(function(g, k){ g.classList.toggle('is-current', k === i); });
+        var prev = grids[i].querySelector('[data-grid="prev"]'), next = grids[i].querySelector('[data-grid="next"]');
+        if (prev) prev.disabled = i === 0;
+        if (next) next.disabled = i === grids.length - 1;
+      }
+      var cur = grids.findIndex(function(g){ return g.getAttribute('data-month') === tonight.slice(0, 7); });
+      if (cur < 0) cur = grids.length - 1;
+      showGrid(cur);
+      grids.forEach(function(g, k){
+        [].forEach.call(g.querySelectorAll('[data-grid]'), function(b){
+          b.addEventListener('click', function(){
+            var n = b.getAttribute('data-grid') === 'prev' ? k - 1 : k + 1;
+            if (n < 0 || n >= grids.length) return;
+            showGrid(n);
+            /* keep keyboard focus on the same arrow in the newly shown month */
+            var same = grids[n].querySelector('[data-grid="' + b.getAttribute('data-grid') + '"]');
+            var other = grids[n].querySelector('[data-grid]:not([disabled])');
+            var f = same && !same.disabled ? same : other;
+            if (f && d.activeElement === b) f.focus();
+          });
+        });
+      });
+    }
   })();
 
   /* ============ Boot ============ */
