@@ -254,8 +254,30 @@ html,body{overflow-x:clip;}
 .minspend__ways li::before{content:"+";position:absolute;left:0;color:var(--mc-orange);}
 .minspend__terms{font-family:var(--mc-font-mono);font-size:10.5px;line-height:1.5;
   color:var(--mc-taupe);margin:var(--sp-3) 0 0;}
-.pkg-card__vat{display:block;font-family:var(--mc-font-mono);font-size:10px;line-height:1.4;
+.pe-sheet__foot-svc{display:block;font-family:var(--mc-font-mono);font-size:11.5px;line-height:1.5;
+  color:var(--mc-cream);opacity:.85;margin-top:var(--sp-2);}
+.pe-sheet__foot-svc strong{font-weight:600;opacity:1;}
+.pe-banner__svc{display:block;font-family:var(--mc-font-mono);font-size:10.5px;line-height:1.4;
+  color:var(--mc-cream);opacity:.8;margin-top:2px;text-align:right;}
+.pe-rail__foot-svc{display:block;font-family:var(--mc-font-mono);font-size:11px;line-height:1.5;
   color:var(--mc-taupe);margin-top:var(--sp-2);}
+.pe-rail__foot-svc strong{color:var(--mc-oxblood);font-weight:600;}
+.pkg-card__vat strong{color:var(--mc-oxblood);font-weight:600;}
+.pkg-card__vat{display:block;font-family:var(--mc-font-mono);font-size:11px;line-height:1.4;
+  color:var(--mc-taupe);margin-top:var(--sp-2);}
+
+/* The season band, named as the pricing document names it, so a figure that
+   looks high can be understood rather than queried. */
+.season-tag{display:inline-block;font-family:var(--mc-font-mono);font-size:9.5px;font-weight:600;
+  letter-spacing:1.2px;text-transform:uppercase;color:var(--mc-orange);
+  border:1px solid var(--mc-orange);border-radius:var(--mc-radius);
+  padding:2px 6px;margin-left:var(--sp-2);vertical-align:1px;white-space:nowrap;}
+.season-tag[hidden]{display:none;}
+.season-tag[data-band="quiet"]{color:var(--mc-taupe);border-color:var(--mc-separator);}
+.minspend__hours,.minspend__route{font-family:var(--mc-font-mono);font-size:11px;line-height:1.5;
+  color:var(--mc-taupe);margin:var(--sp-2) 0 0;}
+.minspend__route{color:var(--mc-oxblood);}
+.minspend__route[hidden]{display:none;}
 
 /* ---- Quantity stepper: revealed only once its add-on is ticked ----
    48px controls (above the 44px minimum), transparent like every other
@@ -755,7 +777,7 @@ body.pe-done .pe-rail{display:none!important;}
       <p class="t-overline">PRIVATE EVENTS</p>
       <h1 class="t-script pe-title" id="pe-heading">Host Your Event</h1>
       <p class="section-intro__body t-caption">The whole house, the front room, or the bar. Tell us the shape of the evening and our events team takes it from there. You will pick up to three dates, best first, early on so we can show you the minimum spend for those nights.</p>
-      <p class="pe-notice" id="pe-notice">Every figure on this page is an <strong>estimate</strong>. It is built from the options you pick and is there to give you a feel for the shape of the evening. It is not a quote, and nothing is confirmed until our events team comes back to you. Prices are inclusive of VAT and exclusive of 12.5% service charge.</p>
+      <p class="pe-notice" id="pe-notice">Every figure on this page is an <strong>estimate</strong>. It is built from the options you pick and is there to give you a feel for the shape of the evening. It is not a quote, and nothing is confirmed until our events team comes back to you. Prices are <strong>inclusive of VAT and exclusive of the 12.5% service charge</strong>, which is added on the night and is discretionary.</p>
     </section>
 
     <!-- ===== Inquiry form. Step order per CFO spec v1.1: space, event, dates, food & drink, add-ons, details ===== -->
@@ -871,9 +893,11 @@ body.pe-done .pe-rail{display:none!important;}
             <!-- minimum spend for the chosen space + first-choice date -->
             <div class="minspend" id="minspend" hidden>
               <div class="minspend__row">
-                <span class="minspend__label" id="minspend-label"></span>
+                <span class="minspend__label" id="minspend-label"></span><span class="season-tag" id="minspend-season" hidden></span>
                 <span class="minspend__figure" id="minspend-figure"></span>
               </div>
+              <p class="minspend__hours" id="minspend-hours"></p>
+              <p class="minspend__route" id="minspend-route" hidden>Friday and Saturday section hires are confirmed by our events team rather than booked automatically.</p>
               <div class="minspend__track" id="minspend-track" role="img" aria-labelledby="minspend-label">
                 <span class="minspend__fill" id="minspend-fill"></span>
               </div>
@@ -909,13 +933,13 @@ body.pe-done .pe-rail{display:none!important;}
                 <input class="sr-input" type="radio" name="package" value="standard">
                 <span class="pkg-card__head"><span class="pkg-card__name">Standard</span><span class="pkg-card__price"><span class="pkg-card__amount" data-pkg="standard"></span><span class="pkg-card__per"> / head</span></span></span>
                 <span class="pkg-card__desc" data-food="Typically six food items and two cocktails." data-drinks="Two cocktails, drinks only.">Typically six food items and two cocktails.</span>
-                <span class="pkg-card__vat">Inclusive of VAT, exclusive of 12.5% service charge.</span>
+                <span class="pkg-card__vat">Inclusive of VAT, <strong>exclusive of 12.5% service charge</strong>.</span>
               </label>
               <label class="pkg-card">
                 <input class="sr-input" type="radio" name="package" value="signature">
                 <span class="pkg-card__head"><span class="pkg-card__name">Signature</span><span class="pkg-card__price"><span class="pkg-card__amount" data-pkg="signature"></span><span class="pkg-card__per"> / head</span></span></span>
                 <span class="pkg-card__desc" data-food="Typically six food items and two cocktails, with premium plates." data-drinks="Two cocktails from the premium list, drinks only.">Typically six food items and two cocktails, with premium plates.</span>
-                <span class="pkg-card__vat">Inclusive of VAT, exclusive of 12.5% service charge.</span>
+                <span class="pkg-card__vat">Inclusive of VAT, <strong>exclusive of 12.5% service charge</strong>.</span>
               </label>
               <label class="pkg-card">
                 <input class="sr-input" type="radio" name="package" value="bespoke">
@@ -1148,6 +1172,7 @@ body.pe-done .pe-rail{display:none!important;}
           <span class="pe-rail__foot-label" id="rail-label"></span>
           <span class="pe-rail__foot-amount" id="rail-amount"></span>
           <span class="pe-rail__foot-meta" id="rail-meta"></span>
+          <span class="pe-rail__foot-svc">Inclusive of VAT. <strong>Excludes the 12.5% service charge.</strong></span>
         </div>
       </div>
     </aside>
@@ -1191,6 +1216,7 @@ body.pe-done .pe-rail{display:none!important;}
           <span class="pe-banner__label" id="banner-label">Total &middot; estimate</span>
           <span class="pe-banner__amount" id="banner-amount"></span>
           <span class="pe-banner__meta" id="banner-meta"></span>
+          <span class="pe-banner__svc">Excludes 12.5% service charge</span>
         </span>
         <span class="pe-banner__cta" id="banner-open">
           <span class="pe-banner__cta-verb" id="banner-open-verb"></span><span id="banner-open-text">FULL BRIEF</span>
@@ -1222,6 +1248,7 @@ body.pe-done .pe-rail{display:none!important;}
       <span class="pe-sheet__foot-label" id="sheet-label"></span>
       <span class="pe-sheet__foot-amount" id="sheet-amount"></span>
       <span class="pe-sheet__foot-meta" id="sheet-meta"></span>
+      <span class="pe-sheet__foot-svc">Inclusive of VAT. <strong>Excludes the 12.5% service charge</strong>, added on the night.</span>
     </div>
     <p class="pe-sheet__deposit" id="sheet-deposit" hidden></p>
   </div>
@@ -1274,26 +1301,59 @@ body.pe-done .pe-rail{display:none!important;}
       "cake":           { model: "flat",    value: 45, qty: { min: 1, max: 6, unit: "cake", units: "cakes" } },
       "print":          { model: "perHead", value: 1.50 }
     },
-    /* MINIMUM SPEND, per CFO spec v1.1 (23 Sep 2026). This replaces the old
-       flat venue hire fee and the semi-private factor, both now deleted.
-       Venue hire is expressed solely as a minimum spend, keyed to the SPACE
-       and the DATE. Seated and Bar share one table.
-         season band  = month of the event date
-         day group    = tue/wed · thu · fri/sat · sun · mon
-       All figures £ inclusive of VAT, exclusive of 12.5% service. */
+    /* MINIMUM SPEND, per "Private hire pricing for the booking form",
+       Mad Cats Collective, 7 Oct 2026. Supersedes CFO spec v1.1.
+       All figures £ INCLUSIVE OF VAT. Service charge of 12.5% is added on top
+       at the event and is discretionary, so it is never in these numbers.
+
+       Lookup is three steps: month gives the season band, weekday gives the
+       day group, band + day + hire type gives the minimum. A small set of
+       month/day combinations then OVERRIDE the band figure.
+
+       MONDAY IS UNRESOLVED. The new document says Monday is not a
+       minimum-spend product at all: room only is a flat hire fee, catered is
+       quoted by the team, and semi-private is not offered. This form always
+       has a package selected, so every Monday enquiry through it is catered.
+       Pending Ed's answer, Monday keeps exactly the behaviour and the figures
+       it had before this change, so nothing breaks in the meantime. */
     minSpend: {
-      bands: { quiet: [0,6,7], peak: [9,10], december: [11] }, /* else standard */
+      bands: { quiet: [0,6,7], high: [1,9], peak: [10,11] }, /* else standard */
+      bandLabel: { quiet: "Quiet", standard: "Standard", high: "High demand", peak: "Peak" },
       full: {
-        quiet:     { tuewed: 3000, thu: 3750, frisat: 6750, sun: 3000, mon: 2500 },
-        standard:  { tuewed: 3600, thu: 4500, frisat: 7500, sun: 3000, mon: 2500 },
-        peak:      { tuewed: 4600, thu: 5750, frisat: 7900, sun: 3000, mon: 2500 },
-        december:  { tuewed: 5400, thu: 6750, frisat: 8250, sun: 4050, mon: 3375 }
+        quiet:    { tuewed: 2000, thu: 3100, frisat: 5000, sun: 1750, mon: 2500 },
+        standard: { tuewed: 2800, thu: 3500, frisat: 5800, sun: 2000, mon: 2500 },
+        high:     { tuewed: 3000, thu: 4350, frisat: 6500, sun: 2500, mon: 2500 },
+        peak:     { tuewed: 4000, thu: 5250, frisat: 7400, sun: 2750, mon: 2500 }
       },
       semi: {
-        quiet:     { tuewed: 1500, thu: 1875, frisat: 4750, sun: 1800, mon: 1500 },
-        standard:  { tuewed: 1800, thu: 2250, frisat: 5250, sun: 1800, mon: 1500 },
-        peak:      { tuewed: 2300, thu: 2875, frisat: 5500, sun: 1800, mon: 1500 },
-        december:  { tuewed: 2700, thu: 3375, frisat: 5800, sun: 2400, mon: 2040 }
+        quiet:    { tuewed: 1000, thu: 1550, frisat: 3500, sun: 1050, mon: 1500 },
+        standard: { tuewed: 1400, thu: 1750, frisat: 4050, sun: 1200, mon: 1500 },
+        high:     { tuewed: 1500, thu: 2175, frisat: 4550, sun: 1500, mon: 1500 },
+        peak:     { tuewed: 2000, thu: 2625, frisat: 5175, sun: 1650, mon: 1500 }
+      },
+      /* month index -> day group -> figure per hire type. Checked once the
+         band figure is known; if present it replaces it. The December Monday
+         entry is not from the new document, it preserves today's behaviour
+         while Mondays are unresolved. */
+      overrides: {
+        0:  { thu: { full: 3650, semi: 1825 }, frisat: { full: 5050, semi: 3550 } },
+        1:  { thu: { full: 5150, semi: 2575 } },
+        2:  { frisat: { full: 5850, semi: 4100 } },
+        3:  { thu: { full: 3650, semi: 1825 } },
+        5:  { thu: { full: 3750, semi: 1875 } },
+        7:  { thu: { full: 3300, semi: 1650 } },
+        11: { thu: { full: 6000, semi: 3000 }, mon: { full: 3375, semi: 2040 } }
+      },
+      /* Friday and Saturday semi-private is shown but never treated as
+         confirmable: the room around it needs a judgement call. */
+      routeToTeam: { semi: ["frisat"] },
+      /* what the hire includes, shown next to the price */
+      hours: {
+        full: { tuewed: "6pm to midnight", thu: "6pm to 1.30am", frisat: "6pm to 2.30am",
+                sun: "the 3pm to 7pm session", mon: "6pm to midnight" },
+        semi: { tuewed: "4 hours within the trading night", thu: "4 hours within the trading night",
+                frisat: "4 hours within the trading night", sun: "the 3pm to 7pm session",
+                mon: "4 hours within the trading night" }
       }
     },
     capacities: { full: 75, seated: 30, bar: 40 } /* bar cap PLACEHOLDER — TBC with venue */
@@ -2177,10 +2237,22 @@ body.pe-done .pe-rail{display:none!important;}
      changes or the date ranking shifts. Returns null until both are known. */
   function minBand(d){
     var m = d.getMonth(), b = PRICING.minSpend.bands;
-    if(b.quiet.indexOf(m) >= 0)    return "quiet";
-    if(b.peak.indexOf(m) >= 0)     return "peak";
-    if(b.december.indexOf(m) >= 0) return "december";
+    if(b.quiet.indexOf(m) >= 0) return "quiet";
+    if(b.high.indexOf(m)  >= 0) return "high";
+    if(b.peak.indexOf(m)  >= 0) return "peak";
     return "standard";
+  }
+  /* the season tag shown beside the figure, in the document's own words */
+  function bandLabel(d){ return PRICING.minSpend.bandLabel[minBand(d)]; }
+  /* Friday and Saturday semi-private is priced but never auto-confirmed */
+  function routesToTeam(d){
+    var sv = tierOf(), key = sv === "full" ? "full" : "semi";
+    var list = PRICING.minSpend.routeToTeam[key];
+    return !!(list && list.indexOf(minDayGroup(d)) >= 0);
+  }
+  function hireHours(d){
+    var sv = tierOf(), key = sv === "full" ? "full" : "semi";
+    return PRICING.minSpend.hours[key][minDayGroup(d)];
   }
   function minDayGroup(d){
     var w = d.getDay();
@@ -2190,7 +2262,20 @@ body.pe-done .pe-rail{display:none!important;}
   function minimumFor(d){
     var sv = gv("space");
     if(!sv || !d) return null;
-    return PRICING.minSpend[sv === "full" ? "full" : "semi"][minBand(d)][minDayGroup(d)];
+    var key = sv === "full" ? "full" : "semi", day = minDayGroup(d);
+    /* band figure first, then let a month/day override replace it */
+    var base = PRICING.minSpend[key][minBand(d)][day];
+    var byMonth = PRICING.minSpend.overrides[d.getMonth()];
+    var ov = byMonth && byMonth[day] && byMonth[day][key];
+    return ov !== undefined ? ov : base;
+  }
+  /* true when this date's figure comes from the override table rather than
+     the band, worth knowing when a number looks out of step with its band */
+  function isOverride(d){
+    var sv = gv("space"); if(!sv || !d) return false;
+    var key = sv === "full" ? "full" : "semi";
+    var byMonth = PRICING.minSpend.overrides[d.getMonth()];
+    return !!(byMonth && byMonth[minDayGroup(d)] && byMonth[minDayGroup(d)][key] !== undefined);
   }
   function currentMinimum(){ return calPicks.length ? minimumFor(calPicks[0]) : null; }
   /* Do the chosen dates straddle two different minimums? Then no single figure
@@ -2816,6 +2901,16 @@ body.pe-done .pe-rail{display:none!important;}
         note = $("#minspend-note"), ways = $("#minspend-ways");
 
     label.textContent = "Minimum spend · " + calLongDate(first);
+    var tagEl = $("#minspend-season");
+    if(tagEl){
+      tagEl.textContent = bandLabel(first);
+      tagEl.hidden = false;
+      tagEl.setAttribute("data-band", minBand(first));
+    }
+    var hoursEl = $("#minspend-hours");
+    if(hoursEl) hoursEl.textContent = "Includes the room, " + hireHours(first) + ".";
+    var routeEl = $("#minspend-route");
+    if(routeEl) routeEl.hidden = !routesToTeam(first);
 
     /* Bespoke: a starting figure, no progress, because there is no total yet */
     if(pkg === "bespoke"){
