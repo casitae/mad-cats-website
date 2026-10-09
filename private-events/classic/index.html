@@ -266,14 +266,33 @@ html,body{overflow-x:clip;}
 .pkg-card__vat{display:block;font-family:var(--mc-font-mono);font-size:11px;line-height:1.4;
   color:var(--mc-taupe);margin-top:var(--sp-2);}
 
-/* The season band, named as the pricing document names it, so a figure that
-   looks high can be understood rather than queried. */
-.season-tag{display:inline-block;font-family:var(--mc-font-mono);font-size:9.5px;font-weight:600;
-  letter-spacing:1.2px;text-transform:uppercase;color:var(--mc-orange);
-  border:1px solid var(--mc-orange);border-radius:var(--mc-radius);
-  padding:2px 6px;margin-left:var(--sp-2);vertical-align:1px;white-space:nowrap;}
-.season-tag[hidden]{display:none;}
-.season-tag[data-band="quiet"]{color:var(--mc-taupe);border-color:var(--mc-separator);}
+/* Season tag, shown only for the two busy bands, so a figure that looks high
+   can be understood rather than queried. It is a button, not a styled span,
+   because the explanation has to be reachable by tap and by keyboard, not
+   only by hovering a mouse. */
+.season-wrap{position:relative;display:inline-block;margin-left:var(--sp-2);vertical-align:1px;}
+.season-wrap[hidden]{display:none;}
+.season-tag{display:inline-flex;align-items:center;gap:4px;font-family:var(--mc-font-mono);
+  font-size:9.5px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;
+  color:var(--mc-orange);background:transparent;border:1px solid var(--mc-orange);
+  border-radius:var(--mc-radius);padding:3px 7px;white-space:nowrap;cursor:help;
+  min-height:22px;}
+.season-tag::after{content:"i";font-size:8.5px;line-height:1;letter-spacing:0;
+  width:11px;height:11px;border:1px solid currentColor;border-radius:50%;
+  display:inline-flex;align-items:center;justify-content:center;opacity:.8;}
+.season-tag:focus-visible{outline:none;border-width:1.5px;padding:2.5px 6.5px;}
+/* anchored from the right so it opens inward: the tag sits well along the
+   line, and a left-anchored bubble runs off the edge of a phone */
+.season-tip{position:absolute;right:0;left:auto;top:calc(100% + 6px);z-index:30;width:252px;
+  font-family:var(--mc-font-mono);font-size:11px;line-height:1.5;letter-spacing:0;
+  text-transform:none;font-weight:400;color:var(--mc-oxblood);
+  background:var(--mc-cream);border:1px solid var(--mc-orange);
+  border-radius:var(--mc-radius);padding:var(--sp-3);
+  opacity:0;visibility:hidden;transition:opacity .15s ease;pointer-events:none;}
+.season-wrap:hover .season-tip,
+.season-tag:focus-visible ~ .season-tip,
+.season-wrap.is-open .season-tip{opacity:1;visibility:visible;}
+@media (max-width:520px){ .season-tip{width:min(252px, calc(100vw - 2 * var(--mc-gutter)));} }
 .minspend__hours,.minspend__route{font-family:var(--mc-font-mono);font-size:11px;line-height:1.5;
   color:var(--mc-taupe);margin:var(--sp-2) 0 0;}
 .minspend__route{color:var(--mc-oxblood);}
@@ -740,7 +759,7 @@ body.pe-done .pe-rail{display:none!important;}
   .field__tick,.pe-sec-tick,.field__check-box::after,.addon-ph,.pe-sheet,.pe-sheet.is-open{transition:none;}
   .field__label-text.is-swapping,.is-reinked{animation:none;}
   .pe-guide{transition:none;} /* static arrow: no pulse, instant relocation */
-  .pe-progress__fill,.rail-progress__fill,.sheet-progress__fill{transition:none;}
+  .pe-progress__fill,.rail-progress__fill,.sheet-progress__fill,.season-tip{transition:none;}
   /* the cue still reads as a cue, it just stops moving. With the swell and the
      glow switched off, the chip carries it on its own: it goes solid cream on
      orange the moment the cue starts, which is the loudest STATIC state the
@@ -893,7 +912,7 @@ body.pe-done .pe-rail{display:none!important;}
             <!-- minimum spend for the chosen space + first-choice date -->
             <div class="minspend" id="minspend" hidden>
               <div class="minspend__row">
-                <span class="minspend__label" id="minspend-label"></span><span class="season-tag" id="minspend-season" hidden></span>
+                <span class="minspend__label" id="minspend-label"></span><span class="season-wrap" id="minspend-season-wrap" hidden><button type="button" class="season-tag" id="minspend-season" aria-describedby="season-tip" aria-expanded="false"></button><span class="season-tip" id="season-tip" role="tooltip">Your first choice falls in one of our busiest months, so the minimum reflects what the venue would normally take that night. Try another month for a lower minimum.</span></span>
                 <span class="minspend__figure" id="minspend-figure"></span>
               </div>
               <p class="minspend__hours" id="minspend-hours"></p>
@@ -1318,7 +1337,9 @@ body.pe-done .pe-rail{display:none!important;}
        it had before this change, so nothing breaks in the meantime. */
     minSpend: {
       bands: { quiet: [0,6,7], high: [1,9], peak: [10,11] }, /* else standard */
-      bandLabel: { quiet: "Quiet", standard: "Standard", high: "High demand", peak: "Peak" },
+      /* Only the two busy bands are tagged. A "Quiet" or "Standard" badge
+         tells the guest nothing they need and just adds noise to the figure. */
+      bandLabel: { high: "High Demand", peak: "Peak Demand" },
       full: {
         quiet:    { tuewed: 2000, thu: 3100, frisat: 5000, sun: 1750, mon: 2500 },
         standard: { tuewed: 2800, thu: 3500, frisat: 5800, sun: 2000, mon: 2500 },
@@ -2901,11 +2922,17 @@ body.pe-done .pe-rail{display:none!important;}
         note = $("#minspend-note"), ways = $("#minspend-ways");
 
     label.textContent = "Minimum spend · " + calLongDate(first);
-    var tagEl = $("#minspend-season");
-    if(tagEl){
-      tagEl.textContent = bandLabel(first);
-      tagEl.hidden = false;
-      tagEl.setAttribute("data-band", minBand(first));
+    var tagEl = $("#minspend-season"), tagWrap = $("#minspend-season-wrap");
+    if(tagEl && tagWrap){
+      var lbl = bandLabel(first);     /* undefined for quiet and standard */
+      tagWrap.hidden = !lbl;
+      if(lbl){
+        tagEl.textContent = lbl;
+        tagEl.setAttribute("data-band", minBand(first));
+      } else {
+        tagWrap.classList.remove("is-open");
+        tagEl.setAttribute("aria-expanded", "false");
+      }
     }
     var hoursEl = $("#minspend-hours");
     if(hoursEl) hoursEl.textContent = "Includes the room, " + hireHours(first) + ".";
@@ -2996,6 +3023,28 @@ body.pe-done .pe-rail{display:none!important;}
       });
     if(wrapR) wrapR.querySelector(".rail-progress__track").setAttribute("aria-label", aria);
   }
+
+  /* hover covers the mouse; tap has to be wired by hand */
+  (function(){
+    var wrap = $("#minspend-season-wrap"), tag = $("#minspend-season");
+    if(!wrap || !tag) return;
+    tag.addEventListener("click", function(e){
+      e.stopPropagation();
+      var open = wrap.classList.toggle("is-open");
+      tag.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+    document.addEventListener("click", function(){
+      if(!wrap.classList.contains("is-open")) return;
+      wrap.classList.remove("is-open");
+      tag.setAttribute("aria-expanded", "false");
+    });
+    document.addEventListener("keydown", function(e){
+      if(e.key === "Escape" && wrap.classList.contains("is-open")){
+        wrap.classList.remove("is-open");
+        tag.setAttribute("aria-expanded", "false");
+      }
+    });
+  })();
 
   function refreshUX(){ updateSectionTicks(); updateAck(); renderCal(); renderPicks(); renderRail(); refreshPricing(); renderMinSpend(); renderProgressBars(); updateGuide(); }
   form.addEventListener("input", refreshUX);
