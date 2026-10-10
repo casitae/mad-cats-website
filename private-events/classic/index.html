@@ -231,6 +231,50 @@ html,body{overflow-x:clip;}
 .cal__day[data-rank="3"] .cal__rank{background:var(--mc-taupe);color:var(--mc-ink-dark);}
 .cal__day:disabled{cursor:default;}
 .cal__day:disabled:hover{border-color:transparent;}
+/* A Monday with a semi-private space selected. Struck through rather than
+   merely faded, because a faded cell reads as "low availability" next to all
+   the percentages, and this one is not available at any price. It stays
+   focusable and hoverable so it can explain itself. */
+/* ---- Large bookings: the one place this form sends people elsewhere ----
+   A real stop, not a nudge, so it is a modal rather than a note. Cream box on
+   a dimmed page, the link styled as the primary action and the way back
+   offered in plain text next to it. */
+.pe-modal{position:fixed;inset:0;z-index:120;display:flex;align-items:center;justify-content:center;
+  padding:var(--sp-4);}
+.pe-modal[hidden]{display:none;}
+/* these three carry their own display value, which outranks the UA rule
+   for [hidden], so they need saying explicitly */
+.pkg-card[hidden],.field[hidden],.pe-section[hidden]{display:none;}
+.pe-modal__scrim{position:absolute;inset:0;background:rgba(72,32,28,.55);}
+.pe-modal__box{position:relative;max-width:420px;width:100%;background:var(--mc-cream);
+  border:1px solid var(--mc-orange);border-radius:var(--mc-radius-card);padding:var(--sp-5);
+  display:grid;gap:var(--sp-3);box-shadow:0 18px 50px rgba(72,32,28,.28);}
+.pe-modal__title{color:var(--mc-orange);}
+.pe-modal__body{font-family:var(--mc-font-mono);font-size:13.5px;line-height:1.6;
+  color:var(--mc-oxblood);margin:0;}
+.pe-modal__acts{display:flex;flex-wrap:wrap;align-items:center;gap:var(--sp-3);margin-top:var(--sp-1);}
+.pe-modal__go{display:inline-flex;align-items:center;justify-content:center;min-height:44px;
+  padding:0 var(--sp-4);font-family:var(--mc-font-mono);font-weight:600;font-size:12px;
+  letter-spacing:1px;text-transform:uppercase;text-decoration:none;color:var(--mc-cream);
+  background:var(--mc-orange);border:1px solid var(--mc-orange);border-radius:var(--mc-radius);}
+.pe-modal__go:hover{background:var(--mc-oxblood);border-color:var(--mc-oxblood);}
+.pe-modal__go:focus-visible{outline:2px solid var(--mc-oxblood);outline-offset:2px;}
+.pe-modal__alt{min-height:44px;padding:0;background:transparent;border:0;cursor:pointer;
+  font-family:var(--mc-font-mono);font-size:12px;color:var(--mc-oxblood);
+  text-decoration:underline;text-underline-offset:3px;}
+.pe-modal__alt:hover{color:var(--mc-orange);}
+body.pe-modal-open{overflow:hidden;}
+@media (max-width:520px){
+  .pe-modal__box{padding:var(--sp-4);}
+  .pe-modal__acts{flex-direction:column;align-items:stretch;gap:var(--sp-2);}
+  .pe-modal__alt{text-align:center;}
+}
+
+.cal__day--blocked{cursor:help;position:relative;}
+.cal__day--blocked .cal__num{color:var(--mc-taupe);opacity:.5;text-decoration:line-through;
+  text-decoration-thickness:1px;}
+.cal__day--blocked:hover,.cal__day--blocked.is-open{border-color:rgba(72,32,28,.32);}
+.cal__day--blocked:focus-visible{outline:none;border-color:var(--mc-orange);border-width:1.5px;padding:3.5px 0;}
 /* ---- Guest count: a stepper either side of a field sized for two digits ----
    The count is almost always two digits and capped at 75, so a full-width box
    invited a stray third digit and looked like a text field. Buttons match the
@@ -468,8 +512,9 @@ body:not(.season-seen) .season-wrap--onaccent .season-tag{animation:season-pulse
    its own line above, it read as a heading for the whole strip and pushed
    the number down. Baseline alignment sits the chip on the same line the
    figure is read from. */
-.pe-banner__amountrow{display:flex;align-items:baseline;gap:var(--sp-2);flex-wrap:wrap;min-width:0;}
-.pe-banner__amountrow .season-wrap{margin-left:0;vertical-align:baseline;}
+.pe-banner__amountrow,.pe-sheet__foot-amountrow{display:flex;align-items:baseline;
+  gap:var(--sp-2);flex-wrap:wrap;min-width:0;}
+.pe-banner__amountrow .season-wrap,.pe-sheet__foot-amountrow .season-wrap{margin-left:0;vertical-align:baseline;}
 /* On a phone the figure column is barely 190px once the FULL BRIEF button
    has its share, so the tag is trimmed rather than allowed to drop onto a
    line of its own. It still wraps under the figure for the widest totals,
@@ -586,6 +631,9 @@ body.has-banner{padding-bottom:calc(var(--pe-banner-h, 120px) + var(--sp-4));}
   .pe-section + .pe-section{margin-top:var(--sp-12);}
   .pe-section__title{font-size:32px;}
   .pkg-grid{grid-template-columns:repeat(3,1fr);}
+  /* a Monday adds Dry Hire as a fourth card: 2x2 reads better than three
+     across with one stranded underneath */
+  .pkg-grid:has(#pkg-dry:not([hidden])){grid-template-columns:repeat(2,1fr);}
   .pkg-card{padding:var(--sp-4);}
   .pkg-card:has(.sr-input:checked),.pkg-card:has(.sr-input:focus-visible){padding:calc(var(--sp-4) - .5px);}
   .pkg-card__name{font-size:20px;}
@@ -1014,7 +1062,7 @@ body.pe-done .pe-rail{display:none!important;}
               </div>
               <p class="minspend__note" id="minspend-note"></p>
               <ul class="minspend__ways" id="minspend-ways" hidden></ul>
-              <p class="minspend__terms">Anything spent on the night counts toward the minimum, including the bar. If it is not reached, the difference is charged as venue hire.</p>
+              <p class="minspend__terms" id="minspend-terms">Anything spent on the night counts toward the minimum, including the bar. If it is not reached, the difference is charged as venue hire.</p>
             </div>
             <!-- ranked picks: selection order = priority, rendered by JS -->
             <ol class="cal-picks" id="cal-picks" hidden aria-label="Your dates, best first"></ol>
@@ -1057,6 +1105,15 @@ body.pe-done .pe-rail{display:none!important;}
                 <span class="pkg-card__head"><span class="pkg-card__name">Bespoke</span></span>
                 <span class="pkg-card__desc">Tailor-made, built around your brief.</span>
                 <span class="pkg-card__sub">priced after a conversation</span>
+              </label>
+              <!-- Monday only: the venue is closed, so the room can go out on
+                   its own at a flat fee. Shown by JS when the first-choice
+                   date is a Monday, hidden and deselected otherwise. -->
+              <label class="pkg-card pkg-card--dry" id="pkg-dry" hidden>
+                <input class="sr-input" type="radio" name="package" value="dryhire">
+                <span class="pkg-card__head"><span class="pkg-card__name">Dry Hire</span><span class="pkg-card__price"><span class="pkg-card__amount" data-pkg="dryhire"></span><span class="pkg-card__per"> flat</span></span></span>
+                <span class="pkg-card__desc">The room on its own, no food or drink.</span>
+                <span class="pkg-card__vat">Inclusive of VAT. Monday hire only.</span>
               </label>
             </div>
             <p class="field__msg" id="package-msg" hidden></p>
@@ -1283,7 +1340,7 @@ body.pe-done .pe-rail{display:none!important;}
           <span class="pe-rail__foot-label" id="rail-label"></span>
           <span class="pe-rail__foot-amount" id="rail-amount"></span>
           <span class="pe-rail__foot-meta" id="rail-meta"></span>
-          <span class="pe-rail__foot-svc">Inclusive of VAT. <strong>Excludes the 12.5% service charge.</strong></span>
+          <span class="pe-rail__foot-svc" id="rail-svc">Inclusive of VAT. <strong>Excludes the 12.5% service charge.</strong></span>
         </div>
       </div>
     </aside>
@@ -1308,6 +1365,20 @@ body.pe-done .pe-rail{display:none!important;}
 </div>
 
 <!-- ===== Sticky per-head total (accent surface) — outside .page so overflow:clip can't touch it ===== -->
+<!-- ===== Large bookings go to SevenRooms, not through this form ===== -->
+<div class="pe-modal" id="pe-modal" hidden>
+  <div class="pe-modal__scrim" id="pe-modal-scrim"></div>
+  <div class="pe-modal__box" role="dialog" aria-modal="true"
+       aria-labelledby="pe-modal-title" aria-describedby="pe-modal-body">
+    <span class="t-overline pe-modal__title" id="pe-modal-title">BOOK THIS ONE DIRECTLY</span>
+    <p class="pe-modal__body" id="pe-modal-body"></p>
+    <div class="pe-modal__acts">
+      <a class="pe-modal__go" id="pe-modal-go" href="#" target="_blank" rel="noopener">Book on SevenRooms</a>
+      <button class="pe-modal__alt" id="pe-modal-back" type="button">Change the guest count</button>
+    </div>
+  </div>
+</div>
+
 <aside class="pe-banner" id="pe-banner" aria-live="polite" aria-label="Estimated cost">
   <span class="pe-banner__lip" aria-hidden="true"></span>
   <div class="pe-banner__body">
@@ -1357,9 +1428,9 @@ body.pe-done .pe-rail{display:none!important;}
     </div>
     <div class="pe-sheet__foot" id="sheet-foot">
       <span class="pe-sheet__foot-label" id="sheet-label"></span>
-      <span class="pe-sheet__foot-amount" id="sheet-amount"></span>
+      <span class="pe-sheet__foot-amountrow"><span class="pe-sheet__foot-amount" id="sheet-amount"></span></span>
       <span class="pe-sheet__foot-meta" id="sheet-meta"></span>
-      <span class="pe-sheet__foot-svc">Inclusive of VAT. <strong>Excludes the 12.5% service charge</strong>, added on the night.</span>
+      <span class="pe-sheet__foot-svc" id="sheet-svc">Inclusive of VAT. <strong>Excludes the 12.5% service charge</strong>, added on the night.</span>
     </div>
     <p class="pe-sheet__deposit" id="sheet-deposit" hidden></p>
   </div>
@@ -1421,33 +1492,35 @@ body.pe-done .pe-rail{display:none!important;}
        day group, band + day + hire type gives the minimum. A small set of
        month/day combinations then OVERRIDE the band figure.
 
-       MONDAY IS UNRESOLVED. The new document says Monday is not a
-       minimum-spend product at all: room only is a flat hire fee, catered is
-       quoted by the team, and semi-private is not offered. This form always
-       has a package selected, so every Monday enquiry through it is catered.
-       Pending Ed's answer, Monday keeps exactly the behaviour and the figures
-       it had before this change, so nothing breaks in the meantime. */
+       MONDAY IS NOT A MINIMUM-SPEND PRODUCT (Ed, 9 Oct 2026). The venue is
+       closed on Mondays, so a Monday hire displaces no trade. Two routes, and
+       no `mon` column in either table below:
+         · Dry Hire — a flat room fee by band, the figures in `dryHire`.
+         · Catered  — the chosen package and add-ons, with no minimum at all.
+                      The events team quotes it after the enquiry lands.
+       Semi-private is not offered on a Monday: see offNight(). */
     minSpend: {
       bands: { quiet: [0,6,7], high: [1,9], peak: [10,11] }, /* else standard */
       /* Only the two busy bands are tagged. A "Quiet" or "Standard" badge
          tells the guest nothing they need and just adds noise to the figure. */
       bandLabel: { high: "High Demand", peak: "Peak Demand" },
       full: {
-        quiet:    { tuewed: 2000, thu: 3100, frisat: 5000, sun: 1750, mon: 2500 },
-        standard: { tuewed: 2800, thu: 3500, frisat: 5800, sun: 2000, mon: 2500 },
-        high:     { tuewed: 3000, thu: 4350, frisat: 6500, sun: 2500, mon: 2500 },
-        peak:     { tuewed: 4000, thu: 5250, frisat: 7400, sun: 2750, mon: 2500 }
+        quiet:    { tuewed: 2000, thu: 3100, frisat: 5000, sun: 1750 },
+        standard: { tuewed: 2800, thu: 3500, frisat: 5800, sun: 2000 },
+        high:     { tuewed: 3000, thu: 4350, frisat: 6500, sun: 2500 },
+        peak:     { tuewed: 4000, thu: 5250, frisat: 7400, sun: 2750 }
       },
       semi: {
-        quiet:    { tuewed: 1000, thu: 1550, frisat: 3500, sun: 1050, mon: 1500 },
-        standard: { tuewed: 1400, thu: 1750, frisat: 4050, sun: 1200, mon: 1500 },
-        high:     { tuewed: 1500, thu: 2175, frisat: 4550, sun: 1500, mon: 1500 },
-        peak:     { tuewed: 2000, thu: 2625, frisat: 5175, sun: 1650, mon: 1500 }
+        quiet:    { tuewed: 1000, thu: 1550, frisat: 3500, sun: 1050 },
+        standard: { tuewed: 1400, thu: 1750, frisat: 4050, sun: 1200 },
+        high:     { tuewed: 1500, thu: 2175, frisat: 4550, sun: 1500 },
+        peak:     { tuewed: 2000, thu: 2625, frisat: 5175, sun: 1650 }
       },
+      /* Monday dry hire: the room on its own, a flat fee by season band.
+         Supersedes the £1,200 Monday figure the form used to show. */
+      dryHire: { quiet: 1000, standard: 1250, high: 1500, peak: 1750 },
       /* month index -> day group -> figure per hire type. Checked once the
-         band figure is known; if present it replaces it. The December Monday
-         entry is not from the new document, it preserves today's behaviour
-         while Mondays are unresolved. */
+         band figure is known; if present it replaces it. */
       overrides: {
         0:  { thu: { full: 3650, semi: 1825 }, frisat: { full: 5050, semi: 3550 } },
         1:  { thu: { full: 5150, semi: 2575 } },
@@ -1455,7 +1528,7 @@ body.pe-done .pe-rail{display:none!important;}
         3:  { thu: { full: 3650, semi: 1825 } },
         5:  { thu: { full: 3750, semi: 1875 } },
         7:  { thu: { full: 3300, semi: 1650 } },
-        11: { thu: { full: 6000, semi: 3000 }, mon: { full: 3375, semi: 2040 } }
+        11: { thu: { full: 6000, semi: 3000 } }
       },
       /* Friday and Saturday semi-private is shown but never treated as
          confirmable: the room around it needs a judgement call. */
@@ -1464,9 +1537,9 @@ body.pe-done .pe-rail{display:none!important;}
       hours: {
         full: { tuewed: "6pm to midnight", thu: "6pm to 1.30am", frisat: "6pm to 2.30am",
                 sun: "the 3pm to 7pm session", mon: "6pm to midnight" },
+        /* no `mon`: semi-private is not offered on a Monday */
         semi: { tuewed: "4 hours within the trading night", thu: "4 hours within the trading night",
-                frisat: "4 hours within the trading night", sun: "the 3pm to 7pm session",
-                mon: "4 hours within the trading night" }
+                frisat: "4 hours within the trading night", sun: "the 3pm to 7pm session" }
       }
     },
     capacities: { full: 75, seated: 30, bar: 40 } /* bar cap PLACEHOLDER — TBC with venue */
@@ -1482,7 +1555,8 @@ body.pe-done .pe-rail{display:none!important;}
       food:   { label: "Signature · Food & Drinks", body: "The kitchen showing off, politely. The same shape as Standard, typically six food items and two cocktails, with premium plates on the list: wagyu and crab among them. We send the full menu by email the moment this reaches us, and anything on it can be swapped with your events specialist." },
       drinks: { label: "Signature · Just Drinks",   body: "Two cocktails from the premium list, made without fuss and kept coming. We send the full list by email the moment this reaches us, and it can be adjusted with your events specialist." }
     },
-    bespoke: { label: "Bespoke · by consultation", body: "We've put logos on drinks for brand launches and rebuilt the room for a single night. No set menu and no set shape. Bespoke events are built with our events team in a follow-up, and priced after a conversation." }
+    bespoke: { label: "Bespoke · by consultation", body: "We've put logos on drinks for brand launches and rebuilt the room for a single night. No set menu and no set shape. Bespoke events are built with our events team in a follow-up, and priced after a conversation." },
+    dryhire: { label: "Dry Hire · Monday only", body: "The room, the sound system and the team to run it, with no food or drink attached. We are closed to the public on Mondays, so the whole venue is yours for a flat fee and there is no minimum spend to reach. Bring your own plan for the evening, or ask us to build one." }
   };
 
   var $  = function(s,c){ return (c||document).querySelector(s); };
@@ -1591,6 +1665,9 @@ body.pe-done .pe-rail{display:none!important;}
   function stopHold(){
     if(holdTimer){ clearTimeout(holdTimer); holdTimer = null; }
     holdRepeats = 0;
+    /* stepping is the other way people reach a number; check once on release
+       rather than on every tick of a hold */
+    if(holdBtn) setTimeout(maybeOfferSevenRooms, 0);
     if(holdBtn){ holdBtn.classList.remove("is-pressing"); holdBtn = null; }
     var el = $("#guests");
     if(el && el.classList.contains("is-spinning")){
@@ -1669,6 +1746,25 @@ body.pe-done .pe-rail{display:none!important;}
     var n = parseInt(guests.value, 10);
     return !guests.value.trim() || isNaN(n) || n < 1;
   }
+  /* ---- Large bookings go to SevenRooms, not through this form ----
+     Eight to twelve guests at a reserved table is a different product with
+     its own, much lower, pricing. Someone asking for a semi-private room at
+     that size would be quoted a section-hire minimum several times what the
+     table would cost them, and would simply leave. The form stops and hands
+     them to SevenRooms instead. Thirteen and up is a real section hire and
+     belongs here. */
+  var LARGE_BOOKING_MAX = 12;
+  /* PLACEHOLDER — swap in the live SevenRooms booking URL before go-live.
+     This is the only line that needs changing. */
+  var SEVENROOMS_URL = "#";
+  var LARGE_BOOKING_MSG = "Parties of " + LARGE_BOOKING_MAX + " or fewer book straight onto a " +
+    "table on SevenRooms, which is quicker and confirms right away. This form is for " +
+    (LARGE_BOOKING_MAX + 1) + " guests and up.";
+  function largeBooking(n){ return semiPrivate() && n >= 1 && n <= LARGE_BOOKING_MAX; }
+  function largeBookingNow(){
+    var n = parseInt(guests.value, 10);
+    return !!guests.value.trim() && !isNaN(n) && largeBooking(n);
+  }
   function guestsOk(announce){
     var n = parseInt(guests.value, 10);
     if(!guests.value.trim() || isNaN(n)){
@@ -1681,9 +1777,41 @@ body.pe-done .pe-rail{display:none!important;}
     if(n < 1){ showMsg(fGuests, guestsMsg, "At least one guest, even if it's just the two of you."); return false; }
     var cap = PRICING.capacities[gv("space")];
     if(cap && n > cap){ showMsg(fGuests, guestsMsg, CAP_MSGS[gv("space")]); return false; }
+    /* announced on blur and at submit, never mid-keystroke: nobody should be
+       told off on their way from "1" to "15" */
+    if(largeBooking(n)){
+      if(announce) showMsg(fGuests, guestsMsg, LARGE_BOOKING_MSG);
+      return false;
+    }
     clearMsg(fGuests, guestsMsg);
     return true;
   }
+  /* The modal is the stop; the inline message is what remains after it closes. */
+  var peModal = $("#pe-modal"), modalReturn = null;
+  $("#pe-modal-go").href = SEVENROOMS_URL;
+  $("#pe-modal-body").textContent = LARGE_BOOKING_MSG;
+  function openSevenRooms(){
+    if(!peModal.hidden) return;
+    modalReturn = document.activeElement;
+    peModal.hidden = false;
+    document.body.classList.add("pe-modal-open");
+    $("#pe-modal-go").focus();
+  }
+  function closeSevenRooms(toGuests){
+    if(peModal.hidden) return;
+    peModal.hidden = true;
+    document.body.classList.remove("pe-modal-open");
+    var back = toGuests ? guests : (modalReturn || guests);
+    if(back && back.focus) back.focus();
+  }
+  function maybeOfferSevenRooms(){ if(largeBookingNow()) openSevenRooms(); }
+  $("#pe-modal-back").addEventListener("click", function(){ closeSevenRooms(true); });
+  $("#pe-modal-scrim").addEventListener("click", function(){ closeSevenRooms(false); });
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Escape" && !peModal.hidden) closeSevenRooms(false);
+  });
+  /* fires on blur and on Enter, not on every keystroke */
+  guests.addEventListener("change", function(){ guestsOk(true); maybeOfferSevenRooms(); });
 
   /* ---- guest count that drives every price display ----
      user input first; else the selected space's capacity; else nothing. */
@@ -1698,7 +1826,8 @@ body.pe-done .pe-rail{display:none!important;}
   /* the space drives the availability tier and the Tue–Sat rule as well as the
      price, so a change has to re-run the whole UX, not just the pricing */
   onGroup("space", function(){
-    clearMsg(fSpace, spaceMsg); guestsOk(); dropOffNightPicks(); syncGuestButtons(); refreshUX();
+    clearMsg(fSpace, spaceMsg); guestsOk(true); dropOffNightPicks(); syncGuestButtons(); refreshUX();
+    maybeOfferSevenRooms(); /* a semi-private room at this size belongs on SevenRooms */
   });
   guests.addEventListener("input", function(){ guestsOk(); refreshPricing(); });
 
@@ -1733,6 +1862,39 @@ body.pe-done .pe-rail{display:none!important;}
       if(rates) el.textContent = money(rates[mode]);
     });
     $$(".pkg-card__desc[data-food]").forEach(function(el){ el.textContent = el.getAttribute("data-" + mode); });
+    renderDryHire();
+  }
+  /* Dry hire exists on a Monday and nowhere else, keyed to the first-choice
+     date like every other figure on this form. Room only means exactly that,
+     so choosing it takes the food and drink question and the whole add-ons
+     step off the page rather than leaving them to be ignored. */
+  function renderDryHire(){
+    var card = $("#pkg-dry");
+    if(!card) return;
+    var on = mondayFirst(), fee = on ? dryHireFee(calPicks[0]) : null;
+    card.hidden = !on;
+    var input = card.querySelector('input[name="package"]');
+    if(!on && input.checked){ input.checked = false; renderSell(); }
+    var amt = card.querySelector('[data-pkg="dryhire"]');
+    if(amt) amt.textContent = fee === null ? "" : money(fee);
+    var dry = input.checked;
+    var cons = $("#f-consumption"); if(cons) cons.hidden = dry;
+    var addons = $("#sec-addons");  if(addons) addons.hidden = dry;
+    if(dry) $$('input[name="addon"]:checked').forEach(function(c){ c.checked = false; });
+    renumberSections();
+  }
+  /* The add-ons step disappears on a dry hire, so the numerals are written
+     rather than hard-coded: otherwise the form reads 04 then 06. The numeral
+     is the num span's first text node; the tick is a sibling inside it. */
+  function renumberSections(){
+    var n = 0;
+    $$(".pe-section").forEach(function(sec){
+      if(sec.hidden) return;
+      n++;
+      var el = sec.querySelector(".pe-section__num");
+      if(el && el.firstChild && el.firstChild.nodeType === 3)
+        el.firstChild.nodeValue = (n < 10 ? "0" : "") + n;
+    });
   }
   $$('input[name="consumption"]').forEach(function(r){
     /* refreshPricing, not updateBanner: switching to Just Drinks has to pull the
@@ -1769,7 +1931,8 @@ body.pe-done .pe-rail{display:none!important;}
     var pkg = selectedPackage();
     var revealEl = $("#reveal-sell");
     if(!pkg){ setReveal(revealEl, false); return; }
-    var entry = (pkg === "bespoke") ? SELL.bespoke : SELL[pkg][currentConsumption() === "drinks" ? "drinks" : "food"];
+    var entry = (pkg === "bespoke" || pkg === "dryhire") ? SELL[pkg]
+              : SELL[pkg][currentConsumption() === "drinks" ? "drinks" : "food"];
     var label = $("#sell-label"), body = $("#sell-body");
     var swapping = revealEl.classList.contains("is-open") && label.textContent !== entry.label;
     label.textContent = entry.label;
@@ -1985,6 +2148,14 @@ body.pe-done .pe-rail{display:none!important;}
     var addons = selectedAddonTotals(g);
     var mode = currentConsumption() === "drinks" ? "drinks" : "food";
     var minimum = currentMinimum();
+    /* Dry hire is a flat room fee and nothing else: no package rate, no
+       add-ons, no minimum to track against. One figure, one line. */
+    if(pkg === "dryhire"){
+      var fee = mondayFirst() ? dryHireFee(calPicks[0]) : null;
+      return { dryHire: true, bespoke: false, g: g, addons: 0, mode: mode,
+               minimum: null, rate: null, base: fee, qualifying: null,
+               surcharge: 0, perHead: null, total: fee };
+    }
     if(pkg === "bespoke") return { bespoke: true, g: g, addons: addons, mode: mode, minimum: minimum };
     var rate = PRICING.packages[pkg][mode];
     /* `base` is what the chosen options come to. `qualifying` is the part of
@@ -2019,6 +2190,11 @@ body.pe-done .pe-rail{display:none!important;}
     /* The minimum NEVER folds into the per-head figure. It rides as its own
        labelled line, exactly as the old venue hire fee did. */
     var minimum = currentMinimum();
+    if(s.dryHire){
+      return { dryHire: true, flat: true, bespoke: false, amount: money(s.total),
+               meta: "flat room hire · ESTIMATE · no minimum spend · " +
+                     calLongDate(calPicks[0]) + " · " + s.g.n + " guests" };
+    }
     if(s.bespoke){
       var bits = [];
       if(s.addons > 0) bits.push("+ " + money(s.addons) + " add-ons, ESTIMATE");
@@ -2081,7 +2257,11 @@ body.pe-done .pe-rail{display:none!important;}
          say which night it belongs to */
       meta: t.meta.replace(/^minimum spend · /, "for ") };
     if(t.bespoke) return { label: "Bespoke", amount: t.amount, kind: "bespoke", value: null, meta: t.meta };
-    var s = computeSummary();
+    var s0 = computeSummary();
+    if(s0 && s0.dryHire) return { label: "Dry hire · estimate", amount: t.amount,
+      kind: "dryhire", value: s0.total,
+      meta: "flat room hire, no minimum spend · " + s0.g.n + " guests" };
+    var s = s0;
     var hasTotal = s.total !== null;
     if(!hasTotal) return { label: "Per head", amount: money(s.perHead), value: s.perHead,
                            kind: "perhead", meta: "add a guest count for the full total" };
@@ -2102,7 +2282,9 @@ body.pe-done .pe-rail{display:none!important;}
              kind: "total", meta: meta };
   }
 
-  function refreshPricing(){ syncPortions(); renderQty(); renderAddonPrices(); updateBanner(); }
+  /* renderPackages is in here because the dry hire card appears and vanishes
+     with the chosen date, not only when the food/drinks toggle moves */
+  function refreshPricing(){ renderPackages(); syncPortions(); renderQty(); renderAddonPrices(); updateBanner(); }
 
   /* ---- init: every visible price is written from PRICING ---- */
   renderPackages();
@@ -2117,10 +2299,12 @@ body.pe-done .pe-rail{display:none!important;}
      the number itself appears against the chosen date, because it depends on
      both the space and the night. */
   $("#date-fee-lead").textContent =
-    "Every space and date carries a minimum spend. Anything spent on the night counts " +
+    "Most dates carry a minimum spend. Anything spent on the night counts " +
     "toward it, including the bar. If it is not reached, the difference is charged as venue hire. " +
     "Hire includes the room from 6pm to close: midnight Tuesday and Wednesday, 1.30am Thursday, " +
-    "2.30am Friday and Saturday. Sunday events run 3pm to 7pm.";
+    "2.30am Friday and Saturday. Sunday events run 3pm to 7pm. Mondays carry no minimum at all: " +
+    "we are closed to the public, so the room goes out either on a flat dry hire fee or catered " +
+    "and priced with you. Monday is full venue only.";
 
   /* ---- Submit: validate required (space · type · package · name · email), scroll to first miss ---- */
   var form = $("#pe-form");
@@ -2140,7 +2324,10 @@ body.pe-done .pe-rail{display:none!important;}
       showMsg(fSpace, spaceMsg, "Choose a space to get started.");
       invalid.push([fSpace, $('input[name="space"]')]);
     }
-    if(!guestsOk(true)) invalid.push([fGuests, guests]);
+    if(!guestsOk(true)){
+      invalid.push([fGuests, guests]);
+      if(largeBookingNow()) openSevenRooms(); /* a hard stop, not a warning */
+    }
     if(!gv("event-type")){
       showMsg(fEventType, eventTypeMsg, "Tell us what kind of event this is.");
       invalid.push([fEventType, $('input[name="event-type"]')]);
@@ -2221,7 +2408,7 @@ body.pe-done .pe-rail{display:none!important;}
        taken from the summary maths, never from mid-animation banner text */
     var est = summaryTexts();
     if(est){
-      payload["_estimate"] = (est.bespoke ? est.amount : est.amount + " per head") +
+      payload["_estimate"] = ((est.bespoke || est.flat) ? est.amount : est.amount + " per head") +
         (est.meta ? " · " + est.meta : "");
     }
     try{ console.log("madcats:private-events-enquiry", payload); }catch(_e){}
@@ -2438,10 +2625,13 @@ body.pe-done .pe-rail{display:none!important;}
     sessionDrift: .015
   };
   function tierOf(){ var sv = gv("space"); return AVAIL.tier[sv] ? sv : "full"; }
-  /* CFO spec v1.1: Sunday and Monday are bookable for ALL three spaces. The
-     old semi-private Tue-to-Sat restriction is deleted. Kept as a stub so the
-     calendar's disabled-day branch stays intact for past dates. */
-  function offNight(){ return false; }
+  /* Sunday is bookable for all three spaces. MONDAY IS FULL VENUE ONLY: the
+     venue is closed to the public that night, so there is no trading room to
+     sit a semi-private party alongside. Mondays are blocked in the calendar
+     whenever a semi-private space is selected, with the reason on the cell. */
+  function semiPrivate(){ var sv = gv("space"); return sv === "seated" || sv === "bar"; }
+  function offNight(d){ return semiPrivate() && isMonday(d); }
+  var MONDAY_BLOCK_TIP = "We are closed on Mondays, so semi-private hire isn't possible. Mondays are full venue only.";
 
   /* One salt per page load, so far-out numbers sit a point either side of
      where they sat last visit. Near-term and ramp numbers never drift: those
@@ -2477,9 +2667,9 @@ body.pe-done .pe-rail{display:none!important;}
     }
     return Math.max(AVAIL.minCap, Math.min(AVAIL.maxCap, pct));
   }
-  /* every space can now book every night, so nothing is ever retired on a
-     space change. Kept as a no-op so the space handler reads unchanged. */
-  function dropOffNightPicks(){}
+  /* Switching to a semi-private room after picking a Monday leaves a date the
+     calendar now refuses. Drop it rather than leave it sitting there. */
+  function dropOffNightPicks(){ pruneBlockedPicks(); }
   function pad2(n){ return (n < 10 ? "0" : "") + n; }
   function calKey(d){ return d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate()); }
   function calLongDate(d){ return CAL_DAYS[d.getDay()] + " " + d.getDate() + " " + CAL_MONTHS[d.getMonth()]; }
@@ -2511,9 +2701,19 @@ body.pe-done .pe-rail{display:none!important;}
     return w === 0 ? "sun" : w === 1 ? "mon" : w === 4 ? "thu"
          : (w === 5 || w === 6) ? "frisat" : "tuewed";
   }
+  /* Monday: closed to the public, so the hire displaces no trade. There is no
+     minimum spend on a Monday in either direction, dry hire or catered. */
+  function isMonday(d){ return !!d && d.getDay() === 1; }
+  /* guarded: the package prices are written at init, before the calendar
+     section has declared its picks */
+  function mondayFirst(){ return !!calPicks && calPicks.length > 0 && isMonday(calPicks[0]); }
+  /* the flat room fee for a Monday, by season band */
+  function dryHireFee(d){ return isMonday(d) ? PRICING.minSpend.dryHire[minBand(d)] : null; }
+  function dryHireSelected(){ return selectedPackage() === "dryhire"; }
   function minimumFor(d){
     var sv = gv("space");
     if(!sv || !d) return null;
+    if(isMonday(d)) return null;           /* not a minimum-spend product */
     var key = sv === "full" ? "full" : "semi", day = minDayGroup(d);
     /* band figure first, then let a month/day override replace it */
     var base = PRICING.minSpend[key][minBand(d)][day];
@@ -2524,7 +2724,7 @@ body.pe-done .pe-rail{display:none!important;}
   /* true when this date's figure comes from the override table rather than
      the band, worth knowing when a number looks out of step with its band */
   function isOverride(d){
-    var sv = gv("space"); if(!sv || !d) return false;
+    var sv = gv("space"); if(!sv || !d || isMonday(d)) return false;
     var key = sv === "full" ? "full" : "semi";
     var byMonth = PRICING.minSpend.overrides[d.getMonth()];
     return !!(byMonth && byMonth[minDayGroup(d)] && byMonth[minDayGroup(d)][key] !== undefined);
@@ -2573,6 +2773,21 @@ body.pe-done .pe-rail{display:none!important;}
     return -1;
   }
   function hideLimitNote(){ dateLimit.hidden = true; dateLimit.textContent = ""; }
+  /* Space is chosen before the dates, but nothing stops anyone going back and
+     switching to a semi-private room after picking a Monday. Rather than leave
+     a date in the list that the calendar now refuses, drop it and say so. */
+  function pruneBlockedPicks(){
+    var dropped = [];
+    for(var i = calPicks.length - 1; i >= 0; i--){
+      if(offNight(calPicks[i])) dropped.unshift(calPicks.splice(i, 1)[0]);
+    }
+    if(!dropped.length) return false;
+    var names = dropped.map(calLongDate);
+    dateLimit.textContent = (names.length === 1 ? names[0] + " has" : names.join(" and ") + " have") +
+      " been removed. " + MONDAY_BLOCK_TIP;
+    dateLimit.hidden = false;
+    return true;
+  }
 
   /* the ranked list below the calendar: numeral + full date in the rank colour,
      the chance % re-scored live, a 44px remove control per row. Removing a pick
@@ -2630,11 +2845,26 @@ body.pe-done .pe-rail{display:none!important;}
         btn.type = "button";
         btn.className = "cal__day";
         var past = d.getTime() <= calToday.getTime(); /* same-day hires go through the team */
-        btn.disabled = past;                          /* every space books every night now */
+        var blocked = !past && offNight(d);           /* Monday, semi-private selected */
+        /* A truly disabled button dispatches no mouse events, so a blocked
+           Monday is aria-disabled instead: it stays hoverable, tappable and
+           focusable purely so it can say why it is out. */
+        btn.disabled = past;
         var num = document.createElement("span"); num.className = "cal__num"; num.textContent = d.getDate();
         btn.appendChild(num);
         if(past){
           btn.setAttribute("aria-label", calLongDate(d) + ", unavailable");
+        } else if(blocked){
+          btn.className = "cal__day cal__day--blocked season-wrap";
+          btn.setAttribute("aria-disabled", "true");
+          btn.setAttribute("aria-label", calLongDate(d) + ", unavailable. " + MONDAY_BLOCK_TIP);
+          var bid = "cal-block-tip-" + (++seasonSeq);
+          btn.setAttribute("aria-describedby", bid);
+          var btip = document.createElement("span");
+          btip.className = "season-tip"; btip.id = bid;
+          btip.setAttribute("role", "tooltip");
+          btip.textContent = MONDAY_BLOCK_TIP;
+          btn.appendChild(btip);
         } else {
           var pc = Math.round(chanceFor(d) * 100);
           var pct = document.createElement("span"); pct.className = "cal__pct"; pct.textContent = pc + "%";
@@ -2690,7 +2920,7 @@ body.pe-done .pe-rail{display:none!important;}
      Groups mirror the form; ranked dates close it out, numeral markers in
      the rank colours on cream (the sheet keeps DS dark ink). */
   var SPACE_NAMES = { full: "Full Venue", seated: "Front Room, seated", bar: "Bar Area" };
-  var PKG_NAMES = { standard: "Standard", signature: "Signature", bespoke: "Bespoke" };
+  var PKG_NAMES = { standard: "Standard", signature: "Signature", bespoke: "Bespoke", dryhire: "Dry Hire" };
 
   /* hand-drawn icon family: 16px box, 1.5px stroke, round caps, no fills */
   var ICON_ATTRS = 'viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"';
@@ -2728,13 +2958,21 @@ body.pe-done .pe-rail{display:none!important;}
     }
     var pkg = selectedPackage();
     if(pkg){
-      var mode = currentConsumption() === "drinks" ? "Just Drinks" : "Food & Drinks";
-      var fi = [{ text: PKG_NAMES[pkg] + ", " + mode }];
-      if(pkg === "bespoke") fi.push({ text: "priced after a conversation" });
-      else fi.push({ text: money(PRICING.packages[pkg][currentConsumption() === "drinks" ? "drinks" : "food"]) + " per head" });
+      var fi, flabel = "Food & package";
+      if(pkg === "dryhire"){
+        flabel = "The room";
+        fi = [{ text: "Dry hire, room only" },
+              { text: "No food or drink" }];
+        if(mondayFirst()) fi.push({ text: money(dryHireFee(calPicks[0])) + " flat" });
+      } else {
+        var mode = currentConsumption() === "drinks" ? "Just Drinks" : "Food & Drinks";
+        fi = [{ text: PKG_NAMES[pkg] + ", " + mode }];
+        if(pkg === "bespoke") fi.push({ text: "priced after a conversation" });
+        else fi.push({ text: money(PRICING.packages[pkg][currentConsumption() === "drinks" ? "drinks" : "food"]) + " per head" });
+      }
       var req = $("#requests").value.trim();
       if(req) fi.push({ text: "Request: " + (req.length > 64 ? req.slice(0, 61) + "…" : req) });
-      groups.push({ icon: "food", label: "Food & package", target: "#sec-package", items: fi });
+      groups.push({ icon: "food", label: flabel, target: "#sec-package", items: fi });
     }
     var ai = [];
     var ADDON_NAMES = {
@@ -2783,16 +3021,42 @@ body.pe-done .pe-rail{display:none!important;}
           text: CAL_DAYS[d.getDay()].slice(0, 3) + " " + d.getDate() + " " +
                 CAL_MONTHS[d.getMonth()].slice(0, 3) + " " + d.getFullYear() +
                 " (" + Math.round(chanceFor(d) * 100) + "% est. availability)",
-          price: dMin === null ? "pick a space" : money(dMin), plus: dMin !== null,
-          seasonDate: dMin === null ? null : d };
+          /* A Monday carries no minimum: it shows the flat dry hire fee, or
+             says the team will price it. The raised plus is reserved for real
+             minimums, so a Monday figure never wears one. */
+          price: (isMonday(d) && gv("space"))
+                   ? (dryHireSelected() ? money(dryHireFee(d)) : "by quotation")
+                   : dMin === null ? "pick a space" : money(dMin),
+          plus: dMin !== null,
+          seasonDate: seasonTagApplies(d) ? d : null };
         if(i === 0){
-          row.sub = (calPicks.length > 1
-            ? "Your first choice sets the minimum. "
-            : "") + "Anything spent on the night counts toward it, including the bar.";
+          row.sub = (isMonday(d) && gv("space"))
+            ? (calPicks.length > 1 ? "Your first choice sets how the night is priced. " : "") +
+              "Mondays carry no minimum spend."
+            : (calPicks.length > 1 ? "Your first choice sets the minimum. " : "") +
+              "Anything spent on the night counts toward it, including the bar.";
         }
         return row;
       });
-      groups.push({ icon: "dates", label: "Dates · best first · minimum spend", target: "#sec-date", items: di });
+      groups.push({ icon: "dates",
+        label: mondayFirst() ? "Dates · best first" : "Dates · best first · minimum spend",
+        target: "#sec-date", items: di });
+
+      /* Mondays are their own commercial animal and the brief says so once,
+         plainly, rather than leaving the guest to notice an absent figure. */
+      if(gv("space") && mondayFirst()){
+        var md = calPicks[0];
+        groups.push({ icon: "money", label: "Mondays", target: "#sec-date",
+          items: dryHireSelected()
+            ? [{ text: "Dry hire, flat fee", price: money(dryHireFee(md)),
+                 sub: "The room on its own, no food or drink. We are closed to the public " +
+                      "on Mondays, so the night displaces no trade and there is no minimum " +
+                      "spend to reach." }]
+            : [{ text: "Minimum spend", price: "by quotation",
+                 sub: MONDAY_QUOTE_NOTE + " We are closed to the public on Mondays, so the " +
+                      "night is priced with you rather than read off a table. If you would " +
+                      "rather take the room on its own, choose Dry Hire." }] });
+      }
 
       /* The surcharge gets its own section rather than hiding among the dates.
          It is a single derived figure with a rule behind it, and the rule is
@@ -2893,6 +3157,9 @@ body.pe-done .pe-rail{display:none!important;}
       $("#rail-meta").textContent = L.meta;
       var rOld = railFoot.querySelector(".season-wrap"); if(rOld) rOld.remove();
       if(calPicks.length){ var rt = seasonTagNode(calPicks[0]); if(rt) $("#rail-label").after(rt); }
+      var rsvc = $("#rail-svc");
+      if(rsvc) rsvc.innerHTML = dryHireSelected() ? "Inclusive of VAT."
+        : "Inclusive of VAT. <strong>Excludes the 12.5% service charge.</strong>";
     }
   }
 
@@ -2957,8 +3224,15 @@ body.pe-done .pe-rail{display:none!important;}
     var sFoot = $("#sheet-foot");
     var sOld = sFoot.querySelector(".season-wrap"); if(sOld) sOld.remove();
     if(L && calPicks.length){ var st = seasonTagNode(calPicks[0], "onaccent");
-      if(st) $("#sheet-label").after(st); }
+      if(st) $("#sheet-amount").after(st); }  /* beside the figure, as on the strip */
     $("#sheet-meta").textContent = L ? L.meta : "";
+    /* a room-only hire has no food or drink for a service charge to sit on */
+    var dryNow = dryHireSelected();
+    $("#sheet-svc").textContent = dryNow ? "Inclusive of VAT." : "";
+    if(!dryNow){
+      $("#sheet-svc").innerHTML = "Inclusive of VAT. <strong>Excludes the 12.5% " +
+        "service charge</strong>, added on the night.";
+    }
     var dj = $('input[name="dj-type"]:checked');
     var ext = djCheck.checked && dj && dj.value === "external";
     var dep = $("#sheet-deposit");
@@ -3004,6 +3278,8 @@ body.pe-done .pe-rail{display:none!important;}
       ? "Minimum spend " + t.amount + " · " + t.meta
       : t.bespoke
       ? "Bespoke · priced after a conversation" + (t.meta ? " · " + t.meta : "")
+      : t.flat
+      ? "Estimated " + t.amount + " · " + t.meta
       : "Estimated " + t.amount + " per head · " + t.meta;
     var by = [nameIn.value.trim(), emailIn.value.trim()];
     var comp = $("#company").value.trim();
@@ -3153,9 +3429,48 @@ body.pe-done .pe-rail{display:none!important;}
     });
     return out;
   }
+  var MONDAY_QUOTE_NOTE = "The minimum spend will be quoted by your events specialist once you submit the form.";
+  var MINSPEND_TERMS = "Anything spent on the night counts toward the minimum, including the bar. " +
+    "If it is not reached, the difference is charged as venue hire.";
+  /* A Monday has no minimum spend, so the panel that normally carries one
+     carries the Monday answer instead: a flat fee if the room is going out
+     dry, otherwise the promise of a quote. Leaving the panel out altogether
+     would take the cost of the night off the page at the moment the guest
+     is looking for it. */
+  function renderMondayPanel(box, first){
+    box.hidden = false;
+    var dry = dryHireSelected(), fee = dryHireFee(first);
+    $("#minspend-label").textContent = "Monday hire · " + calLongDate(first);
+    var tagEl = $("#minspend-season"), tagWrap = $("#minspend-season-wrap");
+    var lbl = seasonTagApplies(first) ? bandLabel(first) : null;
+    tagWrap.hidden = !lbl;
+    if(lbl){
+      tagEl.textContent = lbl;
+      tagEl.setAttribute("data-band", minBand(first));
+      $("#season-tip").textContent = seasonTipText(first);
+    } else {
+      tagWrap.classList.remove("is-open");
+      tagEl.setAttribute("aria-expanded", "false");
+    }
+    $("#minspend-figure").textContent = dry ? money(fee) + " ESTIMATE" : "by quotation";
+    $("#minspend-hours").textContent = "Includes the room, " + PRICING.minSpend.hours.full.mon + ".";
+    $("#minspend-route").hidden = true;
+    $("#minspend-track").hidden = true;
+    $("#minspend-fill").style.width = "0%";
+    $("#minspend-note").textContent = dry
+      ? "A flat fee for the room on its own, no food or drink. There is no minimum spend on a Monday."
+      : MONDAY_QUOTE_NOTE;
+    $("#minspend-ways").hidden = true;
+    $("#minspend-terms").textContent = "We are closed to the public on Mondays, so the night is " +
+      "yours either way: take the room dry at the flat fee above, or have us cater it and we will " +
+      "price it with you.";
+  }
   function renderMinSpend(){
     var box = $("#minspend");
     if(!box) return;
+    var first = calPicks[0];
+    if(first && gv("space") && isMonday(first)){ renderMondayPanel(box, first); return; }
+    $("#minspend-terms").textContent = MINSPEND_TERMS;
     var minimum = currentMinimum();
     if(minimum === null){ box.hidden = true; return; }
     box.hidden = false;
@@ -3167,7 +3482,7 @@ body.pe-done .pe-rail{display:none!important;}
     label.textContent = "Minimum spend · " + calLongDate(first);
     var tagEl = $("#minspend-season"), tagWrap = $("#minspend-season-wrap");
     if(tagEl && tagWrap){
-      var lbl = bandLabel(first);     /* undefined for quiet and standard */
+      var lbl = seasonTagApplies(first) ? bandLabel(first) : null;
       tagWrap.hidden = !lbl;
       if(lbl){
         tagEl.textContent = lbl;
@@ -3276,13 +3591,24 @@ body.pe-done .pe-rail{display:none!important;}
      which one. The lever comes last and in four words, so it is the part that
      survives a skim. */
   function seasonTipText(d){
-    return CAL_MONTHS[d.getMonth()] + " is one of our " +
-      (minBand(d) === "peak" ? "busiest" : "busier") +
-      " months, so the minimum matches what the venue would typically make that " +
+    var busy = CAL_MONTHS[d.getMonth()] + " is one of our " +
+      (minBand(d) === "peak" ? "busiest" : "busier") + " months, so ";
+    /* a Monday has no minimum; what the band moves is the flat room fee */
+    if(isMonday(d)) return busy + "room hire is priced a little higher. A quieter month lowers it.";
+    return busy + "the minimum matches what the venue would typically make that " +
       "night. A quieter date lowers it.";
+  }
+  /* The tag only earns its place where the season actually changes a figure.
+     On a Monday that is the dry hire fee alone: a catered Monday carries no
+     minimum and its total is the package, which the band does not touch. */
+  function seasonTagApplies(d){
+    if(!d) return false;
+    if(isMonday(d)) return dryHireSelected();
+    return !!bandLabel(d);
   }
   var seasonSeq = 0;
   function seasonTagNode(d, variant){
+    if(!seasonTagApplies(d)) return null;
     var label = bandLabel(d);
     if(!label) return null;                 /* quiet and standard go untagged */
     var id = "season-tip-" + (++seasonSeq);
@@ -3307,6 +3633,11 @@ body.pe-done .pe-rail{display:none!important;}
      then clamp into the viewport. Re-run on scroll and resize while open, so
      it stays welded to the tag as the brief scrolls under it. */
   var openWrap = null, openSticky = false;
+  /* Two things wear a bubble now: the season tag, and a Monday the calendar
+     has blocked. The blocked day has no inner button to hang one on, so the
+     anchor falls back to the wrap itself. */
+  var TIP_BTN = ".season-tag, .cal__day--blocked";
+  function tipAnchor(wrap){ return wrap.querySelector(".season-tag") || wrap; }
   /* position:fixed is measured from the viewport UNLESS some ancestor is
      transformed, filtered or contained, which quietly promotes it to the
      containing block. The sticky strip's body carries the "this opens" cue
@@ -3329,7 +3660,7 @@ body.pe-done .pe-rail{display:none!important;}
     return { x: 0, y: 0 };
   }
   function placeTip(wrap){
-    var btn = wrap.querySelector(".season-tag"), tip = wrap.querySelector(".season-tip");
+    var btn = tipAnchor(wrap), tip = wrap.querySelector(".season-tip");
     if(!btn || !tip) return;
     var r = btn.getBoundingClientRect();
     tip.style.left = "0px"; tip.style.top = "0px";   /* measure unconstrained */
@@ -3353,11 +3684,13 @@ body.pe-done .pe-rail{display:none!important;}
     openWrap = wrap;
     if(sticky) openSticky = true;
     wrap.classList.add("is-open");
-    var btn = wrap.querySelector(".season-tag"), tip = wrap.querySelector(".season-tip");
-    btn.setAttribute("aria-expanded", "true");
+    var btn = tipAnchor(wrap), tip = wrap.querySelector(".season-tip");
+    if(btn !== wrap) btn.setAttribute("aria-expanded", "true");
     tip.classList.add("is-shown");
     placeTip(wrap);
-    document.body.classList.add("season-seen");       /* the pulse has done its job */
+    /* only a real season tag retires the pulse; a blocked Monday is a
+       different conversation and should not silence it */
+    if(btn !== wrap) document.body.classList.add("season-seen");
     /* one more pass after the frame settles: dropping the pulse and showing
        the bubble can both nudge the layout, and a bubble measured against a
        stale rectangle is exactly how it ends up half off the screen */
@@ -3365,9 +3698,9 @@ body.pe-done .pe-rail{display:none!important;}
   }
   function closeTip(){
     if(!openWrap) return;
-    var btn = openWrap.querySelector(".season-tag"), tip = openWrap.querySelector(".season-tip");
+    var btn = tipAnchor(openWrap), tip = openWrap.querySelector(".season-tip");
     openWrap.classList.remove("is-open");
-    if(btn) btn.setAttribute("aria-expanded", "false");
+    if(btn && btn !== openWrap) btn.setAttribute("aria-expanded", "false");
     if(tip) tip.classList.remove("is-shown");
     openWrap = null; openSticky = false;
   }
@@ -3387,7 +3720,7 @@ body.pe-done .pe-rail{display:none!important;}
      plain toggle would shut it the instant anyone clicked. Click instead PINS
      an open bubble, and only closes one that was already pinned. */
   document.addEventListener("click", function(e){
-    var btn = e.target.closest && e.target.closest(".season-tag");
+    var btn = e.target.closest && e.target.closest(TIP_BTN);
     if(!btn){ closeTip(); return; }
     e.stopPropagation(); e.preventDefault();
     var wrap = btn.closest(".season-wrap");
@@ -3398,12 +3731,12 @@ body.pe-done .pe-rail{display:none!important;}
      meant the focusout that follows a mouse click tore down the bubble that
      same click had just pinned, and the ordering differed between surfaces. */
   document.addEventListener("focusin", function(e){
-    var btn = e.target.closest && e.target.closest(".season-tag");
+    var btn = e.target.closest && e.target.closest(TIP_BTN);
     if(btn) openTip(btn.closest(".season-wrap"), false);
   });
   document.addEventListener("focusout", function(e){
     if(openSticky) return;                     /* a click pinned it, leave it */
-    var btn = e.target.closest && e.target.closest(".season-tag");
+    var btn = e.target.closest && e.target.closest(TIP_BTN);
     if(btn && btn.closest(".season-wrap") === openWrap) closeTip();
   });
   document.addEventListener("keydown", function(e){ if(e.key === "Escape") closeTip(); });
