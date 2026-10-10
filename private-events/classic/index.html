@@ -2151,7 +2151,11 @@ body.pe-done .pe-rail{display:none!important;}
     /* Dry hire is a flat room fee and nothing else: no package rate, no
        add-ons, no minimum to track against. One figure, one line. */
     if(pkg === "dryhire"){
-      var fee = mondayFirst() ? dryHireFee(calPicks[0]) : null;
+      /* Remove the date and the dry hire card loses its reason to exist. The
+         radio is cleared on the next render, but renderRail() reads the summary
+         BEFORE that happens, so the no-date case has to be answered here. */
+      if(!mondayFirst()) return null;
+      var fee = dryHireFee(calPicks[0]);
       return { dryHire: true, bespoke: false, g: g, addons: 0, mode: mode,
                minimum: null, rate: null, base: fee, qualifying: null,
                surcharge: 0, perHead: null, total: fee };
@@ -2190,7 +2194,7 @@ body.pe-done .pe-rail{display:none!important;}
     /* The minimum NEVER folds into the per-head figure. It rides as its own
        labelled line, exactly as the old venue hire fee did. */
     var minimum = currentMinimum();
-    if(s.dryHire){
+    if(s.dryHire && calPicks.length){
       return { dryHire: true, flat: true, bespoke: false, amount: money(s.total),
                meta: "flat room hire · ESTIMATE · no minimum spend · " +
                      calLongDate(calPicks[0]) + " · " + s.g.n + " guests" };
@@ -2237,6 +2241,7 @@ body.pe-done .pe-rail{display:none!important;}
        !reducedMotion && Math.abs(L.value - lastAmount) > 0.005){
       tweenMoney(bannerAmount, lastAmount, L.value);
     } else {
+      cancelTween();                           /* a direct write beats any roll in flight */
       bannerAmount.textContent = L.amount;
     }
     lastAmount = L.value; lastHero = L.kind;
@@ -2457,9 +2462,17 @@ body.pe-done .pe-rail{display:none!important;}
       el.classList.remove("is-reinked"); void el.offsetWidth; el.classList.add("is-reinked");
     }
   }
+  /* A roll that cannot be cancelled will happily finish on top of a newer
+     figure. Switching package while the last roll was still running left the
+     strip reading the previous total for good, because nothing wrote to it
+     again until the next change. Each roll now carries a token, and any later
+     write to the same element retires it. */
+  var tweenToken = 0;
+  function cancelTween(){ tweenToken++; }
   function tweenMoney(el, from, to){
-    var start = performance.now(), dur = 250;
+    var mine = ++tweenToken, start = performance.now(), dur = 250;
     function step(now){
+      if(mine !== tweenToken) return;          /* something newer owns this figure */
       var p = Math.min(1, (now - start) / dur);
       p = 1 - Math.pow(1 - p, 2);
       el.textContent = money(from + (to - from) * p);
@@ -2857,6 +2870,10 @@ body.pe-done .pe-rail{display:none!important;}
         } else if(blocked){
           btn.className = "cal__day cal__day--blocked season-wrap";
           btn.setAttribute("aria-disabled", "true");
+          /* addressable so a test harness can find the day and read WHY it is
+             out, rather than concluding the date is simply off the calendar */
+          btn.setAttribute("data-key", calKey(d));
+          btn.setAttribute("data-blocked", "monday-full-venue-only");
           btn.setAttribute("aria-label", calLongDate(d) + ", unavailable. " + MONDAY_BLOCK_TIP);
           var bid = "cal-block-tip-" + (++seasonSeq);
           btn.setAttribute("aria-describedby", bid);
