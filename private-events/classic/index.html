@@ -235,40 +235,20 @@ html,body{overflow-x:clip;}
    merely faded, because a faded cell reads as "low availability" next to all
    the percentages, and this one is not available at any price. It stays
    focusable and hoverable so it can explain itself. */
-/* ---- Large bookings: the one place this form sends people elsewhere ----
-   A real stop, not a nudge, so it is a modal rather than a note. Cream box on
-   a dimmed page, the link styled as the primary action and the way back
-   offered in plain text next to it. */
-.pe-modal{position:fixed;inset:0;z-index:120;display:flex;align-items:center;justify-content:center;
-  padding:var(--sp-4);}
-.pe-modal[hidden]{display:none;}
-/* these three carry their own display value, which outranks the UA rule
-   for [hidden], so they need saying explicitly */
-.pkg-card[hidden],.field[hidden],.pe-section[hidden]{display:none;}
-.pe-modal__scrim{position:absolute;inset:0;background:rgba(72,32,28,.55);}
-.pe-modal__box{position:relative;max-width:420px;width:100%;background:var(--mc-cream);
-  border:1px solid var(--mc-orange);border-radius:var(--mc-radius-card);padding:var(--sp-5);
-  display:grid;gap:var(--sp-3);box-shadow:0 18px 50px rgba(72,32,28,.28);}
-.pe-modal__title{color:var(--mc-orange);}
-.pe-modal__body{font-family:var(--mc-font-mono);font-size:13.5px;line-height:1.6;
+/* ---- Small parties: the form folds down rather than pricing ----
+   Twelve or fewer in a semi-private room is a table, not a section hire, and
+   quoting a section minimum against it is how you lose the booking. Instead
+   the pricing half of the form is taken away and what is left is a short
+   enquiry: who, when, and how to reach you. */
+.pe-short-note{display:grid;gap:var(--sp-2);margin-top:var(--sp-4);
+  padding-left:var(--sp-4);border-left:2px solid var(--mc-orange);}
+.pe-short-note[hidden]{display:none;}
+.pe-short-note__label{font-family:var(--mc-font-mono);font-weight:600;font-size:11px;
+  letter-spacing:1px;text-transform:uppercase;color:var(--mc-orange);line-height:1.3;}
+.pe-short-note__body{font-family:var(--mc-font-mono);font-size:12.5px;line-height:1.65;
   color:var(--mc-oxblood);margin:0;}
-.pe-modal__acts{display:flex;flex-wrap:wrap;align-items:center;gap:var(--sp-3);margin-top:var(--sp-1);}
-.pe-modal__go{display:inline-flex;align-items:center;justify-content:center;min-height:44px;
-  padding:0 var(--sp-4);font-family:var(--mc-font-mono);font-weight:600;font-size:12px;
-  letter-spacing:1px;text-transform:uppercase;text-decoration:none;color:var(--mc-cream);
-  background:var(--mc-orange);border:1px solid var(--mc-orange);border-radius:var(--mc-radius);}
-.pe-modal__go:hover{background:var(--mc-oxblood);border-color:var(--mc-oxblood);}
-.pe-modal__go:focus-visible{outline:2px solid var(--mc-oxblood);outline-offset:2px;}
-.pe-modal__alt{min-height:44px;padding:0;background:transparent;border:0;cursor:pointer;
-  font-family:var(--mc-font-mono);font-size:12px;color:var(--mc-oxblood);
-  text-decoration:underline;text-underline-offset:3px;}
-.pe-modal__alt:hover{color:var(--mc-orange);}
-body.pe-modal-open{overflow:hidden;}
-@media (max-width:520px){
-  .pe-modal__box{padding:var(--sp-4);}
-  .pe-modal__acts{flex-direction:column;align-items:stretch;gap:var(--sp-2);}
-  .pe-modal__alt{text-align:center;}
-}
+body.pe-short .pe-banner{display:none;}
+body.pe-short .pe-rail__foot{display:none;}
 
 .cal__day--blocked{cursor:help;position:relative;}
 .cal__day--blocked .cal__num{color:var(--mc-taupe);opacity:.5;text-decoration:line-through;
@@ -532,6 +512,7 @@ body:not(.season-seen) .season-wrap--onaccent .season-tag{animation:season-pulse
 .pe-banner__meta:empty{display:none;}
 .pe-banner--bespoke .pe-banner__amount{font-size:15px;line-height:1.3;letter-spacing:0;}
 body.has-banner{padding-bottom:calc(var(--pe-banner-h, 120px) + var(--sp-4));}
+body.pe-short.has-banner{padding-bottom:var(--sp-8);} /* no strip, no clearance */
 
 /* ---- The "this opens" cue ----
    Round one was a 9px ring and an opacity pulse: peripheral, small, and it
@@ -961,6 +942,12 @@ body.pe-done .pe-rail{display:none!important;}
             <p class="guests__hint" id="guests-hint"></p>
             <p class="field__msg" id="guests-msg" hidden></p>
             <p class="pe-ack" id="guests-ack" hidden></p>
+            <!-- shown when a semi-private room is asked for at 12 or fewer:
+                 the pricing half of the form comes off and this says why -->
+            <div class="pe-short-note" id="short-note" hidden role="note" aria-live="polite">
+              <span class="pe-short-note__label">WE WILL PRICE THIS WITH YOU</span>
+              <p class="pe-short-note__body" id="short-note-body"></p>
+            </div>
           </div>
         </div>
       </fieldset>
@@ -1365,20 +1352,6 @@ body.pe-done .pe-rail{display:none!important;}
 </div>
 
 <!-- ===== Sticky per-head total (accent surface) — outside .page so overflow:clip can't touch it ===== -->
-<!-- ===== Large bookings go to SevenRooms, not through this form ===== -->
-<div class="pe-modal" id="pe-modal" hidden>
-  <div class="pe-modal__scrim" id="pe-modal-scrim"></div>
-  <div class="pe-modal__box" role="dialog" aria-modal="true"
-       aria-labelledby="pe-modal-title" aria-describedby="pe-modal-body">
-    <span class="t-overline pe-modal__title" id="pe-modal-title">BOOK THIS ONE DIRECTLY</span>
-    <p class="pe-modal__body" id="pe-modal-body"></p>
-    <div class="pe-modal__acts">
-      <a class="pe-modal__go" id="pe-modal-go" href="#" target="_blank" rel="noopener">Book on SevenRooms</a>
-      <button class="pe-modal__alt" id="pe-modal-back" type="button">Change the guest count</button>
-    </div>
-  </div>
-</div>
-
 <aside class="pe-banner" id="pe-banner" aria-live="polite" aria-label="Estimated cost">
   <span class="pe-banner__lip" aria-hidden="true"></span>
   <div class="pe-banner__body">
@@ -1667,7 +1640,6 @@ body.pe-done .pe-rail{display:none!important;}
     holdRepeats = 0;
     /* stepping is the other way people reach a number; check once on release
        rather than on every tick of a hold */
-    if(holdBtn) setTimeout(maybeOfferSevenRooms, 0);
     if(holdBtn){ holdBtn.classList.remove("is-pressing"); holdBtn = null; }
     var el = $("#guests");
     if(el && el.classList.contains("is-spinning")){
@@ -1746,24 +1718,20 @@ body.pe-done .pe-rail{display:none!important;}
     var n = parseInt(guests.value, 10);
     return !guests.value.trim() || isNaN(n) || n < 1;
   }
-  /* ---- Large bookings go to SevenRooms, not through this form ----
-     Eight to twelve guests at a reserved table is a different product with
-     its own, much lower, pricing. Someone asking for a semi-private room at
-     that size would be quoted a section-hire minimum several times what the
-     table would cost them, and would simply leave. The form stops and hands
-     them to SevenRooms instead. Thirteen and up is a real section hire and
-     belongs here. */
-  var LARGE_BOOKING_MAX = 12;
-  /* PLACEHOLDER — swap in the live SevenRooms booking URL before go-live.
-     This is the only line that needs changing. */
-  var SEVENROOMS_URL = "#";
-  var LARGE_BOOKING_MSG = "Parties of " + LARGE_BOOKING_MAX + " or fewer book straight onto a " +
-    "table on SevenRooms, which is quicker and confirms right away. This form is for " +
-    (LARGE_BOOKING_MAX + 1) + " guests and up.";
-  function largeBooking(n){ return semiPrivate() && n >= 1 && n <= LARGE_BOOKING_MAX; }
-  function largeBookingNow(){
+  /* ---- Small parties: the form folds down rather than pricing ----
+     Twelve or fewer in a semi-private room is a table, not a section hire.
+     Quoting a section minimum against it asks for several times what the
+     evening should cost, and the booking walks. So no estimate is shown at
+     all: the food and drink and add-on steps come off the page and what is
+     left is a short enquiry, which the events team picks up and prices with
+     the guest. Thirteen and up is a real section hire and prices as normal.
+     Full venue is never folded down: a small buyout is a legitimate hire at
+     the usual minimum. */
+  var SHORT_MAX = 12;
+  function shortEnquiryAt(n){ return semiPrivate() && n >= 1 && n <= SHORT_MAX; }
+  function shortEnquiry(){
     var n = parseInt(guests.value, 10);
-    return !!guests.value.trim() && !isNaN(n) && largeBooking(n);
+    return !!guests.value.trim() && !isNaN(n) && shortEnquiryAt(n);
   }
   function guestsOk(announce){
     var n = parseInt(guests.value, 10);
@@ -1777,41 +1745,12 @@ body.pe-done .pe-rail{display:none!important;}
     if(n < 1){ showMsg(fGuests, guestsMsg, "At least one guest, even if it's just the two of you."); return false; }
     var cap = PRICING.capacities[gv("space")];
     if(cap && n > cap){ showMsg(fGuests, guestsMsg, CAP_MSGS[gv("space")]); return false; }
-    /* announced on blur and at submit, never mid-keystroke: nobody should be
-       told off on their way from "1" to "15" */
-    if(largeBooking(n)){
-      if(announce) showMsg(fGuests, guestsMsg, LARGE_BOOKING_MSG);
-      return false;
-    }
+    /* A small party is not an invalid guest count. It is a different kind of
+       enquiry, and the form changes shape rather than complaining. */
     clearMsg(fGuests, guestsMsg);
     return true;
   }
-  /* The modal is the stop; the inline message is what remains after it closes. */
-  var peModal = $("#pe-modal"), modalReturn = null;
-  $("#pe-modal-go").href = SEVENROOMS_URL;
-  $("#pe-modal-body").textContent = LARGE_BOOKING_MSG;
-  function openSevenRooms(){
-    if(!peModal.hidden) return;
-    modalReturn = document.activeElement;
-    peModal.hidden = false;
-    document.body.classList.add("pe-modal-open");
-    $("#pe-modal-go").focus();
-  }
-  function closeSevenRooms(toGuests){
-    if(peModal.hidden) return;
-    peModal.hidden = true;
-    document.body.classList.remove("pe-modal-open");
-    var back = toGuests ? guests : (modalReturn || guests);
-    if(back && back.focus) back.focus();
-  }
-  function maybeOfferSevenRooms(){ if(largeBookingNow()) openSevenRooms(); }
-  $("#pe-modal-back").addEventListener("click", function(){ closeSevenRooms(true); });
-  $("#pe-modal-scrim").addEventListener("click", function(){ closeSevenRooms(false); });
-  document.addEventListener("keydown", function(e){
-    if(e.key === "Escape" && !peModal.hidden) closeSevenRooms(false);
-  });
-  /* fires on blur and on Enter, not on every keystroke */
-  guests.addEventListener("change", function(){ guestsOk(true); maybeOfferSevenRooms(); });
+  guests.addEventListener("change", function(){ guestsOk(true); });
 
   /* ---- guest count that drives every price display ----
      user input first; else the selected space's capacity; else nothing. */
@@ -1827,7 +1766,6 @@ body.pe-done .pe-rail{display:none!important;}
      price, so a change has to re-run the whole UX, not just the pricing */
   onGroup("space", function(){
     clearMsg(fSpace, spaceMsg); guestsOk(true); dropOffNightPicks(); syncGuestButtons(); refreshUX();
-    maybeOfferSevenRooms(); /* a semi-private room at this size belongs on SevenRooms */
   });
   guests.addEventListener("input", function(){ guestsOk(); refreshPricing(); });
 
@@ -1862,8 +1800,40 @@ body.pe-done .pe-rail{display:none!important;}
       if(rates) el.textContent = money(rates[mode]);
     });
     $$(".pkg-card__desc[data-food]").forEach(function(el){ el.textContent = el.getAttribute("data-" + mode); });
+    if(renderShortEnquiry()){ renumberSections(); return; }
     renderDryHire();
   }
+  var SHORT_NOTE =
+    "A party of this size takes a table rather than a section of the room, so we plan " +
+    "it with you instead of pricing it here. Tell us roughly when, leave your details, " +
+    "and an events specialist will come back with what we can do and what it costs.";
+  /* The fold-down itself. Everything that exists to produce an estimate is
+     taken off the page: the food and drink step, the add-ons step, the
+     minimum spend panel, the running total and the deposit line. Selections
+     already made are cleared, or a package chosen at 20 guests would still be
+     sitting in the summary at 10. */
+  function renderShortEnquiry(){
+    var on = shortEnquiry();
+    document.body.classList.toggle("pe-short", on);
+    var note = $("#short-note");
+    if(note){ note.hidden = !on; $("#short-note-body").textContent = SHORT_NOTE; }
+    var pkgSec = $("#sec-package"), addSec = $("#sec-addons");
+    if(pkgSec) pkgSec.hidden = on;
+    if(addSec && on) addSec.hidden = true;   /* dry hire owns the other half of this */
+    if(on){
+      var p = $('input[name="package"]:checked');
+      if(p){ p.checked = false; renderSell(); }
+      $$('input[name="addon"]:checked').forEach(function(c){ c.checked = false; });
+      clearMsg(fPackage, packageMsg);
+    }
+    var notice = $("#pe-notice");
+    if(notice) notice.hidden = on;           /* no figures, so no estimate caveat */
+    var lead = $("#date-fee-lead");
+    if(lead) lead.textContent = on ? DATE_LEAD_SHORT : DATE_LEAD_FULL;
+    var dep = $("#sheet-deposit"); if(dep && on) dep.hidden = true;
+    return on;
+  }
+
   /* Dry hire exists on a Monday and nowhere else, keyed to the first-choice
      date like every other figure on this form. Room only means exactly that,
      so choosing it takes the food and drink question and the whole add-ons
@@ -2303,13 +2273,18 @@ body.pe-done .pe-rail{display:none!important;}
   /* minimum-spend explainer in the dates lead. No figure is hardcoded here:
      the number itself appears against the chosen date, because it depends on
      both the space and the night. */
-  $("#date-fee-lead").textContent =
+  var DATE_LEAD_FULL =
     "Most dates carry a minimum spend. Anything spent on the night counts " +
     "toward it, including the bar. If it is not reached, the difference is charged as venue hire. " +
     "Hire includes the room from 6pm to close: midnight Tuesday and Wednesday, 1.30am Thursday, " +
     "2.30am Friday and Saturday. Sunday events run 3pm to 7pm. Mondays carry no minimum at all: " +
     "we are closed to the public, so the room goes out either on a flat dry hire fee or catered " +
     "and priced with you. Monday is full venue only.";
+  /* the paragraph above already explains the three dates, so this one only has
+     to answer the question the missing prices raise */
+  var DATE_LEAD_SHORT =
+    "Nothing here is priced. We will come back with what the room can do on each date you pick.";
+  $("#date-fee-lead").textContent = DATE_LEAD_FULL;
 
   /* ---- Submit: validate required (space · type · package · name · email), scroll to first miss ---- */
   var form = $("#pe-form");
@@ -2329,10 +2304,7 @@ body.pe-done .pe-rail{display:none!important;}
       showMsg(fSpace, spaceMsg, "Choose a space to get started.");
       invalid.push([fSpace, $('input[name="space"]')]);
     }
-    if(!guestsOk(true)){
-      invalid.push([fGuests, guests]);
-      if(largeBookingNow()) openSevenRooms(); /* a hard stop, not a warning */
-    }
+    if(!guestsOk(true)) invalid.push([fGuests, guests]);
     if(!gv("event-type")){
       showMsg(fEventType, eventTypeMsg, "Tell us what kind of event this is.");
       invalid.push([fEventType, $('input[name="event-type"]')]);
@@ -2341,7 +2313,8 @@ body.pe-done .pe-rail{display:none!important;}
       showMsg(fDate, dateMsg, "Pick at least one date. Up to three, best first, means faster confirmation.");
       invalid.push([fDate, calGrid.querySelector(".cal__day:not(:disabled)")]);
     }
-    if(!selectedPackage()){
+    /* a short enquiry never reaches the package step, so it cannot be required */
+    if(!shortEnquiry() && !selectedPackage()){
       showMsg(fPackage, packageMsg, "Pick a package: Standard, Signature or Bespoke.");
       invalid.push([fPackage, $('input[name="package"]')]);
     }
@@ -2380,7 +2353,10 @@ body.pe-done .pe-rail{display:none!important;}
     });
     /* minimum spend, derived from the space and the first-priority date.
        Every ranked date's minimum goes too, because they can differ by band. */
-    var cm = currentMinimum();
+    /* A short enquiry carries NO minimum, not even to the team. Sending one
+       is how a £3,000 section figure ends up quoted back at an eight-person
+       dinner, which is the whole thing this mode exists to avoid. */
+    var cm = shortEnquiry() ? null : currentMinimum();
     if(cm !== null){
       payload["minimum-spend"] = cm;
       payload["minimum-spend-basis"] = minBand(calPicks[0]) + " / " + minDayGroup(calPicks[0]);
@@ -2411,7 +2387,11 @@ body.pe-done .pe-rail{display:none!important;}
     if(notPriced.length) payload["addons-not-priced"] = notPriced;
     /* computed estimate for the events team (deposit excluded by design) —
        taken from the summary maths, never from mid-animation banner text */
-    var est = summaryTexts();
+    if(shortEnquiry()){
+      payload["_enquiry-type"] = "small party, priced by the events team";
+      delete payload.consumption;   /* the step was never shown */
+    }
+    var est = shortEnquiry() ? null : summaryTexts();
     if(est){
       payload["_estimate"] = ((est.bespoke || est.flat) ? est.amount : est.amount + " per head") +
         (est.meta ? " · " + est.meta : "");
@@ -3032,6 +3012,7 @@ body.pe-done .pe-rail{display:none!important;}
       /* The money column carries the minimum for each date, because that is the
          figure that changes the decision. Availability rides in brackets after
          the date itself: useful context, but not a number to rank on. */
+      var short = shortEnquiry();
       var di = calPicks.map(function(d, i){
         var dMin = minimumFor(d);
         var row = { rank: i + 1,
@@ -3041,12 +3022,15 @@ body.pe-done .pe-rail{display:none!important;}
           /* A Monday carries no minimum: it shows the flat dry hire fee, or
              says the team will price it. The raised plus is reserved for real
              minimums, so a Monday figure never wears one. */
-          price: (isMonday(d) && gv("space"))
+          price: short ? ""
+               : (isMonday(d) && gv("space"))
                    ? (dryHireSelected() ? money(dryHireFee(d)) : "by quotation")
                    : dMin === null ? "pick a space" : money(dMin),
           plus: dMin !== null,
           seasonDate: seasonTagApplies(d) ? d : null };
-        if(i === 0){
+        if(i === 0 && short){
+          row.sub = "We will come back to you with what the room can do on each of these.";
+        } else if(i === 0){
           row.sub = (isMonday(d) && gv("space"))
             ? (calPicks.length > 1 ? "Your first choice sets how the night is priced. " : "") +
               "Mondays carry no minimum spend."
@@ -3056,12 +3040,12 @@ body.pe-done .pe-rail{display:none!important;}
         return row;
       });
       groups.push({ icon: "dates",
-        label: mondayFirst() ? "Dates · best first" : "Dates · best first · minimum spend",
+        label: (short || mondayFirst()) ? "Dates · best first" : "Dates · best first · minimum spend",
         target: "#sec-date", items: di });
 
       /* Mondays are their own commercial animal and the brief says so once,
          plainly, rather than leaving the guest to notice an absent figure. */
-      if(gv("space") && mondayFirst()){
+      if(gv("space") && mondayFirst() && !short){
         var md = calPicks[0];
         groups.push({ icon: "money", label: "Mondays", target: "#sec-date",
           items: dryHireSelected()
@@ -3291,6 +3275,11 @@ body.pe-done .pe-rail{display:none!important;}
     $("#pe-receipt").hidden = false;
     renderBrief($("#receipt-brief"), false, false); /* receipt has its own "Sent by" line */
     var t = summaryTexts();
+    if(shortEnquiry()){
+      $("#receipt-foot").textContent =
+        "An events specialist will come back to you with what we can do on your dates, and what it costs.";
+      return;
+    }
     $("#receipt-foot").textContent = !t ? "" : t.minimumOnly
       ? "Minimum spend " + t.amount + " · " + t.meta
       : t.bespoke
@@ -3485,6 +3474,9 @@ body.pe-done .pe-rail{display:none!important;}
   function renderMinSpend(){
     var box = $("#minspend");
     if(!box) return;
+    /* a short enquiry quotes nothing, so the panel that carries the minimum
+       has nothing to say */
+    if(shortEnquiry()){ box.hidden = true; return; }
     var first = calPicks[0];
     if(first && gv("space") && isMonday(first)){ renderMondayPanel(box, first); return; }
     $("#minspend-terms").textContent = MINSPEND_TERMS;
