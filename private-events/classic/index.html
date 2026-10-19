@@ -240,6 +240,10 @@ html,body{overflow-x:clip;}
    quoting a section minimum against it is how you lose the booking. Instead
    the pricing half of the form is taken away and what is left is a short
    enquiry: who, when, and how to reach you. */
+.sun-session{margin-top:var(--sp-5);}
+.sun-session[hidden]{display:none;}
+.sun-session__note{font-family:var(--mc-font-mono);font-size:11.5px;line-height:1.6;
+  color:var(--mc-taupe);margin:var(--sp-2) 0 0;}
 .pe-short-note{display:grid;gap:var(--sp-2);margin-top:var(--sp-4);
   padding-left:var(--sp-4);border-left:2px solid var(--mc-orange);}
 .pe-short-note[hidden]{display:none;}
@@ -927,8 +931,7 @@ body.pe-done .pe-rail{display:none!important;}
             <div class="opt-list" role="radiogroup" aria-labelledby="space-label">
               <label class="opt"><input class="sr-input" type="radio" name="space" value="full"><span class="opt__name">Full Venue</span><span class="opt__meta">up to 75 guests</span></label>
               <label class="opt"><input class="sr-input" type="radio" name="space" value="seated"><span class="opt__name">Semi-Private: Seated</span><span class="opt__meta">front room, up to 30 guests</span></label>
-              <!-- Bar Area cap of 40 below is a PLACEHOLDER, TBC with venue -->
-              <label class="opt"><input class="sr-input" type="radio" name="space" value="bar"><span class="opt__name">Semi-Private: Bar Area</span><span class="opt__meta">up to 40 guests</span></label>
+              <label class="opt"><input class="sr-input" type="radio" name="space" value="bar"><span class="opt__name">Semi-Private: Bar Area</span><span class="opt__meta">up to 35 guests</span></label>
             </div>
             <p class="field__msg" id="space-msg" hidden></p>
           </div>
@@ -1036,6 +1039,18 @@ body.pe-done .pe-rail{display:none!important;}
               <div class="cal__grid" id="cal-grid"></div>
               <p class="cal__note t-micro">An indication based on how this space usually books at this time of year. Every date is confirmed by our events team.</p>
             </div>
+            <!-- Sunday splits into two products: the afternoon session the
+                 tables price, and an evening buyout the team quotes. Shown
+                 only when the first choice is a Sunday and the whole venue is
+                 being taken. -->
+            <div class="field sun-session" id="f-sun-session" hidden data-radio-group="sun-session">
+              <span class="field__label" id="sun-session-label">WHICH SUNDAY?</span>
+              <div class="chips" role="radiogroup" aria-labelledby="sun-session-label">
+                <label class="chip"><input class="sr-input" type="radio" name="sun-session" value="afternoon" checked><span>Afternoon &middot; 3pm to 7pm</span></label>
+                <label class="chip"><input class="sr-input" type="radio" name="sun-session" value="evening"><span>Evening &middot; from 7pm</span></label>
+              </div>
+              <p class="sun-session__note" id="sun-session-note"></p>
+            </div>
             <!-- minimum spend for the chosen space + first-choice date -->
             <div class="minspend" id="minspend" hidden>
               <div class="minspend__row">
@@ -1127,7 +1142,7 @@ body.pe-done .pe-rail{display:none!important;}
         <p class="pe-section__lead">We plan the whole evening, not just the room. Tick anything worth talking about.</p>
         <div class="pe-fields">
           <div>
-            <!-- Lead times below marked "minimum …" are PLACEHOLDERS — TBC with venue -->
+            <!-- Lead times below confirmed by Ed, 19 Oct 2026 -->
             <!-- Food-only: hidden on a Just Drinks booking, which has no dishes -->
             <div class="addon" id="addon-portions-wrap">
               <label class="field__check">
@@ -1492,6 +1507,14 @@ body.pe-done .pe-rail{display:none!important;}
       /* Monday dry hire: the room on its own, a flat fee by season band.
          Supersedes the £1,200 Monday figure the form used to show. */
       dryHire: { quiet: 1000, standard: 1250, high: 1500, peak: 1750 },
+      /* The Sunday figures above buy the 3pm to 7pm session. Taking the venue
+         from 7pm is a buyout, and it carries its OWN MINIMUM SPEND of £2,000
+         (Ed, 19 Oct 2026) rather than a hire fee on top of the food and drink.
+         It behaves like every other minimum: anything spent counts toward it
+         and the shortfall is charged as venue hire. Full venue only. The
+         figure is an opening one, so the night is still confirmed by the team
+         rather than booked automatically. */
+      sundayEvening: { minimum: 2000 },
       /* month index -> day group -> figure per hire type. Checked once the
          band figure is known; if present it replaces it. */
       overrides: {
@@ -1515,7 +1538,7 @@ body.pe-done .pe-rail{display:none!important;}
                 frisat: "4 hours within the trading night", sun: "the 3pm to 7pm session" }
       }
     },
-    capacities: { full: 75, seated: 30, bar: 40 } /* bar cap PLACEHOLDER — TBC with venue */
+    capacities: { full: 75, seated: 30, bar: 35 } /* bar standing cap confirmed by Ed, 19 Oct 2026 */
   };
 
   /* ---- Package sell copy (Mad Cats voice — understated, specific) ---- */
@@ -1702,11 +1725,10 @@ body.pe-done .pe-rail{display:none!important;}
   $("#guests").addEventListener("input", syncGuestButtons);
 
   /* ---- 01 · The space: guest count capped by chosen space ---- */
-  /* Bar Area cap of 40 is a PLACEHOLDER, TBC with venue. */
   var CAP_MSGS = {
     full:   "The full venue holds 75. For anything larger, best to talk to the events team first.",
     seated: "The front room seats up to 30. For more, consider the Full Venue.",
-    bar:    "The bar area takes up to 40. For more, consider the Full Venue."
+    bar:    "The bar area takes up to 35. For more, consider the Full Venue."
   };
   var fSpace  = $("#f-space"),  spaceMsg  = $("#space-msg");
   var guests   = $("#guests"), fGuests = $("#f-guests"), guestsMsg = $("#guests-msg");
@@ -2356,6 +2378,11 @@ body.pe-done .pe-rail{display:none!important;}
     /* A short enquiry carries NO minimum, not even to the team. Sending one
        is how a £3,000 section figure ends up quoted back at an eight-person
        dinner, which is the whole thing this mode exists to avoid. */
+    if(sundayEvening()){
+      payload["sunday-session"] = "evening buyout from 7pm, confirmed by the events team";
+    } else if(sundayEveningAvailable()){
+      payload["sunday-session"] = "afternoon, 3pm to 7pm";
+    }
     var cm = shortEnquiry() ? null : currentMinimum();
     if(cm !== null){
       payload["minimum-spend"] = cm;
@@ -2681,11 +2708,13 @@ body.pe-done .pe-rail{display:none!important;}
   function bandLabel(d){ return PRICING.minSpend.bandLabel[minBand(d)]; }
   /* Friday and Saturday semi-private is priced but never auto-confirmed */
   function routesToTeam(d){
+    if(isSunday(d) && sundayEvening()) return true;   /* an opening figure, never auto-confirmed */
     var sv = tierOf(), key = sv === "full" ? "full" : "semi";
     var list = PRICING.minSpend.routeToTeam[key];
     return !!(list && list.indexOf(minDayGroup(d)) >= 0);
   }
   function hireHours(d){
+    if(isSunday(d) && sundayEvening()) return "from 7pm, the whole venue";
     var sv = tierOf(), key = sv === "full" ? "full" : "semi";
     return PRICING.minSpend.hours[key][minDayGroup(d)];
   }
@@ -2697,6 +2726,16 @@ body.pe-done .pe-rail{display:none!important;}
   /* Monday: closed to the public, so the hire displaces no trade. There is no
      minimum spend on a Monday in either direction, dry hire or catered. */
   function isMonday(d){ return !!d && d.getDay() === 1; }
+  function isSunday(d){ return !!d && d.getDay() === 0; }
+  /* The evening buyout is the whole house by definition, so it is offered
+     only on a full venue hire. Semi-private Sundays are the afternoon
+     session and nothing else. */
+  function sundayEveningAvailable(){
+    return gv("space") === "full" && calPicks.length > 0 && isSunday(calPicks[0]);
+  }
+  function sundayEvening(){
+    return sundayEveningAvailable() && gv("sun-session") === "evening";
+  }
   /* guarded: the package prices are written at init, before the calendar
      section has declared its picks */
   function mondayFirst(){ return !!calPicks && calPicks.length > 0 && isMonday(calPicks[0]); }
@@ -2707,6 +2746,8 @@ body.pe-done .pe-rail{display:none!important;}
     var sv = gv("space");
     if(!sv || !d) return null;
     if(isMonday(d)) return null;           /* not a minimum-spend product */
+    /* the tables buy the 3pm to 7pm session; the evening carries its own */
+    if(isSunday(d) && sundayEvening()) return PRICING.minSpend.sundayEvening.minimum;
     var key = sv === "full" ? "full" : "semi", day = minDayGroup(d);
     /* band figure first, then let a month/day override replace it */
     var base = PRICING.minSpend[key][minBand(d)][day];
@@ -3045,6 +3086,15 @@ body.pe-done .pe-rail{display:none!important;}
 
       /* Mondays are their own commercial animal and the brief says so once,
          plainly, rather than leaving the guest to notice an absent figure. */
+      if(gv("space") && !short && sundayEvening()){
+        groups.push({ icon: "money", label: "Sunday evening", target: "#sec-date",
+          items: [{ text: "Buyout, from 7pm",
+                    price: money(PRICING.minSpend.sundayEvening.minimum),
+                    sub: "Our Sunday figures buy the 3pm to 7pm session. Taking the whole venue " +
+                         "from 7pm carries its own minimum spend, which anything you spend on the " +
+                         "night counts toward. It is an opening figure, so your events specialist " +
+                         "confirms the night with you rather than it booking automatically." }] });
+      }
       if(gv("space") && mondayFirst() && !short){
         var md = calPicks[0];
         groups.push({ icon: "money", label: "Mondays", target: "#sec-date",
@@ -3436,6 +3486,27 @@ body.pe-done .pe-rail{display:none!important;}
     return out;
   }
   var MONDAY_QUOTE_NOTE = "The minimum spend will be quoted by your events specialist once you submit the form.";
+  var ROUTE_FRISAT = "Friday and Saturday section hires are confirmed by our events team rather than booked automatically.";
+  var ROUTE_SUN_EVE = "Sunday evening buyouts are confirmed by our events team rather than booked automatically, and the minimum above is an opening figure.";
+  /* Sunday is two products. The tables buy the 3pm to 7pm session; the evening
+     is a buyout of the whole house from 7pm, which carries an opening figure
+     rather than a minimum and is priced by the team. */
+  function renderSunSession(){
+    var box = $("#f-sun-session");
+    if(!box) return;
+    var on = sundayEveningAvailable();
+    box.hidden = !on;
+    if(!on){
+      var aft = document.querySelector('input[name="sun-session"][value="afternoon"]');
+      if(aft) aft.checked = true;        /* never leave a stale evening behind */
+      return;
+    }
+    $("#sun-session-note").textContent = sundayEvening()
+      ? "The whole venue from 7pm, with a minimum spend starting at " +
+        money(PRICING.minSpend.sundayEvening.minimum) +
+        ". Your events specialist confirms the night with you."
+      : "The figures below are for the afternoon session. Pick the evening if you want the venue after 7pm.";
+  }
   var MINSPEND_TERMS = "Anything spent on the night counts toward the minimum, including the bar. " +
     "If it is not reached, the difference is charged as venue hire.";
   /* A Monday has no minimum spend, so the panel that normally carries one
@@ -3480,6 +3551,9 @@ body.pe-done .pe-rail{display:none!important;}
     var first = calPicks[0];
     if(first && gv("space") && isMonday(first)){ renderMondayPanel(box, first); return; }
     $("#minspend-terms").textContent = MINSPEND_TERMS;
+    var routeEl0 = $("#minspend-route");
+    if(routeEl0) routeEl0.textContent = (calPicks[0] && isSunday(calPicks[0]) && sundayEvening())
+      ? ROUTE_SUN_EVE : ROUTE_FRISAT;
     var minimum = currentMinimum();
     if(minimum === null){ box.hidden = true; return; }
     box.hidden = false;
@@ -3488,7 +3562,8 @@ body.pe-done .pe-rail{display:none!important;}
         track = $("#minspend-track"), fill = $("#minspend-fill"),
         note = $("#minspend-note"), ways = $("#minspend-ways");
 
-    label.textContent = "Minimum spend · " + calLongDate(first);
+    label.textContent = (isSunday(first) && sundayEvening() ? "Minimum spend · evening buyout · "
+                                                            : "Minimum spend · ") + calLongDate(first);
     var tagEl = $("#minspend-season"), tagWrap = $("#minspend-season-wrap");
     if(tagEl && tagWrap){
       var lbl = seasonTagApplies(first) ? bandLabel(first) : null;
@@ -3612,6 +3687,7 @@ body.pe-done .pe-rail{display:none!important;}
      minimum and its total is the package, which the band does not touch. */
   function seasonTagApplies(d){
     if(!d) return false;
+    if(isSunday(d) && sundayEvening()) return false;  /* one figure covers every band */
     if(isMonday(d)) return dryHireSelected();
     return !!bandLabel(d);
   }
@@ -3755,7 +3831,7 @@ body.pe-done .pe-rail{display:none!important;}
   document.addEventListener("scroll", function(){ if(openWrap) placeTip(openWrap); }, true);
   window.addEventListener("resize", function(){ if(openWrap) placeTip(openWrap); });
 
-  function refreshUX(){ updateSectionTicks(); updateAck(); renderCal(); renderPicks(); renderRail(); refreshPricing(); renderMinSpend(); renderProgressBars(); updateGuide(); }
+  function refreshUX(){ updateSectionTicks(); updateAck(); renderSunSession(); renderCal(); renderPicks(); renderRail(); refreshPricing(); renderMinSpend(); renderProgressBars(); updateGuide(); }
   form.addEventListener("input", refreshUX);
   form.addEventListener("change", refreshUX);
   refreshUX();
