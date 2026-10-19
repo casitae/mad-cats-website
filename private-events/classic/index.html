@@ -2209,7 +2209,22 @@ body.pe-done .pe-rail{display:none!important;}
   function updateBanner(){
     if(document.body.classList.contains("pe-done")) return; /* the enquiry is in */
     var t = summaryTexts();
-    if(!t) return; /* never before the first selection; never hidden after */
+    /* Nothing to total. Before the first selection the strip has not appeared
+       yet, so there is nothing to do. AFTER it has appeared, returning early
+       left the last figure sitting there: remove your date and the strip went
+       on quoting the price of a date you no longer had. Clear it instead. */
+    if(!t){
+      if(!bannerShown) return;
+      cancelTween();
+      bannerLabel.textContent = "Your estimate";
+      var bOld0 = banner.querySelector(".season-wrap"); if(bOld0) bOld0.remove();
+      bannerAmount.textContent = "—";
+      bannerMeta.textContent = calPicks.length
+        ? "pick a package to see your total"
+        : "pick a date to see the minimum spend";
+      lastAmount = null; lastHero = null;
+      return;
+    }
     if(!bannerShown){
       bannerShown = true;
       document.body.classList.add("has-banner");
@@ -3562,8 +3577,10 @@ body.pe-done .pe-rail{display:none!important;}
         track = $("#minspend-track"), fill = $("#minspend-fill"),
         note = $("#minspend-note"), ways = $("#minspend-ways");
 
-    label.textContent = (isSunday(first) && sundayEvening() ? "Minimum spend · evening buyout · "
-                                                            : "Minimum spend · ") + calLongDate(first);
+    /* same shape as every other date, with the session appended rather than
+       a third clause in front of it: the long form wrapped to three lines */
+    label.textContent = "Minimum spend · " + calLongDate(first) +
+      (isSunday(first) && sundayEvening() ? ", evening" : "");
     var tagEl = $("#minspend-season"), tagWrap = $("#minspend-season-wrap");
     if(tagEl && tagWrap){
       var lbl = seasonTagApplies(first) ? bandLabel(first) : null;
